@@ -14,7 +14,7 @@ h9_module modules[] = {
     { "TimeFactor",
         0,
         0,
-        (h9_algorithm []){
+        (h9_algorithm [10]){
             {0, 0, "Digital Delay", "Mix", "Delay Mix", "Delay A", "Delay B", "Fdbk A", "Fdbk B", "Xfade", "Mod Depth", "Mod Speed", "Filter", "Repeat"},
             {1, 0, "Vintage Delay", "Mix", "Delay Mix", "Delay A", "Delay B", "Fdbk A", "Fdbk B", "Bits", "Mod Depth", "Mod Speed", "Filter", "Repeat"},
             {2, 0, "Tape Echo", "Mix", "Delay Mix", "Delay A", "Delay B", "Fdbk A", "Fdbk B", "Saturation", "Wow", "Flutter", "Filter", "Repeat"},
@@ -32,7 +32,7 @@ h9_module modules[] = {
         "ModFactor",
         1,
         0,
-        (h9_algorithm[]){
+        (h9_algorithm[10]){
             {0, 1, "Chorus", "Intensity", "Type", "Depth", "Speed", "Shape", "Filter", "Depth Mod", "Speed Mod", "Mod Rate", "Mod Source", "Slow/Fast"},
             {1, 1, "Phaser", "Intensity", "Type", "Depth", "Speed", "Shape", "Stages", "Depth Mod", "Speed Mod", "Mod Rate", "Mod Source", "Slow/Fast"},
             {2, 1, "Q-Wah", "Q-Intensity", "Type", "Vowel", "Speed", "Shape", "Bottom", "Depth Mod", "Speed Mod", "Mod Rate", "Mod Source", "Slow/Fast"},
@@ -50,7 +50,7 @@ h9_module modules[] = {
         "PitchFactor",
         2,
         0,
-        (h9_algorithm[]){
+        (h9_algorithm[10]){
             {0, 2, "Diatonic", "Mix", "Pitch Mix", "Pitch A", "Pitch B", "Delay A", "Delay B", "Key", "Scale", "Feedback A", "Feedback B", "Flex"},
             {1, 2, "Quadravox", "Mix", "Pitch Mix", "Pitch A", "Pitch B", "Delay D", "Delay Grp", "Key", "Mode", "Pitch C", "Pitch D", "Flex"},
             {2, 2, "HarModulator", "Mix", "Pitch Mix", "Pitch A", "Pitch B", "Delay A", "Delay B", "Mod Depth", "Mod Sens", "Shape", "Feedback", "Flex"},
@@ -68,7 +68,7 @@ h9_module modules[] = {
         "Space",
         3,
         0,
-        (h9_algorithm[]){
+        (h9_algorithm[12]){
             {0, 3, "Hall", "Mix", "Decay", "Size", "Pre Delay", "Low EQ", "High EQ", "Low Decay", "High Decay", "Mod-Level", "Mid EQ", "HotSwitch"},
             {1, 3, "Room", "Mix", "Decay", "Size", "Pre Delay", "Low EQ", "High EQ", "Reflection", "Diffusion", "Mod-Level", "High Freq", "HotSwitch"},
             {2, 3, "Plate", "Mix", "Decay", "Size", "Pre Delay", "Low-damp", "High-damp", "Distance", "Diffusion", "Mod Level", "Tone", "HotSwitch"},
@@ -88,7 +88,7 @@ h9_module modules[] = {
         "H9",
         4,
         0,
-        (h9_algorithm[]){
+        (h9_algorithm[10]){
             {0, 4, "UltraTap", "Mix", "Length", "Taps", "Pre-Delay", "Spread", "Taper", "Tone", "Slurm", "Chop", "Un-Used", "HotSwitch"},
             {1, 4, "Resonator", "Mix", "Length", "Rhythm", "Feedback", "Resonance", "Reverb", "Note 1", "Note 2", "Note 3", "Note 4", "HotSwitch"},
             {2, 4, "EQ Compressor", "Gain 1", "Frequency 1", "Width 1", "Gain 2", "Frequency 2", "Width 2", "Bass", "Treble", "Compressor", "Trim", "HotSwitch"},

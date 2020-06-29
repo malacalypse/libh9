@@ -76,6 +76,11 @@ typedef struct h9_preset {
     h9_module* module;
     h9_algorithm* algorithm;
     h9_knob knobs[NUM_KNOBS];
+    float tempo;
+    float output_gain;
+    uint8_t xyz_map[3];
+    bool tempo_enabled;
+    bool modfactor_fast_slow;
 } h9_preset;
 
 // We'll work on callbacks later

@@ -23,12 +23,15 @@
 #endif
 
 #define NUM_MODULES 5
+#define KNOB_MAX 0x7FE0 // By observation
 
 // Create
 h9* h9_new(void) {
     h9* h9 = malloc(sizeof(h9));
     assert(h9 != NULL);
     memset(h9, 0x0, sizeof(*h9)); // pedantically explicitly zero
+    h9->preset = malloc(sizeof(*h9->preset));
+    assert(h9->preset != NULL);
     h9->sysex_id = 1U; // Default
     return h9;
 }
@@ -114,6 +117,36 @@ uint16_t iarray_sumf(float *array, size_t len) {
     return result;
 }
 
+void import_knob_values(h9_knob* knobs, size_t index, uint32_t* value_row) {
+    h9_knob *knob = &knobs[index];
+
+    size_t indices[] = { 9, 8, 7, 6, 5, 4, 0, 1, 2, 3 };
+    uint32_t raw_value = value_row[indices[index]];
+    knob->default_value = raw_value / (float)KNOB_MAX; // Scale between 0.0 and 1.0
+    knob->current_value = knob->default_value;
+    knob->display_value = knob->default_value;
+}
+
+void import_knob_map(h9_knob* knobs, size_t index, uint32_t *knob_expr_psw_row) {
+    h9_knob *knob = &knobs[index];
+
+    size_t min_indices[] = { 18, 16, 14, 12, 10, 8, 0, 2, 4, 6 };
+    size_t max_indices[] = { 19, 17, 15, 13, 11, 9, 1, 3, 5, 7 };
+    size_t psw_indices[] = { 29, 28, 27, 26, 25, 24, 20, 21, 22, 23 };
+    knob->exp_min = knob_expr_psw_row[min_indices[index]] / (float)KNOB_MAX;
+    knob->exp_max = knob_expr_psw_row[max_indices[index]] / (float)KNOB_MAX;
+    knob->psw     = knob_expr_psw_row[psw_indices[index]] / (float)KNOB_MAX;
+    knob->exp_mapped = (knob->exp_min != 0.0 || knob->exp_max != 0.0);
+    knob->psw_mapped = (knob->psw != 0.0);
+}
+
+void import_knob_mknob(h9_knob* knobs, size_t index, float* mknob_row) {
+    h9_knob *knob = &knobs[index];
+
+    size_t indices[] = { 9, 8, 7, 6, 5, 4, 0, 1, 2, 3 };
+    knob->mknob_value = mknob_row[indices[index]];
+}
+
 // A sysex chunk, stripped of leading and trailing 0xF0/0xF7
 h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     assert(h9);
@@ -176,7 +209,7 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     }
 
     // Unpack Line 1: [00] 0 0 0 => [<preset>] {module} {unknown, always 5} {algorithm}
-    found = sscanf(lines[0], "[%d] %d %*d %d", &preset_num, &module, &algorithm);
+    found = sscanf(lines[0], "[%d] %d %*d %d", &preset_num, &algorithm, &module);
     if (found != 3) {
         debug("Line 1 did not validate, found %zu.\n", found);
         return kH9_SYSEX_CHECKSUM_INVALID;
@@ -246,9 +279,25 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     debug("Checksum VALID.\n");
 
     // Transform values to h9 state
-//    h9->preset->algorithm = (uint8_t)algorithm;
-//    h9->preset->module = (uint8_t)module;
-//    h9->preset->
+    h9_preset* preset = h9->preset;
+    size_t module_index = module - 1; // modules are 1-based, algorithms are 0-. Why? No clue.
+    strncpy(preset->name, patch_name, MAX_NAME_LEN);
+    preset->algorithm = &modules[module_index].algorithms[algorithm];
+    preset->module = &modules[module_index];
+    for (size_t i = 0; i < NUM_KNOBS; i++) {
+        import_knob_values(preset->knobs, i, knob_values);
+        import_knob_map(preset->knobs, i, knob_map);
+        import_knob_mknob(preset->knobs, i, mknob_values);
+    }
+    preset->tempo = (float)options[1] / 100.0;
+    preset->tempo_enabled = (options[2] != 0);
+    preset->xyz_map[0] = options[4];
+    preset->xyz_map[1] = options[5];
+    preset->xyz_map[2] = options[6];
+    preset->modfactor_fast_slow = (options[7] != 0);
+
+    // Output gain is funky, it's premultiplied by 10 and is a standard 2s complement signed int, but with a 24-bit width.
+    preset->output_gain = ((int32_t)(options[3] << 8) >> 8) * 0.1f;
     return kH9_OK;
 }
 
