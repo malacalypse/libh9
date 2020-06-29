@@ -118,8 +118,24 @@ h9* h9_new(void); // Allocates and returns a pointer to a new H9 instance
 void h9_free(h9* h9);
 
 // Common H9 operations
-h9_status h9_load(h9* h9, uint8_t* sysex, size_t len); // can include or skip the leading and trailing 0xF0/0xF7, doesn't matter
-size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len); // will dump WITH the 0xF0/0xF7 and correct preamble.
+
+/*
+ * Sysex should not include the leading 0xF0 / 0xF7.
+ *
+ * Return value indicates whether the operation was successful. 
+ */
+h9_status h9_load(h9* h9, uint8_t* sysex, size_t len);
+
+
+/*
+ * Generates a complete sysex message encapsulating the specified h9 object's current state.
+ *
+ * Return value is length of the entire sysex blob, inclusive of 0xF0/0xF7 terminators.
+ * Note 1: If this is >= max_len, truncation occurred and the sysex should be considered invalid.
+ *         Regardless of update_sync_dirty, if truncation occurred, the dirty flag will NOT be updated.
+ * Note 2: This is NOT a string. There is no guarantee of a NULL after the final 0xF7.
+ */
+size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_sync_dirty);
 
 // Knob, Expr, and PSW operations
 void h9_setKnob(h9* h9, knob_id knob_num, knob_value value);

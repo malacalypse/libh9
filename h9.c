@@ -224,24 +224,33 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
 
     // Output gain is funky, it's premultiplied by 10 and is a standard 2s complement signed int, but with a 24-bit width.
     preset->output_gain = ((int32_t)(options[3] << 8) >> 8) * 0.1f;
+
+    // Update the dirty flags
+    h9->preset_dirty = false;
+    h9->sync_dirty = false;
+
     return kH9_OK;
 }
 
-uint16_t export_knob_value(float knob_value) {
+uint32_t export_knob_value(float knob_value) {
     float interim = rintf(knob_value * KNOB_MAX);
     if (interim > KNOB_MAX) {
         interim = KNOB_MAX;
     } else if (interim < 0.0f) {
         interim = 0.0f;
     }
-    return (uint16_t)interim;
+    return (uint32_t)interim;
 }
 
-// will dump WITH the 0xF0/0xF7 and correct preamble.
-size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len) {
+size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_sync_dirty) {
     h9_preset* preset = h9->preset;
-    uint16_t new_checksum = 0U;
-    uint16_t line2[] = {
+    if (preset->algorithm == NULL || preset->module == NULL) {
+        // Preset is not loaded, don't write anything.
+        return 0;
+    }
+    
+    uint16_t checksum = 0U;
+    uint32_t line2[] = {
         export_knob_value(preset->knobs[6].current_value),
         export_knob_value(preset->knobs[7].current_value),
         export_knob_value(preset->knobs[8].current_value),
@@ -254,7 +263,7 @@ size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len) {
         export_knob_value(preset->knobs[0].current_value),
         export_knob_value(h9->expression)
     };
-    uint16_t line3[] = {
+    uint32_t line3[] = {
         export_knob_value(preset->knobs[6].exp_min),
         export_knob_value(preset->knobs[6].exp_max),
         export_knob_value(preset->knobs[7].exp_min),
@@ -286,7 +295,7 @@ size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len) {
         export_knob_value(preset->knobs[1].psw),
         export_knob_value(preset->knobs[0].psw),
     };
-    uint16_t line4[] = {
+    uint32_t line4[] = {
         (uint16_t)rintf(preset->tempo * 100.0f),
         (preset->tempo_enabled ? 1 : 0),
         (int16_t)rintf(preset->output_gain * 10.0f),
@@ -303,18 +312,10 @@ size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len) {
     };
 
     // Compute checksum
-    for (size_t i = 0; i < sizeof(line2) / sizeof(*line2); i++) {
-        new_checksum += line2[i];
-    }
-    for (size_t i = 0; i < sizeof(line3) / sizeof(*line3); i++) {
-        new_checksum += line3[i];
-    }
-    for (size_t i = 0; i < sizeof(line4) / sizeof(*line4); i++) {
-        new_checksum += line4[i];
-    }
-    for (size_t i = 0; i < sizeof(line5) / sizeof(*line5); i++) {
-        new_checksum += truncf(line5[i]);
-    }
+    checksum += array_sum(line2, 11);
+    checksum += array_sum(line3, 30);
+    checksum += array_sum(line4, 7);
+    checksum += iarray_sumf(line5, 12);
 
     size_t bytes_written = snprintf((char *)sysex,
                                     max_len,
@@ -342,12 +343,20 @@ size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len) {
                                     // Line 5 is constant, for now
                                     line5_widths[0], line5[0], line5_widths[1], line5[1], line5_widths[2], line5[2], line5_widths[3], line5[3], line5_widths[4], line5[4], line5_widths[5], line5[5], line5_widths[6], line5[6], line5_widths[7], line5[7], line5_widths[8], line5[8], line5_widths[9], line5[9], line5_widths[10], line5[10], line5_widths[11], line5[11],
                                     // Line 6
-                                    new_checksum,
+                                    checksum,
                                     // Line 7
                                     preset->name
                                     );
-    sysex[bytes_written + 1] = 0xF7;
-    return bytes_written + 2;
+    bytes_written += 1; // Count the null byte
+    if (max_len > (bytes_written + 1)) {
+        sysex[bytes_written] = 0xF7;
+        bytes_written += 1;
+
+        if (update_sync_dirty) {
+            h9->sync_dirty = false;
+        }
+    }
+    return bytes_written;
 }
 
 /*

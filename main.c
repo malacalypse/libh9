@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
         printf("Dumping loaded information back out:\n");
         uint8_t sysex[1000];
         size_t len = 0U;
-        len = h9_dump(h9, sysex, 1000);
+        len = h9_dump(h9, sysex, 1000, true);
         if (len > 1000) {
             printf("Buffer too small, truncated!!\n");
         } else {
