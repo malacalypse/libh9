@@ -20,12 +20,29 @@
 #define NUM_MODULES 5
 #define KNOB_MAX 0x7FE0 // By observation
 
+// Private
+static void reset_knobs(h9* h9);
+static void update_display_value(h9* h9, h9_knob* knob, knob_value value);
+
+static void reset_knobs(h9* h9) {
+    for (size_t i = 0; i < NUM_KNOBS; i++) {
+        h9_knob* knob = &h9->preset->knobs[i];
+        if (knob->exp_mapped || knob->psw_mapped) {
+            update_display_value(h9, knob, knob->current_value);
+        }
+    }
+}
+
+// This exists to handle future callbacks or other dynamic behaviour
+static void update_display_value(h9* h9, h9_knob* knob, knob_value value) {
+    knob->display_value = knob->current_value;
+}
+
 // Create
 h9* h9_new(void) {
-    h9* h9 = malloc(sizeof(h9));
+    h9* h9 = malloc(sizeof(*h9));
     assert(h9 != NULL);
-    memset(h9, 0x0, sizeof(*h9)); // pedantically explicitly zero
-    h9->preset = malloc(sizeof(*h9->preset));
+    h9->preset = malloc(sizeof(*(h9->preset)));
     assert(h9->preset != NULL);
     h9->sysex_id = 1U; // Default
     return h9;
@@ -43,7 +60,7 @@ void h9_free(h9* h9) {
 }
 
 // Common H9 operations
-void import_knob_values(h9_knob* knobs, size_t index, uint32_t* value_row) {
+static void import_knob_values(h9_knob* knobs, size_t index, uint32_t* value_row) {
     h9_knob *knob = &knobs[index];
 
     size_t indices[] = { 9, 8, 7, 6, 5, 4, 0, 1, 2, 3 };
@@ -53,7 +70,7 @@ void import_knob_values(h9_knob* knobs, size_t index, uint32_t* value_row) {
     knob->display_value = knob->default_value;
 }
 
-void import_knob_map(h9_knob* knobs, size_t index, uint32_t *knob_expr_psw_row) {
+static void import_knob_map(h9_knob* knobs, size_t index, uint32_t *knob_expr_psw_row) {
     h9_knob *knob = &knobs[index];
 
     size_t min_indices[] = { 18, 16, 14, 12, 10, 8, 0, 2, 4, 6 };
@@ -66,7 +83,7 @@ void import_knob_map(h9_knob* knobs, size_t index, uint32_t *knob_expr_psw_row) 
     knob->psw_mapped = (knob->psw != 0.0);
 }
 
-void import_knob_mknob(h9_knob* knobs, size_t index, float* mknob_row) {
+static void import_knob_mknob(h9_knob* knobs, size_t index, float* mknob_row) {
     h9_knob *knob = &knobs[index];
 
     size_t indices[] = { 9, 8, 7, 6, 5, 4, 0, 1, 2, 3 };
@@ -232,7 +249,7 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     return kH9_OK;
 }
 
-uint32_t export_knob_value(float knob_value) {
+static uint32_t export_knob_value(float knob_value) {
     float interim = rintf(knob_value * KNOB_MAX);
     if (interim > KNOB_MAX) {
         interim = KNOB_MAX;
@@ -242,13 +259,16 @@ uint32_t export_knob_value(float knob_value) {
     return (uint32_t)interim;
 }
 
+bool h9_preset_loaded(h9* h9) {
+    return (h9->preset->algorithm != NULL && h9->preset->module != NULL);
+}
+
 size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_sync_dirty) {
     h9_preset* preset = h9->preset;
-    if (preset->algorithm == NULL || preset->module == NULL) {
-        // Preset is not loaded, don't write anything.
+    if (!h9_preset_loaded(h9)) {
         return 0;
     }
-    
+
     uint16_t checksum = 0U;
     uint32_t line2[] = {
         export_knob_value(preset->knobs[6].current_value),
@@ -327,24 +347,13 @@ size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_sync_dirty) {
                                     " %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f\r\n"
                                     "C_%x\r\n"
                                     "%s\r\n",
-                                    // Preamble
-                                    SYSEX_EVENTIDE, SYSEX_H9, h9->sysex_id, kH9_PRESET,
-                                    // Line 1
-                                    preset->algorithm->id,
-                                    preset->module->sysex_num,
-                                    // Line 2
+                                    SYSEX_EVENTIDE, SYSEX_H9, h9->sysex_id, kH9_PRESET, // Preamble
+                                    preset->algorithm->id, preset->module->sysex_num,   // Line 1, etc..
                                     line2[0], line2[1], line2[2], line2[3], line2[4], line2[5], line2[6], line2[7], line2[8], line2[9], line2[10],
-                                    // Line 3
-                                    line3[0],  line3[1],  line3[2],  line3[3],  line3[4],  line3[5],  line3[6],  line3[7],  line3[8],  line3[9],
-                                    line3[10], line3[11], line3[12], line3[13], line3[14], line3[15], line3[16], line3[17], line3[18], line3[19],
-                                    line3[20], line3[21], line3[22], line3[23], line3[24], line3[25], line3[26], line3[27], line3[28], line3[29],
-                                    // Line 4
+                                    line3[0],  line3[1],  line3[2],  line3[3],  line3[4],  line3[5],  line3[6],  line3[7],  line3[8],  line3[9], line3[10], line3[11], line3[12], line3[13], line3[14], line3[15], line3[16], line3[17], line3[18], line3[19], line3[20], line3[21], line3[22], line3[23], line3[24], line3[25], line3[26], line3[27], line3[28], line3[29],
                                     line4[0], line4[1], line4[2], line4[3], line4[4], line4[5], line4[6],
-                                    // Line 5 is constant, for now
                                     line5_widths[0], line5[0], line5_widths[1], line5[1], line5_widths[2], line5[2], line5_widths[3], line5[3], line5_widths[4], line5[4], line5_widths[5], line5[5], line5_widths[6], line5[6], line5_widths[7], line5[7], line5_widths[8], line5[8], line5_widths[9], line5[9], line5_widths[10], line5[10], line5_widths[11], line5[11],
-                                    // Line 6
                                     checksum,
-                                    // Line 7
                                     preset->name
                                     );
     bytes_written += 1; // Count the null byte
@@ -359,33 +368,142 @@ size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_sync_dirty) {
     return bytes_written;
 }
 
-/*
-
 // Knob, Expr, and PSW operations
-void h9_setKnob(h9* h9, knob_id knob_num, knob_value value);
-void h9_setKnobMap(h9* h9, knob_id knob_num, knob_value exp_min, knob_value exp_max, knob_value psw);
-knob_value h9_getKnob(h9* h9, knob_id knob_num);
-knob_value h9_getKnobDisplay(h9* h9, knob_id knob_num);
-void h9_getKnobMap(h9* h9, knob_id knob_num, knob_value* exp_min, knob_value* exp_max, knob_value* psw);
-void h9_setExpr(h9* h9, knob_value value);
-knob_value h9_getExpr(h9* h9);
-void h9_setPsw(h9* h9, bool psw_on);
-bool h9_getPsw(h9* h9);
+void h9_setKnob(h9* h9, knob_id knob_num, knob_value value) {
+    // Knobs can be set even if a preset isn't loaded.
+    h9_knob* knob = &h9->preset->knobs[knob_num];
+    knob->current_value = value;
+    if (knob->current_value != knob->default_value) {
+        h9->preset_dirty = true;
+    }
+    if (knob->current_value != knob->display_value) {
+        update_display_value(h9, knob, knob->current_value);
+    }
+}
+
+
+void h9_setKnobMap(h9* h9, knob_id knob_num, knob_value exp_min, knob_value exp_max, knob_value psw) {
+    h9_knob* knob = &h9->preset->knobs[knob_num];
+    knob->exp_min = exp_min;
+    knob->exp_max = exp_max;
+    knob->psw = psw;
+}
+
+knob_value h9_getKnob(h9* h9, knob_id knob_num) {
+    h9_knob* knob = &h9->preset->knobs[knob_num];
+    return knob->current_value;
+}
+
+knob_value h9_getKnobDisplay(h9* h9, knob_id knob_num) {
+    h9_knob* knob = &h9->preset->knobs[knob_num];
+    return knob->display_value;
+}
+
+void h9_getKnobMap(h9* h9, knob_id knob_num, knob_value* exp_min, knob_value* exp_max, knob_value* psw) {
+    h9_knob* knob = &h9->preset->knobs[knob_num];
+    *exp_min = knob->exp_min;
+    *exp_max = knob->exp_max;
+    *psw = knob->psw;
+}
+
+void h9_setExpr(h9* h9, knob_value value) {
+    knob_value expval = clip(value, 0.0f, 1.0f);
+
+    h9->expression = expval;
+    for (size_t i = 0; i < NUM_KNOBS; i++) {
+        h9_knob* knob = &h9->preset->knobs[i];
+        if (knob->exp_mapped) {
+            knob_value interpolated_value = (knob->exp_max - knob->exp_min) * expval + knob->exp_min;
+            update_display_value(h9, knob, interpolated_value);
+        }
+    }
+}
+
+knob_value h9_getExpr(h9* h9) {
+    return h9->expression;
+}
+
+void h9_setPsw(h9* h9, bool psw_on) {
+    h9->psw = psw_on;
+
+    for (size_t i = 0; i < NUM_KNOBS; i++) {
+        h9_knob* knob = &h9->preset->knobs[i];
+        if (knob->psw_mapped) {
+            update_display_value(h9, knob, knob->psw);
+        }
+    }
+}
+
+bool h9_getPsw(h9* h9) {
+    return h9->psw;
+}
 
 // Preset Operations
-void h9_switchAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
+void h9_switchAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
+    assert(module_sysex_id > 0 && module_sysex_id <= NUM_MODULES);
+    h9_module *module = &modules[module_sysex_id];
+    assert(algorithm_sysex_id < module->num_algorithms);
+    h9->preset->module = module;
+    h9->preset->algorithm = &module->algorithms[algorithm_sysex_id];
+    reset_knobs(h9);
+}
 
 // (S)Setters and getters for preset name, module (by name or number), and algorithm (by name or number).
-size_t h9_numSupportedModules(h9* h9);
-size_t h9_numSupportedAlgorithms(h9* h9, uint8_t module_sysex_id);
-uint8_t h9_currentModule(h9* h9);
-uint8_t h9_currentAlgorithm(h9* h9);
-char* h9_moduleName(h9* h9, uint8_t module_sysex_id);
-char* h9_currentModuleName(h9* h9);
-char* h9_algorithmName(h9* h9, uint8_t algorithm_sysex_id);
-char* h9_currentAlgorithmName(h9* h9);
+size_t h9_numModules(h9* h9) {
+    return NUM_MODULES;
+}
+
+size_t h9_numAlgorithms(h9* h9, uint8_t module_sysex_id) {
+    assert(module_sysex_id > 0 && module_sysex_id <= NUM_MODULES);
+    return modules[module_sysex_id - 1].num_algorithms;
+}
+
+int8_t h9_currentModule(h9* h9) {
+    if (!h9_preset_loaded(h9)) {
+        return -1;
+    }
+    return h9->preset->module->sysex_num;
+}
+int8_t h9_currentAlgorithm(h9* h9) {
+    if (!h9_preset_loaded(h9)) {
+        return -1;
+    }
+    return h9->preset->algorithm->id;
+}
+
+const char* const h9_moduleName(uint8_t module_sysex_id) {
+    assert(module_sysex_id > 0 && module_sysex_id <= NUM_MODULES);
+    return modules[module_sysex_id].name;
+}
+
+const char* h9_currentModuleName(h9* h9) {
+    if (!h9_preset_loaded(h9)) {
+        return NULL;
+    }
+    return h9->preset->module->name;
+}
+
+const char* const h9_algorithmName(uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
+    assert(module_sysex_id > 0 && module_sysex_id <= NUM_MODULES);
+    h9_module* module = &modules[module_sysex_id];
+    assert(algorithm_sysex_id < module->num_algorithms);
+    return module->algorithms[algorithm_sysex_id].name;
+}
+
+const char* h9_currentAlgorithmName(h9* h9) {
+    if (!h9_preset_loaded(h9)) {
+        return NULL;
+    }
+    return h9->preset->algorithm->name;
+}
 
 // Syncing
-size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len);
-size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len);
-*/
+size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len) {
+    size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", SYSEX_EVENTIDE, SYSEX_H9, h9->sysex_id, kH9_DUMP_ONE);
+    return bytes_written; // No +1 here, the f7 is the terminator.
+}
+
+size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len) {
+    size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", SYSEX_EVENTIDE, SYSEX_H9, h9->sysex_id, kH9_GET_CONFIG);
+    return bytes_written; // No +1 here, the f7 is the terminator.
+}

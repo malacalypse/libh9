@@ -16,6 +16,8 @@
 #define MAX_NAME_LEN 17 // Fixme(DC): Determine correct max for both pedal name and preset name. Don't forget the terminating null.
 #define SYSEX_EVENTIDE 0x1C
 #define SYSEX_H9 0x70
+#define NOMODULE -1
+#define NOALGORITHM -1
 
 typedef struct h9_algorithm {
     uint8_t id;
@@ -152,14 +154,14 @@ bool h9_getPsw(h9* h9);
 void h9_switchAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
 
 // (S)Setters and getters for preset name, module (by name or number), and algorithm (by name or number).
-size_t h9_numSupportedModules(h9* h9);
-size_t h9_numSupportedAlgorithms(h9* h9, uint8_t module_sysex_id);
-uint8_t h9_currentModule(h9* h9);
-uint8_t h9_currentAlgorithm(h9* h9);
-char* h9_moduleName(h9* h9, uint8_t module_sysex_id);
-char* h9_currentModuleName(h9* h9);
-char* h9_algorithmName(h9* h9, uint8_t algorithm_sysex_id);
-char* h9_currentAlgorithmName(h9* h9);
+size_t h9_numModules(h9* h9);
+size_t h9_numAlgorithms(h9* h9, uint8_t module_sysex_id);
+int8_t h9_currentModule(h9* h9); // returns NOMODULE if unloaded
+int8_t h9_currentAlgorithm(h9* h9); // returns NOALGORITHM if unloaded
+const char* const h9_moduleName(uint8_t module_sysex_id);
+const char* h9_currentModuleName(h9* h9);
+const char* const h9_algorithmName(uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
+const char* h9_currentAlgorithmName(h9* h9);
 
 // Syncing
 size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len);
