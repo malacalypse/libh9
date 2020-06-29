@@ -1,0 +1,9 @@
+*.profraw
+*.mmon
+.DS_Store
+DerivedData/
+build/
+infile
+outfile
+itohex
+h9.xcodeproj/project.xcworkspace/xcuserdata/studiodc.xcuserdatad/UserInterfaceState.xcuserstate
