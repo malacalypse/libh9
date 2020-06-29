@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "h9_dump:h9.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "export_knob_value(preset-&gt;knobs[6].psw_mapped)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "h9_load:h9.c">
       </ContextState>
    </ContextStates>

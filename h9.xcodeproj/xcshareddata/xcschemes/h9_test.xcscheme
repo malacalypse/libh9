@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/studiodc/Development/max-sdk/source/studiodc/h9/HRMDLO.syx"
+            argument = "/Users/studiodc/Development/max-sdk/source/studiodc/h9/test1.syx"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -12,7 +12,7 @@
 
 h9_module modules[] = {
     { "TimeFactor",
-        0,
+        1,
         0,
         (h9_algorithm [10]){
             {0, 0, "Digital Delay", "Mix", "Delay Mix", "Delay A", "Delay B", "Fdbk A", "Fdbk B", "Xfade", "Mod Depth", "Mod Speed", "Filter", "Repeat"},
@@ -30,7 +30,7 @@ h9_module modules[] = {
     },
     {
         "ModFactor",
-        1,
+        2,
         0,
         (h9_algorithm[10]){
             {0, 1, "Chorus", "Intensity", "Type", "Depth", "Speed", "Shape", "Filter", "Depth Mod", "Speed Mod", "Mod Rate", "Mod Source", "Slow/Fast"},
@@ -48,7 +48,7 @@ h9_module modules[] = {
     },
     {
         "PitchFactor",
-        2,
+        3,
         0,
         (h9_algorithm[10]){
             {0, 2, "Diatonic", "Mix", "Pitch Mix", "Pitch A", "Pitch B", "Delay A", "Delay B", "Key", "Scale", "Feedback A", "Feedback B", "Flex"},
@@ -66,7 +66,7 @@ h9_module modules[] = {
     },
     {
         "Space",
-        3,
+        4,
         0,
         (h9_algorithm[12]){
             {0, 3, "Hall", "Mix", "Decay", "Size", "Pre Delay", "Low EQ", "High EQ", "Low Decay", "High Decay", "Mod-Level", "Mid EQ", "HotSwitch"},
@@ -86,7 +86,7 @@ h9_module modules[] = {
     },
     {
         "H9",
-        4,
+        5,
         0,
         (h9_algorithm[10]){
             {0, 4, "UltraTap", "Mix", "Length", "Taps", "Pre-Delay", "Spread", "Taper", "Tone", "Slurm", "Chop", "Un-Used", "HotSwitch"},

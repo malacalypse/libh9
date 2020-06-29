@@ -15,12 +15,7 @@
 #include <stdarg.h>
 
 #include "h9_modules.h"
-
-#ifndef NDEBUG
-#define debug(...) printf(__VA_ARGS__)
-#else
-#define debug(...)
-#endif
+#include "utils.h"
 
 #define NUM_MODULES 5
 #define KNOB_MAX 0x7FE0 // By observation
@@ -48,75 +43,6 @@ void h9_free(h9* h9) {
 }
 
 // Common H9 operations
-
-void hexdump(uint8_t* data, size_t len) {
-    for (size_t i = 0; i < len; i++) {
-        debug("%02x", (int)data[i]);
-        if ((i != 0) && ((i + 1) % 4 == 0)) {
-            debug(" ");
-        }
-    }
-    debug("\n");
-}
-
-size_t scanhex(char *str, uint32_t *dest, size_t len) {
-    FILE *stream;
-    size_t i = 0;
-
-    stream = fmemopen(str, strlen(str), "r");
-    for (i = 0; i < len; i++) {
-        if (fscanf(stream, "%x", &dest[i]) != 1) {
-            debug("Failed scanning ASCII hex: successfully read %zu of %zu values.\n", i, len);
-            return i;
-        }
-    }
-
-    debug("Scanned: ");
-    for (size_t i = 0; i < len; i++) {
-        debug("%d ", dest[i]);
-    }
-    debug("\n");
-
-    return i;
-}
-
-size_t scanfloat(char* str, float *dest, size_t len) {
-    FILE *stream;
-    size_t i = 0;
-
-    stream = fmemopen(str, strlen(str), "r");
-    for (i = 0; i < len; i++) {
-        if (fscanf(stream, "%f", &dest[i]) != 1) {
-            debug("Failed scanning ASCII hex: successfully read %zu of %zu values.\n", i, len);
-            return i;
-        }
-    }
-
-    printf("Scanned: ");
-    for (size_t i = 0; i < len; i++) {
-        debug("%f ", dest[i]);
-    }
-    debug("\n");
-
-    return i;
-}
-
-uint16_t array_sum(uint32_t *array, size_t len) {
-    uint16_t result = 0U;
-    for (size_t i = 0; i < len; i++) {
-        result += array[i];
-    }
-    return result;
-}
-
-uint16_t iarray_sumf(float *array, size_t len) {
-    uint16_t result = 0U;
-    for (size_t i = 0; i < len; i++) {
-        result += (uint16_t)truncf(array[i]);
-    }
-    return result;
-}
-
 void import_knob_values(h9_knob* knobs, size_t index, uint32_t* value_row) {
     h9_knob *knob = &knobs[index];
 
@@ -301,8 +227,130 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     return kH9_OK;
 }
 
+uint16_t export_knob_value(float knob_value) {
+    float interim = rintf(knob_value * KNOB_MAX);
+    if (interim > KNOB_MAX) {
+        interim = KNOB_MAX;
+    } else if (interim < 0.0f) {
+        interim = 0.0f;
+    }
+    return (uint16_t)interim;
+}
+
+// will dump WITH the 0xF0/0xF7 and correct preamble.
+size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len) {
+    h9_preset* preset = h9->preset;
+    uint16_t new_checksum = 0U;
+    uint16_t line2[] = {
+        export_knob_value(preset->knobs[6].current_value),
+        export_knob_value(preset->knobs[7].current_value),
+        export_knob_value(preset->knobs[8].current_value),
+        export_knob_value(preset->knobs[9].current_value),
+        export_knob_value(preset->knobs[5].current_value),
+        export_knob_value(preset->knobs[4].current_value),
+        export_knob_value(preset->knobs[3].current_value),
+        export_knob_value(preset->knobs[2].current_value),
+        export_knob_value(preset->knobs[1].current_value),
+        export_knob_value(preset->knobs[0].current_value),
+        export_knob_value(h9->expression)
+    };
+    uint16_t line3[] = {
+        export_knob_value(preset->knobs[6].exp_min),
+        export_knob_value(preset->knobs[6].exp_max),
+        export_knob_value(preset->knobs[7].exp_min),
+        export_knob_value(preset->knobs[7].exp_max),
+        export_knob_value(preset->knobs[8].exp_min),
+        export_knob_value(preset->knobs[8].exp_max),
+        export_knob_value(preset->knobs[9].exp_min),
+        export_knob_value(preset->knobs[9].exp_max),
+        export_knob_value(preset->knobs[5].exp_min),
+        export_knob_value(preset->knobs[5].exp_max),
+        export_knob_value(preset->knobs[4].exp_min),
+        export_knob_value(preset->knobs[4].exp_max),
+        export_knob_value(preset->knobs[3].exp_min),
+        export_knob_value(preset->knobs[3].exp_max),
+        export_knob_value(preset->knobs[2].exp_min),
+        export_knob_value(preset->knobs[2].exp_max),
+        export_knob_value(preset->knobs[1].exp_min),
+        export_knob_value(preset->knobs[1].exp_max),
+        export_knob_value(preset->knobs[0].exp_min),
+        export_knob_value(preset->knobs[0].exp_max),
+        export_knob_value(preset->knobs[6].psw),
+        export_knob_value(preset->knobs[7].psw),
+        export_knob_value(preset->knobs[8].psw),
+        export_knob_value(preset->knobs[9].psw),
+        export_knob_value(preset->knobs[5].psw),
+        export_knob_value(preset->knobs[4].psw),
+        export_knob_value(preset->knobs[3].psw),
+        export_knob_value(preset->knobs[2].psw),
+        export_knob_value(preset->knobs[1].psw),
+        export_knob_value(preset->knobs[0].psw),
+    };
+    uint16_t line4[] = {
+        (uint16_t)rintf(preset->tempo * 100.0f),
+        (preset->tempo_enabled ? 1 : 0),
+        (int16_t)rintf(preset->output_gain * 10.0f),
+        preset->xyz_map[0],
+        preset->xyz_map[1],
+        preset->xyz_map[2],
+        (preset->modfactor_fast_slow ? 1 : 0),
+    };
+    float line5[] = {
+        65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f, 65000.0f
+    };
+    uint8_t line5_widths[] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    // Compute checksum
+    for (size_t i = 0; i < sizeof(line2) / sizeof(*line2); i++) {
+        new_checksum += line2[i];
+    }
+    for (size_t i = 0; i < sizeof(line3) / sizeof(*line3); i++) {
+        new_checksum += line3[i];
+    }
+    for (size_t i = 0; i < sizeof(line4) / sizeof(*line4); i++) {
+        new_checksum += line4[i];
+    }
+    for (size_t i = 0; i < sizeof(line5) / sizeof(*line5); i++) {
+        new_checksum += truncf(line5[i]);
+    }
+
+    size_t bytes_written = snprintf((char *)sysex,
+                                    max_len,
+                                    "\xf0%c%c%c%c"
+                                    "[1] %d 5 %d\r\n"
+                                    " %x %x %x %x %x %x %x %x %x %x %x 0\r\n"
+                                    " %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x\r\n"
+                                    " 0 %x %x %x %x %x %x %x\r\n"
+                                    " %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f\r\n"
+                                    "C_%x\r\n"
+                                    "%s\r\n",
+                                    // Preamble
+                                    SYSEX_EVENTIDE, SYSEX_H9, h9->sysex_id, kH9_PRESET,
+                                    // Line 1
+                                    preset->algorithm->id,
+                                    preset->module->sysex_num,
+                                    // Line 2
+                                    line2[0], line2[1], line2[2], line2[3], line2[4], line2[5], line2[6], line2[7], line2[8], line2[9], line2[10],
+                                    // Line 3
+                                    line3[0],  line3[1],  line3[2],  line3[3],  line3[4],  line3[5],  line3[6],  line3[7],  line3[8],  line3[9],
+                                    line3[10], line3[11], line3[12], line3[13], line3[14], line3[15], line3[16], line3[17], line3[18], line3[19],
+                                    line3[20], line3[21], line3[22], line3[23], line3[24], line3[25], line3[26], line3[27], line3[28], line3[29],
+                                    // Line 4
+                                    line4[0], line4[1], line4[2], line4[3], line4[4], line4[5], line4[6],
+                                    // Line 5 is constant, for now
+                                    line5_widths[0], line5[0], line5_widths[1], line5[1], line5_widths[2], line5[2], line5_widths[3], line5[3], line5_widths[4], line5[4], line5_widths[5], line5[5], line5_widths[6], line5[6], line5_widths[7], line5[7], line5_widths[8], line5[8], line5_widths[9], line5[9], line5_widths[10], line5[10], line5_widths[11], line5[11],
+                                    // Line 6
+                                    new_checksum,
+                                    // Line 7
+                                    preset->name
+                                    );
+    sysex[bytes_written + 1] = 0xF7;
+    return bytes_written + 2;
+}
+
 /*
-size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len); // will dump WITH the 0xF0/0xF7 and correct preamble.
 
 // Knob, Expr, and PSW operations
 void h9_setKnob(h9* h9, knob_id knob_num, knob_value value);

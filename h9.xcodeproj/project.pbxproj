@@ -13,6 +13,9 @@
 		ED07F99924A91CB2006D36D1 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98E24A90D62006D36D1 /* main.c */; };
 		ED07F99A24A91CBA006D36D1 /* h9.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98A24A44193006D36D1 /* h9.c */; };
 		ED07F99B24A91CBD006D36D1 /* midi_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = ED373DFD243AAB00004C2CEB /* midi_parser.c */; };
+		ED07F99F24AA921F006D36D1 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07F99D24AA921F006D36D1 /* utils.h */; };
+		ED07F9A024AA921F006D36D1 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F99E24AA921F006D36D1 /* utils.c */; };
+		ED07F9A124AA921F006D36D1 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F99E24AA921F006D36D1 /* utils.c */; };
 		ED373DFE243AAB00004C2CEB /* midi_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = ED373DFC243AAB00004C2CEB /* midi_parser.h */; };
 		ED373DFF243AAB00004C2CEB /* midi_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = ED373DFD243AAB00004C2CEB /* midi_parser.c */; };
 /* End PBXBuildFile section */
@@ -39,6 +42,8 @@
 		ED07F98E24A90D62006D36D1 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		ED07F99424A91CAC006D36D1 /* h9_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = h9_test; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED07F99C24A98E73006D36D1 /* h9_modules.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = h9_modules.h; sourceTree = "<group>"; };
+		ED07F99D24AA921F006D36D1 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		ED07F99E24AA921F006D36D1 /* utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		ED373DFC243AAB00004C2CEB /* midi_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = midi_parser.h; sourceTree = "<group>"; };
 		ED373DFD243AAB00004C2CEB /* midi_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = midi_parser.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,6 +69,8 @@
 		089C166AFE841209C02AAC07 /* iterator */ = {
 			isa = PBXGroup;
 			children = (
+				ED07F99D24AA921F006D36D1 /* utils.h */,
+				ED07F99E24AA921F006D36D1 /* utils.c */,
 				ED07F99C24A98E73006D36D1 /* h9_modules.h */,
 				ED07F98D24A90D62006D36D1 /* main.h */,
 				ED07F98E24A90D62006D36D1 /* main.c */,
@@ -102,6 +109,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED07F99F24AA921F006D36D1 /* utils.h in Headers */,
 				ED373DFE243AAB00004C2CEB /* midi_parser.h in Headers */,
 				ED07F98B24A44193006D36D1 /* h9.h in Headers */,
 			);
@@ -203,6 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED07F98F24A91C0E006D36D1 /* h9.c in Sources */,
+				ED07F9A024AA921F006D36D1 /* utils.c in Sources */,
 				22CF122B0EE9AAAD0054F513 /* h9_max_external.c in Sources */,
 				ED373DFF243AAB00004C2CEB /* midi_parser.c in Sources */,
 			);
@@ -213,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED07F99A24A91CBA006D36D1 /* h9.c in Sources */,
+				ED07F9A124AA921F006D36D1 /* utils.c in Sources */,
 				ED07F99924A91CB2006D36D1 /* main.c in Sources */,
 				ED07F99B24A91CBD006D36D1 /* midi_parser.c in Sources */,
 			);
