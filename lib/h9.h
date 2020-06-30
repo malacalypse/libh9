@@ -89,6 +89,10 @@ typedef struct h9_preset {
 // typedef (void) knob_update(uint8_t knob_id, float value, void *ctx);
 // typedef (void) data_callback(uint32_t len, char *data);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // The core H9 model
 typedef struct h9 {
     // Device info
@@ -166,5 +170,9 @@ const char* h9_currentAlgorithmName(h9* h9);
 // Syncing
 size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len);
 size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* h9_h */

@@ -1,4 +1,6 @@
 .DS_Store
+DerivedData/
+build/
 infile
 outfile
 itohex
