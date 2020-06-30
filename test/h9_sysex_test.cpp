@@ -6,10 +6,21 @@
 //
 
 #include "h9.h"
+#include "utils.h"
 
 #include "gtest/gtest.h"
 
 #define TEST_CLASS H9Test
+
+// Various sysex constants for testing certian things
+char sysex_hrmdlo[] = "\x1c\x70\x01\x4f"
+                        "[1] 8 5 5\r\n"
+                        " 8 3ff0 3ff0 3ff0 2c92 293c 3226 3458 b12 5656 0 0\r\n"
+                        " 0 0 0 0 0 0 0 0 0 0 0 0 3459 2c38 0 0 5657 6fcf 7088 6264 23cf 0 0 0 0 0 0 0 0 0\r\n"
+                        " 0 c42 0 14 9 8 4 0\r\n"
+                        " 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000\r\n"
+                        "C_ee49\r\n"
+                        "HRMDLO\r\n";
 
 namespace h9_test {
 
@@ -40,6 +51,11 @@ class TEST_CLASS : public ::testing::Test {
      // before the destructor).
   }
 
+    void LoadPatch(h9* h9obj, char *sysex) {
+        h9_status status = h9_load(h9obj, reinterpret_cast<uint8_t *>(sysex), strnlen(sysex, 1000));
+        ASSERT_EQ(status, kH9_OK);
+    }
+
   // Class members declared here can be used by all tests in the test suite
   // for Foo.
 };
@@ -54,16 +70,28 @@ TEST_F(TEST_CLASS, h9_new_populates_empty_preset) {
 // Tests that h9_load correctly parses valid sysex
 TEST_F(TEST_CLASS, h9_load_withCorrectSysex_returns_kH9_OK) {
     h9* h9obj = h9_new();
-    char sysex[] =  "\x1c\x70\x01\x4f"
-                    "[1] 8 5 5\r\n"
-                    " 8 3ff0 3ff0 3ff0 2c92 293c 3226 3458 b12 5656 0 0\r\n"
-                    " 0 0 0 0 0 0 0 0 0 0 0 0 3459 2c38 0 0 5657 6fcf 7088 6264 23cf 0 0 0 0 0 0 0 0 0\r\n"
-                    " 0 c42 0 14 9 8 4 0\r\n"
-                    " 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000\r\n"
-                    "C_ee49\r\n"
-                    "HRMDLO\r\n";
-    h9_status status = h9_load(h9obj, reinterpret_cast<uint8_t *>(sysex), strnlen(sysex, 1000));
-    ASSERT_EQ(status, kH9_OK);
+    LoadPatch(h9obj, sysex_hrmdlo);
+}
+
+// Test that the h9_load correctly dumps the same sysex it parsed
+TEST_F(TEST_CLASS, h9_dump_dumps_loaded_sysex) {
+    h9* h9obj = h9_new();
+    LoadPatch(h9obj, sysex_hrmdlo);
+
+    size_t buf_len = 1000U;
+    uint8_t output[buf_len];
+    size_t bytes_written = 0U;
+    bytes_written = h9_dump(h9obj, output, buf_len, true);
+
+    // Check, byte for byte, that the output is identical.
+    // Note that dump wraps with 0xF0/0xF7, so we need to add one and subtract 1.
+    EXPECT_EQ(sizeof(sysex_hrmdlo), bytes_written - 2);
+    for (size_t i = 1; i < (bytes_written - 1); i++) {
+        if (sysex_hrmdlo[i - 1] != output[i]) {
+            printf("Failed at position %zu.\n", i);
+        }
+        ASSERT_EQ(sysex_hrmdlo[i - 1], output[i]);
+    }
 }
 
 }  // namespace h9_test

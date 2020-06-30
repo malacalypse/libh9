@@ -11,14 +11,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "debug.h"
+
 void hexdump(uint8_t* data, size_t len) {
     for (size_t i = 0; i < len; i++) {
-        debug("%02x", (int)data[i]);
+        debug_info("%02x", (int)data[i]);
         if ((i != 0) && ((i + 1) % 4 == 0)) {
-            debug(" ");
+            debug_info(" ");
         }
     }
-    debug("\n");
+    debug_info("\n");
 }
 
 size_t scanhex(char *str, uint32_t *dest, size_t len) {
@@ -28,16 +30,16 @@ size_t scanhex(char *str, uint32_t *dest, size_t len) {
     stream = fmemopen(str, strlen(str), "r");
     for (i = 0; i < len; i++) {
         if (fscanf(stream, "%x", &dest[i]) != 1) {
-            debug("Failed scanning ASCII hex: successfully read %zu of %zu values.\n", i, len);
+            debug_info("Failed scanning ASCII hex: successfully read %zu of %zu values.\n", i, len);
             return i;
         }
     }
 
-    debug("Scanned: ");
+    debug_info("Scanned: ");
     for (size_t i = 0; i < len; i++) {
-        debug("%d ", dest[i]);
+        debug_info("%d ", dest[i]);
     }
-    debug("\n");
+    debug_info("\n");
 
     return i;
 }
@@ -49,16 +51,16 @@ size_t scanfloat(char* str, float *dest, size_t len) {
     stream = fmemopen(str, strlen(str), "r");
     for (i = 0; i < len; i++) {
         if (fscanf(stream, "%f", &dest[i]) != 1) {
-            debug("Failed scanning ASCII hex: successfully read %zu of %zu values.\n", i, len);
+            debug_info("Failed scanning ASCII hex: successfully read %zu of %zu values.\n", i, len);
             return i;
         }
     }
 
-    printf("Scanned: ");
+    debug_info("Scanned: ");
     for (size_t i = 0; i < len; i++) {
-        debug("%f ", dest[i]);
+        debug_info("%f ", dest[i]);
     }
-    debug("\n");
+    debug_info("\n");
 
     return i;
 }

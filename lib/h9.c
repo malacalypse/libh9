@@ -14,6 +14,7 @@
 #include <math.h>
 #include <stdarg.h>
 
+#include "debug.h"
 #include "h9_modules.h"
 #include "utils.h"
 
@@ -45,6 +46,7 @@ h9* h9_new(void) {
     h9->preset = malloc(sizeof(*(h9->preset)));
     assert(h9->preset != NULL);
     h9->sysex_id = 1U; // Default
+    h9->expression = 0.0f;
     return h9;
 }
 
@@ -110,11 +112,10 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     }
 
     // Debug
-    debug("Debugging...\n");
+    debug_info("Debugging...\n");
     hexdump(sysex, len);
-    debug("%.*s\n", (int)len, sysex); // Print as string
-    debug("Debug complete.\n");
-
+    debug_info("%.*s\n", (int)len, sysex); // Print as string
+    debug_info("Debug complete.\n");
 
     // Need to unpack before we can validate the checksum
     int preset_num = 0;
@@ -143,34 +144,34 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     size_t found = sscanf(cursor, "%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]", lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6]);
 
     if (found != max_lines) {
-        printf("Did not find expected data. Retrieved only %zu lines.\n", found);
+        debug_info("Did not find expected data. Retrieved only %zu lines.\n", found);
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
-    printf("Retrieved %zu lines:\n", found);
+    debug_info("Retrieved %zu lines:\n", found);
     for (size_t i = 0; i < max_lines; i++) {
-        debug("%s\n", lines[i]);
+        debug_info("%s\n", lines[i]);
     }
 
     // Unpack Line 1: [00] 0 0 0 => [<preset>] {module} {unknown, always 5} {algorithm}
     found = sscanf(lines[0], "[%d] %d %*d %d", &preset_num, &algorithm, &module);
     if (found != 3) {
-        debug("Line 1 did not validate, found %zu.\n", found);
+        debug_info("Line 1 did not validate, found %zu.\n", found);
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
-    debug("Found [%d] => %d:%d\n", preset_num, module, algorithm);
+    debug_info("Found [%d] => %d:%d\n", preset_num, module, algorithm);
 
     // Unpack Line 2: hex ascii knob values, order: 7 8 9 10 6 5 4 3 2 1 expression <unused>
     size_t expected_values = 12;
     found = scanhex(lines[1], knob_values, expected_values);
     if (found != expected_values) {
-        debug("Line 2 did not validate, found %zu.\n", found);
+        debug_info("Line 2 did not validate, found %zu.\n", found);
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
     // Unpack Line 3: hex ascii knob mapping, knob order: paired [exp min] [exp max] x 10 : [psw] x 10
     expected_values = 30;
     found = scanhex(lines[2], knob_map, expected_values);
     if (found != expected_values) {
-        debug("Line 3 did not validate, found %zu.\n", found);
+        debug_info("Line 3 did not validate, found %zu.\n", found);
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
 
@@ -178,7 +179,7 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     expected_values = 8;
     found = scanhex(lines[3], options, expected_values);
     if (found != expected_values) {
-        debug("Line 4 did not validate, found %zu.\n", found);
+        debug_info("Line 4 did not validate, found %zu.\n", found);
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
 
@@ -186,14 +187,14 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     expected_values = 12;
     found = scanfloat(lines[4], mknob_values, expected_values);
     if (found != expected_values) {
-        debug("Line 4 did not validate, found %zu.\n", found);
+        debug_info("Line 4 did not validate, found %zu.\n", found);
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
 
     // Unpack Line 6: C_xxxx -> xxxx = ascii hex checksum (LSB) ** see note
     found = sscanf(lines[5], "C_%x", &checksum);
     if (found != 1) {
-        debug("Did not identify checksum.\n");
+        debug_info("Did not identify checksum.\n");
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
 
@@ -215,11 +216,11 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     computed_checksum += iarray_sumf(mknob_values, 12);
 
     if (computed_checksum != target_checksum) {
-        debug("Checksum is invalid. Difference is %d\n", computed_checksum - target_checksum);
+        debug_info("Checksum is invalid. Difference is %d\n", computed_checksum - target_checksum);
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
 
-    debug("Checksum VALID.\n");
+    debug_info("Checksum VALID.\n");
 
     // Transform values to h9 state
     h9_preset* preset = h9->preset;
