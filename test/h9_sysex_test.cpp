@@ -88,6 +88,8 @@ TEST_F(TEST_CLASS, h9_dump_dumps_loaded_sysex) {
     EXPECT_EQ(sizeof(sysex_hrmdlo), bytes_written - 2);
     for (size_t i = 1; i < (bytes_written - 1); i++) {
         if (sysex_hrmdlo[i - 1] != output[i]) {
+            printf("%s\n", sysex_hrmdlo);
+            printf("%s\n", output + 1);
             printf("Failed at position %zu.\n", i);
         }
         ASSERT_EQ(sysex_hrmdlo[i - 1], output[i]);

@@ -1,6 +1,7 @@
 //
 //  h9.h
-//  max-external
+//  libh9 - Sysex and state manipulation toolkit for remotely controlling
+//          the Eventide H9 multi-effect pedal.
 //
 //  Created by Studio DC on 2020-06-24.
 //
@@ -48,6 +49,7 @@ typedef enum h9_status {
     kH9_UNKNOWN = 0U,
     kH9_OK,
     kH9_SYSEX_PREAMBLE_INCORRECT,
+    kH9_SYSEX_INVALID,
     kH9_SYSEX_CHECKSUM_INVALID,
 } h9_status;
 
@@ -85,14 +87,6 @@ typedef struct h9_preset {
     bool modfactor_fast_slow;
 } h9_preset;
 
-// We'll work on callbacks later
-// typedef (void) knob_update(uint8_t knob_id, float value, void *ctx);
-// typedef (void) data_callback(uint32_t len, char *data);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // The core H9 model
 typedef struct h9 {
     // Device info
@@ -115,26 +109,38 @@ typedef struct h9 {
     bool psw; // switch, on (true) or off (false)
 } h9;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // H9 API
 
 // Object lifecycle
-// Create
+// Allocate / Create / New
 h9* h9_new(void); // Allocates and returns a pointer to a new H9 instance
 // Free / Delete
 void h9_free(h9* h9);
 
-// Common H9 operations
+// SYSEX Preset Operations
 
 /*
- * Sysex should not include the leading 0xF0 / 0xF7.
+ * Attempts to load the sysex as an H9 preset.
+ * Validates:
+ *    - that it is intended for an H9 (but does not check sysex id for THIS H9),
+ *    - that the checksum is correct,
+ *    - that the sysex is properly formatted,
+ *    - that the values contained are reasonable,
+ *    - that the indicated module and algorithm are supported by this software version.
+ * If successful, the state of the h9 object is updated to reflect the settings in the preset.
  *
- * Return value indicates whether the operation was successful. 
+ * Return value indicates whether the operation was successful.
  */
 h9_status h9_load(h9* h9, uint8_t* sysex, size_t len);
 
-
 /*
  * Generates a complete sysex message encapsulating the specified h9 object's current state.
+ * This sysex can be sent to an H9 with the matching sysex id to load into the working preset space
+ *   (preset 0, regardless of the sysex-contained preset id) for immediate preview.
  *
  * Return value is length of the entire sysex blob, inclusive of 0xF0/0xF7 terminators.
  * Note 1: If this is >= max_len, truncation occurred and the sysex should be considered invalid.
@@ -142,6 +148,11 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len);
  * Note 2: This is NOT a string. There is no guarantee of a NULL after the final 0xF7.
  */
 size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_sync_dirty);
+
+// SYSEX Generation (syncing and device inquiry)
+
+size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len);
+size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len);
 
 // Knob, Expr, and PSW operations
 void h9_setKnob(h9* h9, knob_id knob_num, knob_value value);
@@ -166,10 +177,6 @@ const char* const h9_moduleName(uint8_t module_sysex_id);
 const char* h9_currentModuleName(h9* h9);
 const char* const h9_algorithmName(uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
 const char* h9_currentAlgorithmName(h9* h9);
-
-// Syncing
-size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len);
-size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len);
 
 #ifdef __cplusplus
 }
