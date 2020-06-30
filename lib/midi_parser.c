@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "debug.h"
+
 #ifndef MAX_SYSEX_BUFFER_SIZE
 #define MAX_SYSEX_BUFFER_SIZE  8192 // Adjust to taste. Some sample sysex can be MB.
 #endif
@@ -83,7 +85,7 @@ void midi_parser_delete(midi_parser *parser) {
 void midi_parse(midi_parser *parser, uint8_t n) {
     switch (parser->state) {
         case kSYSEX_PENDING:
-            printf("Midi Parser: kSYSEX_PENDING: Parsing %u\n", n);
+            debug_info("Midi Parser: kSYSEX_PENDING: Parsing %u\n", n);
             if ((n > 0x80) && (n <= 0xF7)) {
                 // Transmission ended before we positively identified it was for us
                 midi_reset(parser);
@@ -95,12 +97,12 @@ void midi_parse(midi_parser *parser, uint8_t n) {
                     parser->sysex_buffer[parser->sysex_len++] = n;
                     if (parser->sysex_len == parser->sysex_preamble_len) {
                         // We've matched the entire preamble, so it's intended for us
-                        printf("Midi Parser: kSYSEX_PENDING->kSYSEX_ACQUIRE\n");
+                        debug_info("Midi Parser: kSYSEX_PENDING->kSYSEX_ACQUIRE\n");
                         parser->state = kSYSEX_ACQUIRE;
                     }
                 } else {
                     // We didn't match the preamble, so ignore the rest of this sysex
-                    printf("Midi Parser: kSYSEX_PENDING->kSYSEX_IGNORE\n");
+                    debug_info("Midi Parser: kSYSEX_PENDING->kSYSEX_IGNORE\n");
                     parser->state = kSYSEX_IGNORE;
                 }
             } else {
@@ -108,7 +110,7 @@ void midi_parse(midi_parser *parser, uint8_t n) {
             }
             break;
         case kSYSEX_ACQUIRE:
-            printf("Midi Parser: kSYSEX_ACQUIRE: Parsing %u\n", n);
+            debug_annoy("Midi Parser: kSYSEX_ACQUIRE: Parsing %u\n", n);
             if (n < 0x80) {
                 // It is a data byte, add it to the pending sysex batch...
                 parser->sysex_buffer[parser->sysex_len++] = n;
@@ -148,7 +150,7 @@ void midi_parse(midi_parser *parser, uint8_t n) {
             }
             break;
         case kSYSEX_IGNORE:
-            printf("Midi Parser: kSYSEX_IGNORE: Parsing %u\n", n);
+            debug_info("Midi Parser: kSYSEX_IGNORE: Parsing %u\n", n);
             // We're just waiting for the end of the transmission
             if ((n >= 0x80) && (n <= 0xF7)) {
                 // we're done!
@@ -157,18 +159,18 @@ void midi_parse(midi_parser *parser, uint8_t n) {
             }
             break;
         case kCC_NUM:
-            printf("Midi Parser: kCC_NUM: Parsing %u\n", n);
+            debug_info("Midi Parser: kCC_NUM: Parsing %u\n", n);
             if (n >= 0x80) {
                 midi_reset(parser);
                 midi_parse(parser, n);
                 return;
             }
             parser->cc_num = n;
-            printf("Midi Parser: kCC_NUM->kCC_VAL\n");
+            debug_info("Midi Parser: kCC_NUM->kCC_VAL\n");
             parser->state = kCC_VAL;
             break;
         case kCC_VAL:
-            printf("Midi Parser: kCC_VAL: Parsing %u\n", n);
+            debug_info("Midi Parser: kCC_VAL: Parsing %u\n", n);
             if (n >= 0x80) {
                 midi_reset(parser);
                 midi_parse(parser, n);
@@ -178,20 +180,20 @@ void midi_parse(midi_parser *parser, uint8_t n) {
             break;
         default: // should be kIDLE, but just in case...
             parser->state = kIDLE;
-            printf("Midi Parser: kIDLE: Parsing %u\n", n);
+            debug_annoy("Midi Parser: kIDLE: Parsing %u\n", n);
             if (n == 0xF0) {
                 if (parser->sysex_preamble_len > 0) {
-                    printf("Midi Parser: kIDLE->kSYSEX_PENDING\n");
+                    debug_info("Midi Parser: kIDLE->kSYSEX_PENDING\n");
                     parser->state = kSYSEX_PENDING;
                 } else {
-                    printf("Midi Parser: kIDLE->kSYEX_ACQUIRE\n");
+                    debug_info("Midi Parser: kIDLE->kSYEX_ACQUIRE\n");
                     parser->state = kSYSEX_ACQUIRE;
                 }
             } else if (n == (0xB0 + parser->listening_channel)) {
-                printf("Midi Parser: kIDLE->kCC_NUM\n");
+                debug_info("Midi Parser: kIDLE->kCC_NUM\n");
                 parser->state = kCC_NUM;
             } else {
-                printf("Midi Parser: %u not valid in current state, ignoring.\n", n);
+                debug_info("Midi Parser: %u not valid in current state, ignoring.\n", n);
                 // currently unsupported right now.
             }
             break;
@@ -199,13 +201,13 @@ void midi_parse(midi_parser *parser, uint8_t n) {
 }
 
 static void midi_reset(midi_parser *parser) {
-    printf("Midi Parser: midi_reset\n");
+    debug_info("Midi Parser: midi_reset\n");
     parser->state = kIDLE;
     parser->sysex_len = 0;
 }
 
 static void midi_cc_complete(midi_parser *parser, uint8_t n) {
-    printf("Midi Parser: midi_cc_complete\n");
+    debug_info("Midi Parser: midi_cc_complete\n");
     if (parser->cc_callback != NULL) {
         parser->cc_callback(parser, parser->listening_channel, parser->cc_num, n);
     }
@@ -213,7 +215,7 @@ static void midi_cc_complete(midi_parser *parser, uint8_t n) {
 }
 
 static void midi_sysex_complete(midi_parser *parser) {
-    printf("Midi Parser: midi_sysex_complete\n");
+    debug_info("Midi Parser: midi_sysex_complete\n");
     if (parser->sysex_callback != NULL) {
         parser->sysex_callback(parser, parser->sysex_buffer, parser->sysex_len);
     }

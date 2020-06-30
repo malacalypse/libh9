@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-void hexdump(uint8_t* data, size_t len);
+size_t hexdump(char *dest, size_t max_len, uint8_t* data, size_t len);
 size_t scanhex(char *str, uint32_t *dest, size_t len);
 size_t scanfloat(char* str, float *dest, size_t len);
 uint16_t array_sum(uint32_t *array, size_t len);

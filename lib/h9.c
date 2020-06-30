@@ -20,6 +20,7 @@
 
 #define NUM_MODULES 5
 #define KNOB_MAX 0x7FE0 // By observation
+#define DEFAULT_PRESET_NUM 1
 
 typedef struct h9_sysex_preset {
     int preset_num;
@@ -169,7 +170,7 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
         debug_info("Line 1 did not validate, found %zu.\n", found);
         return false;
     }
-    debug_info("Found [%d] => %d:%d\n", preset->preset_num, preset->module, preset->algorithm);
+    debug_info("Found [%d] => %d:%d\n", sxpreset->preset_num, sxpreset->module, sxpreset->algorithm);
 
     // Unpack Line 2: hex ascii knob values, order: 7 8 9 10 6 5 4 3 2 1 expression <unused>
     size_t expected_values = 12;
@@ -237,7 +238,7 @@ static bool validate_h9_sysex_preset(h9_sysex_preset *sxpreset) {
         is_valid = false;
         return is_valid;
     }
-    if (sxpreset->algorithm < 0 || sxpreset->algorithm >= modules[sxpreset->module].num_algorithms) {
+    if (sxpreset->algorithm < 0 || sxpreset->algorithm >= modules[sxpreset->module - 1].num_algorithms) {
         is_valid = false;
         return is_valid;
     }
@@ -269,6 +270,7 @@ static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
 static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset, float expression) {
     sxpreset->module = preset->module->sysex_num;
     sxpreset->algorithm = preset->algorithm->id;
+    sxpreset->preset_num = DEFAULT_PRESET_NUM;
 
     // Dump knob values
     for (size_t i = 0; i < NUM_KNOBS; i++) {
@@ -305,7 +307,7 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
     size_t bytes_written = snprintf((char *)sysex,
                                     max_len,
                                     "\xf0%c%c%c%c"
-                                    "[1] %d 5 %d\r\n"
+                                    "[%d] %d 5 %d\r\n"
                                     " %x %x %x %x %x %x %x %x %x %x %x 0\r\n"
                                     " %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x\r\n"
                                     " %x %x %x %x %x %x %x %x\r\n"
@@ -313,7 +315,7 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
                                     "C_%x\r\n"
                                     "%s\r\n",
                                     SYSEX_EVENTIDE, SYSEX_H9, sysex_id, kH9_PRESET, // Preamble
-                                    sxpreset->algorithm, sxpreset->module,   // Line 1, etc..
+                                    sxpreset->preset_num, sxpreset->algorithm, sxpreset->module,   // Line 1, etc..
                                     sxpreset->knob_values[0], sxpreset->knob_values[1], sxpreset->knob_values[2], sxpreset->knob_values[3], sxpreset->knob_values[4], sxpreset->knob_values[5], sxpreset->knob_values[6], sxpreset->knob_values[7], sxpreset->knob_values[8], sxpreset->knob_values[9], sxpreset->knob_values[10],
                                     sxpreset->knob_map[0],  sxpreset->knob_map[1],  sxpreset->knob_map[2],  sxpreset->knob_map[3],  sxpreset->knob_map[4],  sxpreset->knob_map[5],  sxpreset->knob_map[6],  sxpreset->knob_map[7],  sxpreset->knob_map[8],  sxpreset->knob_map[9], sxpreset->knob_map[10], sxpreset->knob_map[11], sxpreset->knob_map[12], sxpreset->knob_map[13], sxpreset->knob_map[14], sxpreset->knob_map[15], sxpreset->knob_map[16], sxpreset->knob_map[17], sxpreset->knob_map[18], sxpreset->knob_map[19], sxpreset->knob_map[20], sxpreset->knob_map[21], sxpreset->knob_map[22], sxpreset->knob_map[23], sxpreset->knob_map[24], sxpreset->knob_map[25], sxpreset->knob_map[26], sxpreset->knob_map[27], sxpreset->knob_map[28], sxpreset->knob_map[29],
                                     sxpreset->options[0], sxpreset->options[1], sxpreset->options[2], sxpreset->options[3], sxpreset->options[4], sxpreset->options[5], sxpreset->options[6], sxpreset->options[7],
@@ -345,10 +347,15 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     }
 
     // Debug
+#if (DEBUG_LEVEL > DEBUG_INFO)
+    char sysex_buffer[1000];
+    size_t bytes_written = hexdump(sysex_buffer, 1000, sysex, len);
+
     debug_info("Debugging...\n");
-    hexdump(sysex, len);
+    debug_info("%*s\n", bytes_written, sysex_buffer);
     debug_info("%.*s\n", (int)len, sysex); // Print as string
     debug_info("Debug complete.\n");
+#endif
 
     // Need to unpack before we can validate the checksum
     h9_sysex_preset sxpreset;

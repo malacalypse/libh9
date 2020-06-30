@@ -39,10 +39,13 @@ int main(int argc, char* argv[]) {
         if (len > 1000) {
             printf("Buffer too small, truncated!!\n");
         } else {
-            printf("%zu bytes of Sysex generated:\n", len);
-            hexdump(sysex, len);
+            char sysex_buffer[1000];
+            size_t bytes_written = hexdump(sysex_buffer, 1000, sysex, len);
+            printf("%zu bytes of Sysex generated:\n%*s\n", len, (int)bytes_written, sysex_buffer);
+            if (bytes_written >= 1000) {
+                printf("(Truncated)\n");
+            }
         }
-
     } else {
         printf("Usage: %s <sysex filename>\n", argv[0]);
         return 1;
@@ -51,9 +54,9 @@ int main(int argc, char* argv[]) {
 }
 
 void sysex_found(midi_parser *parser, uint8_t* sysex, size_t len) {
-    printf("Found sysex: %.*s", (int)len, sysex);
     h9_status status = h9_load(parser->context, sysex, len);
     if (status != kH9_OK) {
         printf("H9 Load failed: %d\n", status);
     }
+    printf("Loaded preset %s\n", ((h9 *)parser->context)->preset->name);
 }

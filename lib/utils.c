@@ -13,14 +13,19 @@
 
 #include "debug.h"
 
-void hexdump(uint8_t* data, size_t len) {
+size_t hexdump(char *dest, size_t max_len, uint8_t* data, size_t len) {
+    char *cursor = dest;
+    char *end = dest + max_len;
     for (size_t i = 0; i < len; i++) {
-        debug_info("%02x", (int)data[i]);
-        if ((i != 0) && ((i + 1) % 4 == 0)) {
-            debug_info(" ");
+        if (cursor < (end - 2)) {
+            cursor += sprintf(cursor, "%02x", (int)data[i]);
+            if ((cursor < end - 1) && (i != 0) && ((i + 1) % 4 == 0)) {
+                cursor += sprintf(cursor, " ");
+            }
         }
     }
-    debug_info("\n");
+    size_t bytes_written = cursor - dest;
+    return bytes_written;
 }
 
 size_t scanhex(char *str, uint32_t *dest, size_t len) {
