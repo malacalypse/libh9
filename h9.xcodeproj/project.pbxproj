@@ -601,6 +601,7 @@
 		ED07FC3C24AAE178006D36D1 /* HRMDLO.syx */ = {isa = PBXFileReference; lastKnownFileType = file; path = HRMDLO.syx; sourceTree = "<group>"; };
 		ED07FC6124AAEDE9006D36D1 /* h9_gtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = h9_gtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED07FC7124AAEF0E006D36D1 /* h9_sysex_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = h9_sysex_test.cpp; sourceTree = "<group>"; };
+		ED07FC7624AAF437006D36D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		ED373DFC243AAB00004C2CEB /* midi_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = midi_parser.h; sourceTree = "<group>"; };
 		ED373DFD243AAB00004C2CEB /* midi_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = midi_parser.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -633,6 +634,7 @@
 		089C166AFE841209C02AAC07 /* iterator */ = {
 			isa = PBXGroup;
 			children = (
+				ED07FC7624AAF437006D36D1 /* README.md */,
 				ED07FC4324AAE6A5006D36D1 /* build */,
 				ED07FC3224AAE050006D36D1 /* examples */,
 				ED07F9A224AADFE2006D36D1 /* lib */,
