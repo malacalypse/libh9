@@ -13,12 +13,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define NUM_KNOBS 10
-#define MAX_NAME_LEN 17 // Fixme(DC): Determine correct max for both pedal name and preset name. Don't forget the terminating null.
-#define SYSEX_EVENTIDE 0x1C
-#define SYSEX_H9 0x70
-#define NOMODULE -1
-#define NOALGORITHM -1
+#define H9_NUM_MODULES 5
+#define H9_MAX_ALGORITHMS 12
+#define H9_NUM_KNOBS 10
+#define H9_MAX_NAME_LEN 17 
+#define H9_SYSEX_EVENTIDE 0x1C
+#define H9_SYSEX_H9 0x70
+#define H9_NOMODULE -1
+#define H9_NOALGORITHM -1
 
 typedef enum h9_status {
     kH9_UNKNOWN = 0U,
@@ -45,7 +47,7 @@ typedef enum h9_message_code {
 } h9_message_code;
 
 typedef enum control_id {
-    KNOB0 = 0U,
+    KNOB0 = 0U, // KNOB 0 MUST REMAIN 0
     KNOB1,
     KNOB2,
     KNOB3,
@@ -54,9 +56,10 @@ typedef enum control_id {
     KNOB6,
     KNOB7,
     KNOB8,
-    KNOB9,
+    KNOB9, // KNOBS ARE ALWAYS 0-9
     EXPR,
     PSW,
+    NUM_CONTROLS, // KEEP THIS LAST
 } control_id;
 
 typedef float control_value; // 0.00 to 1.00 always.
@@ -82,7 +85,7 @@ typedef struct h9_module {
     char *name;
     uint8_t sysex_num;
     uint8_t psw_mode;
-    h9_algorithm *algorithms;
+    h9_algorithm algorithms[H9_MAX_ALGORITHMS];
     size_t num_algorithms;
 } h9_module;
 
@@ -98,10 +101,10 @@ typedef struct h9_knob {
 } h9_knob;
 
 typedef struct h9_preset {
-    char name[MAX_NAME_LEN];
+    char name[H9_MAX_NAME_LEN];
     h9_module* module;
     h9_algorithm* algorithm;
-    h9_knob knobs[NUM_KNOBS];
+    h9_knob knobs[H9_NUM_KNOBS];
     float tempo;
     float output_gain;
     uint8_t xyz_map[3];
@@ -109,24 +112,38 @@ typedef struct h9_preset {
     bool modfactor_fast_slow;
 } h9_preset;
 
+struct h9;
+typedef struct h9 h9;
+typedef void (*h9_display_callback)(h9* h9, control_id control, float value);
+typedef void (*h9_cc_callback)(h9* h9, uint8_t midi_channel, uint8_t cc, uint8_t msb, uint8_t lsb);
+
+typedef struct h9_midi_config {
+    uint8_t midi_channel;
+    uint8_t cc_rx_map[NUM_CONTROLS];
+    uint8_t cc_tx_map[NUM_CONTROLS];
+} h9_midi_config;
+
 // The core H9 model
 typedef struct h9 {
     // Device info
-    char name[MAX_NAME_LEN];
+    char name[H9_MAX_NAME_LEN];
 
     // MIDI and communications settings
     uint8_t sysex_id;
+    h9_midi_config midi_config;
 
     // Current loaded preset
     h9_preset *preset;
-    bool preset_dirty; // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
-    bool synched; // true if we've spit out the preset to the device
-    bool sync_dirty; // true if we've made changes that have not been synched (sysex-only changes, not knob values that can be sent as CC)
-
+    bool dirty; // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
+    
     // Current physical control states
     float expression; // 0.00 to 1.00
     bool expr_changed; // true if the expression pedal has been moved after loading the preset
     bool psw; // switch, on (true) or off (false)
+
+    // Observer registration
+    h9_display_callback display_callback;
+    h9_cc_callback cc_callback;
 } h9;
 
 #ifdef __cplusplus
@@ -140,6 +157,8 @@ extern "C" {
 h9* h9_new(void); // Allocates and returns a pointer to a new H9 instance
 // Free / Delete
 void h9_free(h9* h9);
+
+bool h9_preset_loaded(h9* h9);
 
 // SYSEX Preset Operations
 
@@ -167,7 +186,7 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len);
  *         Regardless of update_sync_dirty, if truncation occurred, the dirty flag will NOT be updated.
  * Note 2: This is NOT a string. There is no guarantee of a NULL after the final 0xF7.
  */
-size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_sync_dirty);
+size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_dirty_flag);
 
 // SYSEX Generation (syncing and device inquiry)
 
@@ -180,12 +199,6 @@ void h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_v
 control_value h9_getControl(h9* h9, control_id knob_num);
 control_value h9_getKnobDisplay(h9* h9, control_id knob_num);
 void h9_getKnobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw);
-
-// Shortcuts
-void h9_setExpr(h9* h9, control_value value);
-control_value h9_getExpr(h9* h9);
-void h9_setPsw(h9* h9, bool psw_on);
-bool h9_getPsw(h9* h9);
 
 // Preset Operations
 void h9_switchAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);

@@ -11,6 +11,17 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "load_preset:h9_sysex.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "modules[module_index]">
+            </PersistentString>
+            <PersistentString
+               value = "(h9_algorithm[10])$0.algorithms">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "h9_load:h9.c">
       </ContextState>
    </ContextStates>

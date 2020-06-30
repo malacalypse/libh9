@@ -24,6 +24,8 @@
 		ED07FC7324AAF218006D36D1 /* h9.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98A24A44193006D36D1 /* h9.c */; };
 		ED07FC7424AAF21E006D36D1 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F99E24AA921F006D36D1 /* utils.c */; };
 		ED07FC7524AAF222006D36D1 /* midi_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = ED373DFD243AAB00004C2CEB /* midi_parser.c */; };
+		ED1CF0C124ABE775003684BF /* h9_sysex.c in Sources */ = {isa = PBXBuildFile; fileRef = ED1CF0C024ABE775003684BF /* h9_sysex.c */; };
+		ED1CF0C224ABE775003684BF /* h9_sysex.c in Sources */ = {isa = PBXBuildFile; fileRef = ED1CF0C024ABE775003684BF /* h9_sysex.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -327,6 +329,8 @@
 		ED07FC7124AAEF0E006D36D1 /* h9_sysex_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = h9_sysex_test.cpp; sourceTree = "<group>"; };
 		ED07FC7624AAF437006D36D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		ED07FC7724AB8A52006D36D1 /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		ED1CF0BF24ABE775003684BF /* h9_sysex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = h9_sysex.h; sourceTree = "<group>"; };
+		ED1CF0C024ABE775003684BF /* h9_sysex.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = h9_sysex.c; sourceTree = "<group>"; };
 		ED373DFC243AAB00004C2CEB /* midi_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = midi_parser.h; sourceTree = "<group>"; };
 		ED373DFD243AAB00004C2CEB /* midi_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = midi_parser.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -385,6 +389,8 @@
 				ED373DFC243AAB00004C2CEB /* midi_parser.h */,
 				ED373DFD243AAB00004C2CEB /* midi_parser.c */,
 				ED07FC7724AB8A52006D36D1 /* debug.h */,
+				ED1CF0BF24ABE775003684BF /* h9_sysex.h */,
+				ED1CF0C024ABE775003684BF /* h9_sysex.c */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -996,6 +1002,7 @@
 				ED07F99A24A91CBA006D36D1 /* h9.c in Sources */,
 				ED07F9A124AA921F006D36D1 /* utils.c in Sources */,
 				ED07F99924A91CB2006D36D1 /* main.c in Sources */,
+				ED1CF0C124ABE775003684BF /* h9_sysex.c in Sources */,
 				ED07F99B24A91CBD006D36D1 /* midi_parser.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1013,6 +1020,7 @@
 				ED07FC6A24AAEE8E006D36D1 /* gtest-death-test.cc in Sources */,
 				ED07FC6B24AAEEBB006D36D1 /* gtest-port.cc in Sources */,
 				ED07FC6824AAEE1A006D36D1 /* gtest.cc in Sources */,
+				ED1CF0C224ABE775003684BF /* h9_sysex.c in Sources */,
 				ED07FC7424AAF21E006D36D1 /* utils.c in Sources */,
 				ED07FC7524AAF222006D36D1 /* midi_parser.c in Sources */,
 				ED07FC6C24AAEEBB006D36D1 /* gtest-printers.cc in Sources */,

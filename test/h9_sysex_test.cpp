@@ -71,6 +71,8 @@ TEST_F(TEST_CLASS, h9_new_populates_empty_preset) {
 TEST_F(TEST_CLASS, h9_load_withCorrectSysex_returns_kH9_OK) {
     h9* h9obj = h9_new();
     LoadPatch(h9obj, sysex_hrmdlo);
+    ASSERT_EQ(h9obj->preset->algorithm->id, 8);
+    ASSERT_EQ(h9obj->preset->module->sysex_num, 5);
 }
 
 // Test that the h9_load correctly dumps the same sysex it parsed
