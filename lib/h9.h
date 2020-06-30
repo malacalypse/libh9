@@ -20,6 +20,47 @@
 #define NOMODULE -1
 #define NOALGORITHM -1
 
+typedef enum h9_status {
+    kH9_UNKNOWN = 0U,
+    kH9_OK,
+    kH9_SYSEX_PREAMBLE_INCORRECT,
+    kH9_SYSEX_INVALID,
+    kH9_SYSEX_CHECKSUM_INVALID,
+} h9_status;
+
+typedef enum h9_message_code {
+    // kH9_OK is returned by the pedal often to confirm the last request.
+    kH9_ERROR               = 0x0d, // Response from pedal with problem. Body of response is ASCII readable error description.
+    kH9_USER_VALUE_PUT      = 0x2d, // COMMAND to set indicated key to value. Data format: [key]<space>[value] in "ASCII hex". Response is VALUE_DUMP
+    kH9_SYSEX_VALUE_DUMP    = 0x2e, // Response containing a single value as "ASCII hex"
+    kH9_OBJECTINFO_WANT     = 0x31, // Request value of specified key. Data format: [key] = ["ASCII hex", e.g. "201" = 0x32 0x30 0x31 0x00]
+    kH9_VALUE_WANT          = 0x3b, // Same as OBJECTINFO_WANT. Both reply with a VALUE_DUMP.
+    kH9_USER_OBJECT_SHORT   = 0x3c, // COMMAND: XXXX YY = [key] [value], same as VALUE_PUT.
+    kH9_DUMP_ALL            = 0x48, // Requests all programs. Response is a PROGRAM_DUMP.
+    kH9_PROGRAM_DUMP        = 0x49, // Response containing all programs in memory on the unit, sequentially.
+    kH9_TJ_SYSVARS_WANT     = 0x4c, // Request full sysvars. Response is a TJ_SYSVARS_DUMP.
+    kH9_TJ_SYSVARS_DUMP     = 0x4d, // Response to SYSVARS_WANT, contains full sysvar dump in unspecified format.
+    kH9_DUMP_ONE            = 0x4e, // Requests the currently loaded PROGRAM. Response is PROGRAM.
+    kH9_PROGRAM             = 0x4f, // COMMAND to set temporary PROGRAM, RESPONSE contains indicated PROGRAM.
+} h9_message_code;
+
+typedef enum control_id {
+    KNOB0 = 0U,
+    KNOB1,
+    KNOB2,
+    KNOB3,
+    KNOB4,
+    KNOB5,
+    KNOB6,
+    KNOB7,
+    KNOB8,
+    KNOB9,
+    EXPR,
+    PSW,
+} control_id;
+
+typedef float control_value; // 0.00 to 1.00 always.
+
 typedef struct h9_algorithm {
     uint8_t id;
     uint8_t module;
@@ -45,32 +86,13 @@ typedef struct h9_module {
     size_t num_algorithms;
 } h9_module;
 
-typedef enum h9_status {
-    kH9_UNKNOWN = 0U,
-    kH9_OK,
-    kH9_SYSEX_PREAMBLE_INCORRECT,
-    kH9_SYSEX_INVALID,
-    kH9_SYSEX_CHECKSUM_INVALID,
-} h9_status;
-
-typedef enum h9_message_code {
-    kH9_GET_CONFIG = 0x2e, // 46
-    kH9_DUMP_ALL = 0x48,   // 72
-    kH9_DUMP_ONE = 0x4e,   // 78
-    kH9_PRESET = 0x4f,     // 79, used both when receiving and sending
-} h9_message_code;
-
-typedef uint8_t knob_id;
-typedef float knob_value; // 0.00 to 1.00 always.
-
 typedef struct h9_knob {
-    knob_value default_value; // Value to set the knob to when loading the preset
-    knob_value current_value; // Value the knob has been manually or via CC set to after loading
-    knob_value display_value; // After adjustment by, e.g. exp or psw operation
+    control_value current_value; // Physical position of the knob.
+    control_value display_value; // Display value, after adjustment by, e.g. exp or psw operation.
     float mknob_value; // Still no clue what this is exactly, seems some translated display value of the knob.
-    knob_value exp_min;
-    knob_value exp_max;
-    knob_value psw;
+    control_value exp_min;
+    control_value exp_max;
+    control_value psw;
     bool exp_mapped;
     bool psw_mapped;
 } h9_knob;
@@ -94,8 +116,6 @@ typedef struct h9 {
 
     // MIDI and communications settings
     uint8_t sysex_id;
-    uint8_t midi_channel;
-    // ... other things like cc maps go here, once we support CC parsing and configuration detection
 
     // Current loaded preset
     h9_preset *preset;
@@ -155,13 +175,15 @@ size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len);
 size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len);
 
 // Knob, Expr, and PSW operations
-void h9_setKnob(h9* h9, knob_id knob_num, knob_value value);
-void h9_setKnobMap(h9* h9, knob_id knob_num, knob_value exp_min, knob_value exp_max, knob_value psw);
-knob_value h9_getKnob(h9* h9, knob_id knob_num);
-knob_value h9_getKnobDisplay(h9* h9, knob_id knob_num);
-void h9_getKnobMap(h9* h9, knob_id knob_num, knob_value* exp_min, knob_value* exp_max, knob_value* psw);
-void h9_setExpr(h9* h9, knob_value value);
-knob_value h9_getExpr(h9* h9);
+void h9_setControl(h9* h9, control_id knob_num, control_value value);
+void h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw);
+control_value h9_getControl(h9* h9, control_id knob_num);
+control_value h9_getKnobDisplay(h9* h9, control_id knob_num);
+void h9_getKnobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw);
+
+// Shortcuts
+void h9_setExpr(h9* h9, control_value value);
+control_value h9_getExpr(h9* h9);
 void h9_setPsw(h9* h9, bool psw_on);
 bool h9_getPsw(h9* h9);
 
