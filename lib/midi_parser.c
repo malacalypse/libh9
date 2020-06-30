@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DEBUG_LEVEL DEBUG_ERROR
 #include "debug.h"
 
 #ifndef MAX_SYSEX_BUFFER_SIZE

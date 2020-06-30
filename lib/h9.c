@@ -14,13 +14,15 @@
 #include <math.h>
 #include <stdarg.h>
 
-#include "debug.h"
 #include "h9_modules.h"
 #include "utils.h"
 
 #define NUM_MODULES 5
 #define KNOB_MAX 0x7FE0 // By observation
 #define DEFAULT_PRESET_NUM 1
+
+#define DEBUG_LEVEL DEBUG_ERROR
+#include "debug.h"
 
 typedef struct h9_sysex_preset {
     int preset_num;
@@ -347,7 +349,7 @@ h9_status h9_load(h9* h9, uint8_t* sysex, size_t len) {
     }
 
     // Debug
-#if (DEBUG_LEVEL > DEBUG_INFO)
+#if (DEBUG_LEVEL >= DEBUG_INFO)
     char sysex_buffer[1000];
     size_t bytes_written = hexdump(sysex_buffer, 1000, sysex, len);
 

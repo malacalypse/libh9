@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#define DEBUG_LEVEL DEBUG_ERROR
 #include "debug.h"
 
 size_t hexdump(char *dest, size_t max_len, uint8_t* data, size_t len) {
