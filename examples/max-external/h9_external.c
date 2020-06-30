@@ -1,6 +1,6 @@
 /**
 	@file
-	h9_max_external - An Eventide H9 control object as a Max external
+	h9_external - An Eventide H9 control object as a Max external
 	daniel collins - malacalypse@argx.net
 
 	@ingroup	malacalypse

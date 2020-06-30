@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		22CF122B0EE9AAAD0054F513 /* h9_max_external.c in Sources */ = {isa = PBXBuildFile; fileRef = 22CF122A0EE9AAAD0054F513 /* h9_max_external.c */; };
+		22CF122B0EE9AAAD0054F513 /* h9_external.c in Sources */ = {isa = PBXBuildFile; fileRef = 22CF122A0EE9AAAD0054F513 /* h9_external.c */; };
 		ED07F98B24A44193006D36D1 /* h9.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07F98924A44193006D36D1 /* h9.h */; };
 		ED07F98F24A91C0E006D36D1 /* h9.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98A24A44193006D36D1 /* h9.c */; };
 		ED07F99924A91CB2006D36D1 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98E24A90D62006D36D1 /* main.c */; };
@@ -16,6 +16,272 @@
 		ED07F99F24AA921F006D36D1 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07F99D24AA921F006D36D1 /* utils.h */; };
 		ED07F9A024AA921F006D36D1 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F99E24AA921F006D36D1 /* utils.c */; };
 		ED07F9A124AA921F006D36D1 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F99E24AA921F006D36D1 /* utils.c */; };
+		ED07FAC424AADFE4006D36D1 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9A524AADFE2006D36D1 /* CMakeLists.txt */; };
+		ED07FAC524AADFE4006D36D1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9A624AADFE2006D36D1 /* LICENSE */; };
+		ED07FAC624AADFE4006D36D1 /* env-linux.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9A824AADFE2006D36D1 /* env-linux.sh */; };
+		ED07FAC724AADFE4006D36D1 /* env-osx.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9A924AADFE2006D36D1 /* env-osx.sh */; };
+		ED07FAC824AADFE4006D36D1 /* build-platformio.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9AA24AADFE2006D36D1 /* build-platformio.sh */; };
+		ED07FAC924AADFE4006D36D1 /* get-nprocessors.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9AB24AADFE2006D36D1 /* get-nprocessors.sh */; };
+		ED07FACA24AADFE4006D36D1 /* travis.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9AC24AADFE2006D36D1 /* travis.sh */; };
+		ED07FACB24AADFE4006D36D1 /* install-osx.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9AD24AADFE2006D36D1 /* install-osx.sh */; };
+		ED07FACC24AADFE4006D36D1 /* install-platformio.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9AE24AADFE2006D36D1 /* install-platformio.sh */; };
+		ED07FACD24AADFE4006D36D1 /* install-linux.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9AF24AADFE2006D36D1 /* install-linux.sh */; };
+		ED07FACE24AADFE4006D36D1 /* build-linux-bazel.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B024AADFE2006D36D1 /* build-linux-bazel.sh */; };
+		ED07FACF24AADFE4006D36D1 /* log-config.sh in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B124AADFE2006D36D1 /* log-config.sh */; };
+		ED07FAD024AADFE4006D36D1 /* WORKSPACE in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B224AADFE2006D36D1 /* WORKSPACE */; };
+		ED07FAD124AADFE4006D36D1 /* platformio.ini in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B324AADFE2006D36D1 /* platformio.ini */; };
+		ED07FAD224AADFE4006D36D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B424AADFE2006D36D1 /* README.md */; };
+		ED07FAD324AADFE4006D36D1 /* appveyor.yml in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B524AADFE2006D36D1 /* appveyor.yml */; };
+		ED07FAD424AADFE4006D36D1 /* library.json in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B624AADFE2006D36D1 /* library.json */; };
+		ED07FAD524AADFE4006D36D1 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B724AADFE2006D36D1 /* .gitignore */; };
+		ED07FAD624AADFE4006D36D1 /* CONTRIBUTING.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B824AADFE2006D36D1 /* CONTRIBUTING.md */; };
+		ED07FAD724AADFE4006D36D1 /* .clang-format in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9B924AADFE2006D36D1 /* .clang-format */; };
+		ED07FAD824AADFE4006D36D1 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9BB24AADFE2006D36D1 /* CMakeLists.txt */; };
+		ED07FAD924AADFE4006D36D1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9BC24AADFE2006D36D1 /* LICENSE */; };
+		ED07FADA24AADFE4006D36D1 /* googletest-message-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9BE24AADFE2006D36D1 /* googletest-message-test.cc */; };
+		ED07FADC24AADFE4006D36D1 /* googletest-output-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9BF24AADFE2006D36D1 /* googletest-output-test_.cc */; };
+		ED07FADE24AADFE4006D36D1 /* gtest_pred_impl_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C024AADFE2006D36D1 /* gtest_pred_impl_unittest.cc */; };
+		ED07FAE024AADFE4006D36D1 /* gtest_skip_in_environment_setup_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C124AADFE2006D36D1 /* gtest_skip_in_environment_setup_test.cc */; };
+		ED07FAE224AADFE4006D36D1 /* gtest_xml_output_unittest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9C224AADFE2006D36D1 /* gtest_xml_output_unittest.py */; };
+		ED07FAE324AADFE4006D36D1 /* googletest-param-test-test.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07F9C324AADFE2006D36D1 /* googletest-param-test-test.h */; };
+		ED07FAE424AADFE4006D36D1 /* googletest-test-part-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C424AADFE2006D36D1 /* googletest-test-part-test.cc */; };
+		ED07FAE624AADFE4006D36D1 /* gtest_assert_by_exception_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C524AADFE2006D36D1 /* gtest_assert_by_exception_test.cc */; };
+		ED07FAE824AADFE4006D36D1 /* gtest_testbridge_test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C624AADFE2006D36D1 /* gtest_testbridge_test_.cc */; };
+		ED07FAEA24AADFE4006D36D1 /* gtest_main_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C724AADFE2006D36D1 /* gtest_main_unittest.cc */; };
+		ED07FAEC24AADFE4006D36D1 /* googletest-listener-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C824AADFE2006D36D1 /* googletest-listener-test.cc */; };
+		ED07FAEE24AADFE4006D36D1 /* gtest_environment_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9C924AADFE2006D36D1 /* gtest_environment_test.cc */; };
+		ED07FAF024AADFE4006D36D1 /* gtest_xml_output_unittest_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9CA24AADFE2006D36D1 /* gtest_xml_output_unittest_.cc */; };
+		ED07FAF224AADFE4006D36D1 /* googletest-output-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9CB24AADFE2006D36D1 /* googletest-output-test.py */; };
+		ED07FAF324AADFE4006D36D1 /* googletest-throw-on-failure-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9CC24AADFE2006D36D1 /* googletest-throw-on-failure-test_.cc */; };
+		ED07FAF524AADFE4006D36D1 /* googletest-filter-unittest_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9CD24AADFE2006D36D1 /* googletest-filter-unittest_.cc */; };
+		ED07FAF724AADFE4006D36D1 /* googletest-death-test-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9CE24AADFE2006D36D1 /* googletest-death-test-test.cc */; };
+		ED07FAF924AADFE4006D36D1 /* googletest-failfast-unittest_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9CF24AADFE2006D36D1 /* googletest-failfast-unittest_.cc */; };
+		ED07FAFB24AADFE4006D36D1 /* gtest_stress_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9D024AADFE2006D36D1 /* gtest_stress_test.cc */; };
+		ED07FAFD24AADFE4006D36D1 /* googletest-uninitialized-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9D124AADFE2006D36D1 /* googletest-uninitialized-test_.cc */; };
+		ED07FAFF24AADFE4006D36D1 /* production.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9D224AADFE2006D36D1 /* production.cc */; };
+		ED07FB0124AADFE4006D36D1 /* googletest-param-test-invalid-name1-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9D324AADFE2006D36D1 /* googletest-param-test-invalid-name1-test.py */; };
+		ED07FB0224AADFE4006D36D1 /* gtest_xml_outfile1_test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9D424AADFE2006D36D1 /* gtest_xml_outfile1_test_.cc */; };
+		ED07FB0424AADFE4006D36D1 /* gtest_help_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9D524AADFE2006D36D1 /* gtest_help_test.py */; };
+		ED07FB0524AADFE4006D36D1 /* gtest_prod_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9D624AADFE2006D36D1 /* gtest_prod_test.cc */; };
+		ED07FB0724AADFE4006D36D1 /* googletest-env-var-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9D724AADFE2006D36D1 /* googletest-env-var-test_.cc */; };
+		ED07FB0924AADFE4006D36D1 /* gtest-unittest-api_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9D824AADFE2006D36D1 /* gtest-unittest-api_test.cc */; };
+		ED07FB0B24AADFE4006D36D1 /* gtest_test_utils.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9D924AADFE2006D36D1 /* gtest_test_utils.py */; };
+		ED07FB0C24AADFE4006D36D1 /* gtest_repeat_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9DA24AADFE2006D36D1 /* gtest_repeat_test.cc */; };
+		ED07FB0E24AADFE4006D36D1 /* googletest-setuptestsuite-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9DB24AADFE2006D36D1 /* googletest-setuptestsuite-test_.cc */; };
+		ED07FB1024AADFE4006D36D1 /* gtest_json_test_utils.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9DC24AADFE2006D36D1 /* gtest_json_test_utils.py */; };
+		ED07FB1124AADFE4006D36D1 /* googletest-param-test-invalid-name2-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9DD24AADFE2006D36D1 /* googletest-param-test-invalid-name2-test.py */; };
+		ED07FB1224AADFE4006D36D1 /* gtest_all_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9DE24AADFE2006D36D1 /* gtest_all_test.cc */; };
+		ED07FB1424AADFE4006D36D1 /* googletest-json-output-unittest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9DF24AADFE2006D36D1 /* googletest-json-output-unittest.py */; };
+		ED07FB1524AADFE4006D36D1 /* googletest-break-on-failure-unittest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9E024AADFE2006D36D1 /* googletest-break-on-failure-unittest.py */; };
+		ED07FB1624AADFE4006D36D1 /* googletest-param-test-invalid-name1-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9E124AADFE2006D36D1 /* googletest-param-test-invalid-name1-test_.cc */; };
+		ED07FB1824AADFE4006D36D1 /* googletest-catch-exceptions-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9E224AADFE2006D36D1 /* googletest-catch-exceptions-test_.cc */; };
+		ED07FB1A24AADFE4006D36D1 /* googletest-break-on-failure-unittest_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9E324AADFE2006D36D1 /* googletest-break-on-failure-unittest_.cc */; };
+		ED07FB1C24AADFE4006D36D1 /* googletest-setuptestsuite-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9E424AADFE2006D36D1 /* googletest-setuptestsuite-test.py */; };
+		ED07FB1D24AADFE4006D36D1 /* googletest-shuffle-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9E524AADFE2006D36D1 /* googletest-shuffle-test_.cc */; };
+		ED07FB1F24AADFE4006D36D1 /* gtest_premature_exit_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9E624AADFE2006D36D1 /* gtest_premature_exit_test.cc */; };
+		ED07FB2124AADFE4006D36D1 /* googletest-list-tests-unittest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9E724AADFE2006D36D1 /* googletest-list-tests-unittest.py */; };
+		ED07FB2224AADFE4006D36D1 /* gtest_xml_outfile2_test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9E824AADFE2006D36D1 /* gtest_xml_outfile2_test_.cc */; };
+		ED07FB2424AADFE4006D36D1 /* googletest-env-var-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9E924AADFE2006D36D1 /* googletest-env-var-test.py */; };
+		ED07FB2524AADFE4006D36D1 /* gtest_test_macro_stack_footprint_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9EA24AADFE2006D36D1 /* gtest_test_macro_stack_footprint_test.cc */; };
+		ED07FB2724AADFE4006D36D1 /* googletest-list-tests-unittest_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9EB24AADFE2006D36D1 /* googletest-list-tests-unittest_.cc */; };
+		ED07FB2924AADFE4006D36D1 /* googletest-port-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9EC24AADFE2006D36D1 /* googletest-port-test.cc */; };
+		ED07FB2B24AADFE4006D36D1 /* gtest_list_output_unittest_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9ED24AADFE2006D36D1 /* gtest_list_output_unittest_.cc */; };
+		ED07FB2D24AADFE4006D36D1 /* gtest_skip_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9EE24AADFE2006D36D1 /* gtest_skip_test.cc */; };
+		ED07FB2F24AADFE4006D36D1 /* gtest_no_test_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9EF24AADFE2006D36D1 /* gtest_no_test_unittest.cc */; };
+		ED07FB3124AADFE4006D36D1 /* gtest_xml_outfiles_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9F024AADFE2006D36D1 /* gtest_xml_outfiles_test.py */; };
+		ED07FB3224AADFE4006D36D1 /* gtest-typed-test_test.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07F9F124AADFE2006D36D1 /* gtest-typed-test_test.h */; };
+		ED07FB3324AADFE4006D36D1 /* gtest_help_test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9F224AADFE2006D36D1 /* gtest_help_test_.cc */; };
+		ED07FB3524AADFE4006D36D1 /* googletest-output-test-golden-lin.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9F324AADFE2006D36D1 /* googletest-output-test-golden-lin.txt */; };
+		ED07FB3624AADFE4006D36D1 /* gtest_list_output_unittest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9F424AADFE2006D36D1 /* gtest_list_output_unittest.py */; };
+		ED07FB3724AADFE4006D36D1 /* googletest-filepath-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9F524AADFE2006D36D1 /* googletest-filepath-test.cc */; };
+		ED07FB3924AADFE4006D36D1 /* googletest-param-test-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9F624AADFE2006D36D1 /* googletest-param-test-test.cc */; };
+		ED07FB3B24AADFE4006D36D1 /* googletest-printers-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9F724AADFE2006D36D1 /* googletest-printers-test.cc */; };
+		ED07FB3D24AADFE4006D36D1 /* BUILD.bazel in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9F824AADFE2006D36D1 /* BUILD.bazel */; };
+		ED07FB3E24AADFE4006D36D1 /* gtest_xml_test_utils.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9F924AADFE2006D36D1 /* gtest_xml_test_utils.py */; };
+		ED07FB3F24AADFE4006D36D1 /* googletest-param-test2-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9FA24AADFE2006D36D1 /* googletest-param-test2-test.cc */; };
+		ED07FB4124AADFE4006D36D1 /* production.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07F9FB24AADFE2006D36D1 /* production.h */; };
+		ED07FB4224AADFE4006D36D1 /* googletest-color-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9FC24AADFE2006D36D1 /* googletest-color-test.py */; };
+		ED07FB4324AADFE4006D36D1 /* googletest-filter-unittest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9FD24AADFE2006D36D1 /* googletest-filter-unittest.py */; };
+		ED07FB4424AADFE4006D36D1 /* googletest-param-test-invalid-name2-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07F9FE24AADFE2006D36D1 /* googletest-param-test-invalid-name2-test_.cc */; };
+		ED07FB4624AADFE4006D36D1 /* gtest_skip_check_output_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07F9FF24AADFE2006D36D1 /* gtest_skip_check_output_test.py */; };
+		ED07FB4724AADFE4006D36D1 /* gtest_testbridge_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0024AADFE2006D36D1 /* gtest_testbridge_test.py */; };
+		ED07FB4824AADFE4006D36D1 /* gtest_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0124AADFE2006D36D1 /* gtest_unittest.cc */; };
+		ED07FB4A24AADFE4006D36D1 /* googletest-throw-on-failure-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0224AADFE2006D36D1 /* googletest-throw-on-failure-test.py */; };
+		ED07FB4B24AADFE4006D36D1 /* googletest-shuffle-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0324AADFE2006D36D1 /* googletest-shuffle-test.py */; };
+		ED07FB4C24AADFE4006D36D1 /* gtest_sole_header_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0424AADFE2006D36D1 /* gtest_sole_header_test.cc */; };
+		ED07FB4E24AADFE4006D36D1 /* googletest-uninitialized-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0524AADFE2006D36D1 /* googletest-uninitialized-test.py */; };
+		ED07FB4F24AADFE4006D36D1 /* googletest-color-test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0624AADFE2006D36D1 /* googletest-color-test_.cc */; };
+		ED07FB5124AADFE4006D36D1 /* googletest-catch-exceptions-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0724AADFE2006D36D1 /* googletest-catch-exceptions-test.py */; };
+		ED07FB5224AADFE4006D36D1 /* googletest-death-test_ex_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0824AADFE2006D36D1 /* googletest-death-test_ex_test.cc */; };
+		ED07FB5424AADFE4006D36D1 /* googletest-json-outfiles-test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0924AADFE2006D36D1 /* googletest-json-outfiles-test.py */; };
+		ED07FB5524AADFE4006D36D1 /* gtest_skip_environment_check_output_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0A24AADFE2006D36D1 /* gtest_skip_environment_check_output_test.py */; };
+		ED07FB5624AADFE4006D36D1 /* gtest-typed-test2_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0B24AADFE2006D36D1 /* gtest-typed-test2_test.cc */; };
+		ED07FB5824AADFE4006D36D1 /* gtest-typed-test_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0C24AADFE2006D36D1 /* gtest-typed-test_test.cc */; };
+		ED07FB5A24AADFE4006D36D1 /* googletest-failfast-unittest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA0D24AADFE2006D36D1 /* googletest-failfast-unittest.py */; };
+		ED07FB5B24AADFE4006D36D1 /* googletest-options-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0E24AADFE2006D36D1 /* googletest-options-test.cc */; };
+		ED07FB5D24AADFE4006D36D1 /* gtest_throw_on_failure_ex_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA0F24AADFE2006D36D1 /* gtest_throw_on_failure_ex_test.cc */; };
+		ED07FB5F24AADFE4006D36D1 /* internal_utils.cmake in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA1124AADFE2006D36D1 /* internal_utils.cmake */; };
+		ED07FB6024AADFE4006D36D1 /* gtest.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA1224AADFE2006D36D1 /* gtest.pc.in */; };
+		ED07FB6124AADFE4006D36D1 /* gtest_main.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA1324AADFE2006D36D1 /* gtest_main.pc.in */; };
+		ED07FB6224AADFE4006D36D1 /* Config.cmake.in in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA1424AADFE2006D36D1 /* Config.cmake.in */; };
+		ED07FB6324AADFE4006D36D1 /* libgtest.la.in in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA1524AADFE2006D36D1 /* libgtest.la.in */; };
+		ED07FB6424AADFE4006D36D1 /* gtest-matchers.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA1824AADFE2006D36D1 /* gtest-matchers.h */; };
+		ED07FB6524AADFE4006D36D1 /* gtest-death-test.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA1924AADFE2006D36D1 /* gtest-death-test.h */; };
+		ED07FB6624AADFE4006D36D1 /* gtest-spi.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA1A24AADFE2006D36D1 /* gtest-spi.h */; };
+		ED07FB6724AADFE4006D36D1 /* gtest-string.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA1C24AADFE2006D36D1 /* gtest-string.h */; };
+		ED07FB6824AADFE4006D36D1 /* gtest-death-test-internal.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA1D24AADFE3006D36D1 /* gtest-death-test-internal.h */; };
+		ED07FB6924AADFE4006D36D1 /* gtest-port.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA1E24AADFE3006D36D1 /* gtest-port.h */; };
+		ED07FB6A24AADFE4006D36D1 /* gtest-port-arch.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA1F24AADFE3006D36D1 /* gtest-port-arch.h */; };
+		ED07FB6B24AADFE4006D36D1 /* gtest-internal.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2024AADFE3006D36D1 /* gtest-internal.h */; };
+		ED07FB6C24AADFE4006D36D1 /* gtest-param-util.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2124AADFE3006D36D1 /* gtest-param-util.h */; };
+		ED07FB6D24AADFE4006D36D1 /* gtest-type-util.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2224AADFE3006D36D1 /* gtest-type-util.h */; };
+		ED07FB6E24AADFE4006D36D1 /* gtest-filepath.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2324AADFE3006D36D1 /* gtest-filepath.h */; };
+		ED07FB6F24AADFE4006D36D1 /* gtest-port.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2524AADFE3006D36D1 /* gtest-port.h */; };
+		ED07FB7024AADFE4006D36D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA2624AADFE3006D36D1 /* README.md */; };
+		ED07FB7124AADFE4006D36D1 /* gtest.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2724AADFE3006D36D1 /* gtest.h */; };
+		ED07FB7224AADFE4006D36D1 /* gtest-printers.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2824AADFE3006D36D1 /* gtest-printers.h */; };
+		ED07FB7324AADFE4006D36D1 /* gtest-message.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2924AADFE3006D36D1 /* gtest-message.h */; };
+		ED07FB7424AADFE4006D36D1 /* gtest-param-test.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2A24AADFE3006D36D1 /* gtest-param-test.h */; };
+		ED07FB7524AADFE4006D36D1 /* gtest-typed-test.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2B24AADFE3006D36D1 /* gtest-typed-test.h */; };
+		ED07FB7624AADFE4006D36D1 /* gtest_pred_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2C24AADFE3006D36D1 /* gtest_pred_impl.h */; };
+		ED07FB7724AADFE4006D36D1 /* gtest_prod.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2D24AADFE3006D36D1 /* gtest_prod.h */; };
+		ED07FB7824AADFE4006D36D1 /* gtest-test-part.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2E24AADFE3006D36D1 /* gtest-test-part.h */; };
+		ED07FB7924AADFE4006D36D1 /* gtest.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA2F24AADFE3006D36D1 /* gtest.h */; };
+		ED07FB7A24AADFE4006D36D1 /* gtest-printers.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA3024AADFE3006D36D1 /* gtest-printers.h */; };
+		ED07FB7B24AADFE4006D36D1 /* samples.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA3224AADFE3006D36D1 /* samples.md */; };
+		ED07FB7C24AADFE4006D36D1 /* faq.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA3324AADFE3006D36D1 /* faq.md */; };
+		ED07FB7D24AADFE4006D36D1 /* primer.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA3424AADFE3006D36D1 /* primer.md */; };
+		ED07FB7E24AADFE4006D36D1 /* advanced.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA3524AADFE3006D36D1 /* advanced.md */; };
+		ED07FB7F24AADFE4006D36D1 /* pkgconfig.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA3624AADFE3006D36D1 /* pkgconfig.md */; };
+		ED07FB8024AADFE4006D36D1 /* CONTRIBUTORS in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA3724AADFE3006D36D1 /* CONTRIBUTORS */; };
+		ED07FB8124AADFE4006D36D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA3824AADFE3006D36D1 /* README.md */; };
+		ED07FB8224AADFE4006D36D1 /* sample6_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA3A24AADFE3006D36D1 /* sample6_unittest.cc */; };
+		ED07FB8424AADFE4006D36D1 /* sample3_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA3B24AADFE3006D36D1 /* sample3_unittest.cc */; };
+		ED07FB8624AADFE4006D36D1 /* sample4.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA3C24AADFE3006D36D1 /* sample4.h */; };
+		ED07FB8724AADFE4006D36D1 /* sample9_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA3D24AADFE3006D36D1 /* sample9_unittest.cc */; };
+		ED07FB8924AADFE4006D36D1 /* sample10_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA3E24AADFE3006D36D1 /* sample10_unittest.cc */; };
+		ED07FB8B24AADFE4006D36D1 /* sample5_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA3F24AADFE3006D36D1 /* sample5_unittest.cc */; };
+		ED07FB8D24AADFE4006D36D1 /* sample2.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4024AADFE3006D36D1 /* sample2.cc */; };
+		ED07FB8F24AADFE4006D36D1 /* prime_tables.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA4124AADFE3006D36D1 /* prime_tables.h */; };
+		ED07FB9024AADFE4006D36D1 /* sample3-inl.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA4224AADFE3006D36D1 /* sample3-inl.h */; };
+		ED07FB9124AADFE4006D36D1 /* sample1.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4324AADFE3006D36D1 /* sample1.cc */; };
+		ED07FB9324AADFE4006D36D1 /* sample2_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4424AADFE3006D36D1 /* sample2_unittest.cc */; };
+		ED07FB9524AADFE4006D36D1 /* sample7_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4524AADFE3006D36D1 /* sample7_unittest.cc */; };
+		ED07FB9724AADFE4006D36D1 /* sample2.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA4624AADFE3006D36D1 /* sample2.h */; };
+		ED07FB9824AADFE4006D36D1 /* sample4.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4724AADFE3006D36D1 /* sample4.cc */; };
+		ED07FB9A24AADFE4006D36D1 /* sample4_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4824AADFE3006D36D1 /* sample4_unittest.cc */; };
+		ED07FB9C24AADFE4006D36D1 /* sample1_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4924AADFE3006D36D1 /* sample1_unittest.cc */; };
+		ED07FB9E24AADFE4006D36D1 /* sample1.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA4A24AADFE3006D36D1 /* sample1.h */; };
+		ED07FB9F24AADFE4006D36D1 /* sample8_unittest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4B24AADFE3006D36D1 /* sample8_unittest.cc */; };
+		ED07FBA124AADFE4006D36D1 /* release_docs.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA4D24AADFE3006D36D1 /* release_docs.py */; };
+		ED07FBA224AADFE4006D36D1 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA4F24AADFE3006D36D1 /* Makefile */; };
+		ED07FBA424AADFE4006D36D1 /* upload.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5024AADFE3006D36D1 /* upload.py */; };
+		ED07FBA524AADFE4006D36D1 /* run_with_path.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5124AADFE3006D36D1 /* run_with_path.py */; };
+		ED07FBA624AADFE4006D36D1 /* fuse_gtest_files.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5224AADFE3006D36D1 /* fuse_gtest_files.py */; };
+		ED07FBA724AADFE4006D36D1 /* gtest-config.in in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5324AADFE3006D36D1 /* gtest-config.in */; };
+		ED07FBA824AADFE4006D36D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5424AADFE3006D36D1 /* README.md */; };
+		ED07FBA924AADFE4006D36D1 /* gen_gtest_pred_impl.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5524AADFE3006D36D1 /* gen_gtest_pred_impl.py */; };
+		ED07FBAA24AADFE4006D36D1 /* common.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5624AADFE3006D36D1 /* common.py */; };
+		ED07FBAB24AADFE4006D36D1 /* upload_gtest.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA5724AADFE3006D36D1 /* upload_gtest.py */; };
+		ED07FBAC24AADFE4006D36D1 /* gtest-test-part.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5924AADFE3006D36D1 /* gtest-test-part.cc */; };
+		ED07FBAE24AADFE4006D36D1 /* gtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5A24AADFE3006D36D1 /* gtest.cc */; };
+		ED07FBB024AADFE4006D36D1 /* gtest_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5B24AADFE3006D36D1 /* gtest_main.cc */; };
+		ED07FBB224AADFE4006D36D1 /* gtest-internal-inl.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA5C24AADFE3006D36D1 /* gtest-internal-inl.h */; };
+		ED07FBB324AADFE4006D36D1 /* gtest-death-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5D24AADFE3006D36D1 /* gtest-death-test.cc */; };
+		ED07FBB524AADFE4006D36D1 /* gtest-port.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5E24AADFE3006D36D1 /* gtest-port.cc */; };
+		ED07FBB724AADFE4006D36D1 /* gtest-printers.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5F24AADFE3006D36D1 /* gtest-printers.cc */; };
+		ED07FBB924AADFE4006D36D1 /* gtest-typed-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6024AADFE3006D36D1 /* gtest-typed-test.cc */; };
+		ED07FBBB24AADFE4006D36D1 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6124AADFE3006D36D1 /* gtest-all.cc */; };
+		ED07FBBD24AADFE4006D36D1 /* gtest-filepath.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6224AADFE3006D36D1 /* gtest-filepath.cc */; };
+		ED07FBBF24AADFE4006D36D1 /* gtest-matchers.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6324AADFE3006D36D1 /* gtest-matchers.cc */; };
+		ED07FBC124AADFE4006D36D1 /* BUILD.bazel in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA6424AADFE3006D36D1 /* BUILD.bazel */; };
+		ED07FBC224AADFE4006D36D1 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA6624AADFE3006D36D1 /* CMakeLists.txt */; };
+		ED07FBC324AADFE4006D36D1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA6724AADFE3006D36D1 /* LICENSE */; };
+		ED07FBC424AADFE4006D36D1 /* gmock_leak_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA6924AADFE3006D36D1 /* gmock_leak_test.py */; };
+		ED07FBC524AADFE4006D36D1 /* gmock_all_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6A24AADFE3006D36D1 /* gmock_all_test.cc */; };
+		ED07FBC724AADFE4006D36D1 /* gmock_output_test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6B24AADFE3006D36D1 /* gmock_output_test_.cc */; };
+		ED07FBC924AADFE4006D36D1 /* gmock-port_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6C24AADFE3006D36D1 /* gmock-port_test.cc */; };
+		ED07FBCB24AADFE4006D36D1 /* gmock_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6D24AADFE3006D36D1 /* gmock_test.cc */; };
+		ED07FBCD24AADFE4006D36D1 /* gmock-nice-strict_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6E24AADFE3006D36D1 /* gmock-nice-strict_test.cc */; };
+		ED07FBCF24AADFE4006D36D1 /* gmock-spec-builders_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6F24AADFE3006D36D1 /* gmock-spec-builders_test.cc */; };
+		ED07FBD124AADFE4006D36D1 /* gmock_output_test_golden.txt in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA7024AADFE3006D36D1 /* gmock_output_test_golden.txt */; };
+		ED07FBD224AADFE4006D36D1 /* gmock_link2_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7124AADFE3006D36D1 /* gmock_link2_test.cc */; };
+		ED07FBD424AADFE4006D36D1 /* gmock_link_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7224AADFE3006D36D1 /* gmock_link_test.cc */; };
+		ED07FBD624AADFE4006D36D1 /* gmock_leak_test_.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7324AADFE3006D36D1 /* gmock_leak_test_.cc */; };
+		ED07FBD824AADFE4006D36D1 /* gmock-generated-actions_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7424AADFE3006D36D1 /* gmock-generated-actions_test.cc */; };
+		ED07FBDA24AADFE4006D36D1 /* gmock_ex_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7524AADFE3006D36D1 /* gmock_ex_test.cc */; };
+		ED07FBDC24AADFE4006D36D1 /* gmock-pp_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7624AADFE3006D36D1 /* gmock-pp_test.cc */; };
+		ED07FBDE24AADFE4006D36D1 /* gmock-internal-utils_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7724AADFE3006D36D1 /* gmock-internal-utils_test.cc */; };
+		ED07FBE024AADFE4006D36D1 /* gmock-function-mocker_nc_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA7824AADFE3006D36D1 /* gmock-function-mocker_nc_test.py */; };
+		ED07FBE124AADFE4006D36D1 /* gmock_stress_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7924AADFE3006D36D1 /* gmock_stress_test.cc */; };
+		ED07FBE324AADFE4006D36D1 /* gmock-more-actions_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7A24AADFE3006D36D1 /* gmock-more-actions_test.cc */; };
+		ED07FBE524AADFE4006D36D1 /* gmock-generated-matchers_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7B24AADFE3006D36D1 /* gmock-generated-matchers_test.cc */; };
+		ED07FBE724AADFE4006D36D1 /* gmock-pp-string_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7C24AADFE3006D36D1 /* gmock-pp-string_test.cc */; };
+		ED07FBE924AADFE4006D36D1 /* gmock-actions_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7D24AADFE3006D36D1 /* gmock-actions_test.cc */; };
+		ED07FBEB24AADFE4006D36D1 /* gmock-cardinalities_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA7E24AADFE3006D36D1 /* gmock-cardinalities_test.cc */; };
+		ED07FBED24AADFE4006D36D1 /* BUILD.bazel in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA7F24AADFE3006D36D1 /* BUILD.bazel */; };
+		ED07FBEE24AADFE4006D36D1 /* gmock_test_utils.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA8024AADFE3006D36D1 /* gmock_test_utils.py */; };
+		ED07FBEF24AADFE4006D36D1 /* gmock-function-mocker_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA8124AADFE3006D36D1 /* gmock-function-mocker_test.cc */; };
+		ED07FBF124AADFE4006D36D1 /* gmock-matchers_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA8224AADFE3006D36D1 /* gmock-matchers_test.cc */; };
+		ED07FBF324AADFE4006D36D1 /* pump_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA8324AADFE3006D36D1 /* pump_test.py */; };
+		ED07FBF424AADFE4006D36D1 /* gmock-function-mocker_nc.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA8424AADFE3006D36D1 /* gmock-function-mocker_nc.cc */; };
+		ED07FBF624AADFE4006D36D1 /* gmock_output_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA8524AADFE3006D36D1 /* gmock_output_test.py */; };
+		ED07FBF724AADFE4006D36D1 /* gmock_link_test.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA8624AADFE3006D36D1 /* gmock_link_test.h */; };
+		ED07FBF824AADFE4006D36D1 /* gmock_main.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA8824AADFE3006D36D1 /* gmock_main.pc.in */; };
+		ED07FBF924AADFE4006D36D1 /* gmock.pc.in in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA8924AADFE3006D36D1 /* gmock.pc.in */; };
+		ED07FBFA24AADFE4006D36D1 /* gmock-generated-actions.h.pump in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA8C24AADFE3006D36D1 /* gmock-generated-actions.h.pump */; };
+		ED07FBFB24AADFE4006D36D1 /* gmock-matchers.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA8D24AADFE3006D36D1 /* gmock-matchers.h */; };
+		ED07FBFC24AADFE4006D36D1 /* gmock-more-actions.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA8E24AADFE3006D36D1 /* gmock-more-actions.h */; };
+		ED07FBFD24AADFE4006D36D1 /* gmock-generated-actions.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA8F24AADFE3006D36D1 /* gmock-generated-actions.h */; };
+		ED07FBFE24AADFE4006D36D1 /* gmock-port.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9124AADFE3006D36D1 /* gmock-port.h */; };
+		ED07FBFF24AADFE4006D36D1 /* gmock-internal-utils.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9224AADFE3006D36D1 /* gmock-internal-utils.h */; };
+		ED07FC0024AADFE4006D36D1 /* gmock-pp.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9324AADFE3006D36D1 /* gmock-pp.h */; };
+		ED07FC0124AADFE4006D36D1 /* gmock-generated-actions.h.pump in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA9524AADFE3006D36D1 /* gmock-generated-actions.h.pump */; };
+		ED07FC0224AADFE4006D36D1 /* gmock-port.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9624AADFE3006D36D1 /* gmock-port.h */; };
+		ED07FC0324AADFE4006D36D1 /* gmock-matchers.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9724AADFE3006D36D1 /* gmock-matchers.h */; };
+		ED07FC0424AADFE4006D36D1 /* gmock-generated-actions.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9824AADFE3006D36D1 /* gmock-generated-actions.h */; };
+		ED07FC0524AADFE4006D36D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FA9924AADFE3006D36D1 /* README.md */; };
+		ED07FC0624AADFE4006D36D1 /* gmock-function-mocker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9A24AADFE3006D36D1 /* gmock-function-mocker.h */; };
+		ED07FC0724AADFE4006D36D1 /* gmock-more-matchers.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9B24AADFE3006D36D1 /* gmock-more-matchers.h */; };
+		ED07FC0824AADFE4006D36D1 /* gmock-cardinalities.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9C24AADFE3006D36D1 /* gmock-cardinalities.h */; };
+		ED07FC0924AADFE4006D36D1 /* gmock-spec-builders.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9D24AADFE3006D36D1 /* gmock-spec-builders.h */; };
+		ED07FC0A24AADFE4006D36D1 /* gmock-nice-strict.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9E24AADFE3006D36D1 /* gmock-nice-strict.h */; };
+		ED07FC0B24AADFE4006D36D1 /* gmock.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FA9F24AADFE3006D36D1 /* gmock.h */; };
+		ED07FC0C24AADFE4006D36D1 /* gmock-actions.h in Headers */ = {isa = PBXBuildFile; fileRef = ED07FAA024AADFE3006D36D1 /* gmock-actions.h */; };
+		ED07FC0D24AADFE4006D36D1 /* cook_book.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA224AADFE3006D36D1 /* cook_book.md */; };
+		ED07FC0E24AADFE4006D36D1 /* for_dummies.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA324AADFE3006D36D1 /* for_dummies.md */; };
+		ED07FC0F24AADFE4006D36D1 /* pump_manual.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA424AADFE3006D36D1 /* pump_manual.md */; };
+		ED07FC1024AADFE4006D36D1 /* cheat_sheet.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA524AADFE3006D36D1 /* cheat_sheet.md */; };
+		ED07FC1124AADFE4006D36D1 /* gmock_faq.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA624AADFE3006D36D1 /* gmock_faq.md */; };
+		ED07FC1224AADFE4006D36D1 /* community_created_documentation.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA724AADFE3006D36D1 /* community_created_documentation.md */; };
+		ED07FC1324AADFE4006D36D1 /* CONTRIBUTORS in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA824AADFE3006D36D1 /* CONTRIBUTORS */; };
+		ED07FC1424AADFE4006D36D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAA924AADFE3006D36D1 /* README.md */; };
+		ED07FC1524AADFE4006D36D1 /* pump.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAAB24AADFE3006D36D1 /* pump.py */; };
+		ED07FC1624AADFE4006D36D1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAAC24AADFE3006D36D1 /* README.md */; };
+		ED07FC1724AADFE4006D36D1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAAE24AADFE3006D36D1 /* LICENSE */; };
+		ED07FC1824AADFE4006D36D1 /* README in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAAF24AADFE4006D36D1 /* README */; };
+		ED07FC1924AADFE4006D36D1 /* gmock_class.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB124AADFE4006D36D1 /* gmock_class.py */; };
+		ED07FC1A24AADFE4006D36D1 /* keywords.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB224AADFE4006D36D1 /* keywords.py */; };
+		ED07FC1B24AADFE4006D36D1 /* __init__.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB324AADFE4006D36D1 /* __init__.py */; };
+		ED07FC1C24AADFE4006D36D1 /* utils.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB424AADFE4006D36D1 /* utils.py */; };
+		ED07FC1D24AADFE4006D36D1 /* ast.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB524AADFE4006D36D1 /* ast.py */; };
+		ED07FC1E24AADFE4006D36D1 /* tokenize.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB624AADFE4006D36D1 /* tokenize.py */; };
+		ED07FC1F24AADFE4006D36D1 /* gmock_class_test.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB724AADFE4006D36D1 /* gmock_class_test.py */; };
+		ED07FC2024AADFE4006D36D1 /* README.cppclean in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB824AADFE4006D36D1 /* README.cppclean */; };
+		ED07FC2124AADFE4006D36D1 /* gmock_gen.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAB924AADFE4006D36D1 /* gmock_gen.py */; };
+		ED07FC2224AADFE4006D36D1 /* fuse_gmock_files.py in Resources */ = {isa = PBXBuildFile; fileRef = ED07FABA24AADFE4006D36D1 /* fuse_gmock_files.py */; };
+		ED07FC2324AADFE4006D36D1 /* gmock-internal-utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FABC24AADFE4006D36D1 /* gmock-internal-utils.cc */; };
+		ED07FC2524AADFE4006D36D1 /* gmock-cardinalities.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FABD24AADFE4006D36D1 /* gmock-cardinalities.cc */; };
+		ED07FC2724AADFE4006D36D1 /* gmock_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FABE24AADFE4006D36D1 /* gmock_main.cc */; };
+		ED07FC2924AADFE4006D36D1 /* gmock-matchers.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FABF24AADFE4006D36D1 /* gmock-matchers.cc */; };
+		ED07FC2B24AADFE4006D36D1 /* gmock-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FAC024AADFE4006D36D1 /* gmock-all.cc */; };
+		ED07FC2D24AADFE4006D36D1 /* gmock-spec-builders.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FAC124AADFE4006D36D1 /* gmock-spec-builders.cc */; };
+		ED07FC2F24AADFE4006D36D1 /* gmock.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FAC224AADFE4006D36D1 /* gmock.cc */; };
+		ED07FC3124AADFE4006D36D1 /* .travis.yml in Resources */ = {isa = PBXBuildFile; fileRef = ED07FAC324AADFE4006D36D1 /* .travis.yml */; };
+		ED07FC3D24AAE178006D36D1 /* HALL.syx in Resources */ = {isa = PBXBuildFile; fileRef = ED07FC3924AAE178006D36D1 /* HALL.syx */; };
+		ED07FC3E24AAE178006D36D1 /* test1.syx in Resources */ = {isa = PBXBuildFile; fileRef = ED07FC3A24AAE178006D36D1 /* test1.syx */; };
+		ED07FC3F24AAE178006D36D1 /* H9 Algorithms.csv in Resources */ = {isa = PBXBuildFile; fileRef = ED07FC3B24AAE178006D36D1 /* H9 Algorithms.csv */; };
+		ED07FC4024AAE178006D36D1 /* HRMDLO.syx in Resources */ = {isa = PBXBuildFile; fileRef = ED07FC3C24AAE178006D36D1 /* HRMDLO.syx */; };
 		ED373DFE243AAB00004C2CEB /* midi_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = ED373DFC243AAB00004C2CEB /* midi_parser.h */; };
 		ED373DFF243AAB00004C2CEB /* midi_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = ED373DFD243AAB00004C2CEB /* midi_parser.c */; };
 /* End PBXBuildFile section */
@@ -33,9 +299,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		22CF10220EE984600054F513 /* maxmspsdk.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = maxmspsdk.xcconfig; path = ../../maxmspsdk.xcconfig; sourceTree = SOURCE_ROOT; };
-		22CF122A0EE9AAAD0054F513 /* h9_max_external.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = h9_max_external.c; sourceTree = "<group>"; };
-		2FBBEAE508F335360078DB84 /* h9.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = h9.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		22CF122A0EE9AAAD0054F513 /* h9_external.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = h9_external.c; sourceTree = "<group>"; };
+		2FBBEAE508F335360078DB84 /* h9.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = h9.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED07F98924A44193006D36D1 /* h9.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = h9.h; sourceTree = "<group>"; };
 		ED07F98A24A44193006D36D1 /* h9.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = h9.c; sourceTree = "<group>"; };
 		ED07F98D24A90D62006D36D1 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
@@ -44,6 +309,274 @@
 		ED07F99C24A98E73006D36D1 /* h9_modules.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = h9_modules.h; sourceTree = "<group>"; };
 		ED07F99D24AA921F006D36D1 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		ED07F99E24AA921F006D36D1 /* utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		ED07F9A524AADFE2006D36D1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		ED07F9A624AADFE2006D36D1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		ED07F9A824AADFE2006D36D1 /* env-linux.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "env-linux.sh"; sourceTree = "<group>"; };
+		ED07F9A924AADFE2006D36D1 /* env-osx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "env-osx.sh"; sourceTree = "<group>"; };
+		ED07F9AA24AADFE2006D36D1 /* build-platformio.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "build-platformio.sh"; sourceTree = "<group>"; };
+		ED07F9AB24AADFE2006D36D1 /* get-nprocessors.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "get-nprocessors.sh"; sourceTree = "<group>"; };
+		ED07F9AC24AADFE2006D36D1 /* travis.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = travis.sh; sourceTree = "<group>"; };
+		ED07F9AD24AADFE2006D36D1 /* install-osx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-osx.sh"; sourceTree = "<group>"; };
+		ED07F9AE24AADFE2006D36D1 /* install-platformio.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-platformio.sh"; sourceTree = "<group>"; };
+		ED07F9AF24AADFE2006D36D1 /* install-linux.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-linux.sh"; sourceTree = "<group>"; };
+		ED07F9B024AADFE2006D36D1 /* build-linux-bazel.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "build-linux-bazel.sh"; sourceTree = "<group>"; };
+		ED07F9B124AADFE2006D36D1 /* log-config.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "log-config.sh"; sourceTree = "<group>"; };
+		ED07F9B224AADFE2006D36D1 /* WORKSPACE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WORKSPACE; sourceTree = "<group>"; };
+		ED07F9B324AADFE2006D36D1 /* platformio.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = platformio.ini; sourceTree = "<group>"; };
+		ED07F9B424AADFE2006D36D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ED07F9B524AADFE2006D36D1 /* appveyor.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = appveyor.yml; sourceTree = "<group>"; };
+		ED07F9B624AADFE2006D36D1 /* library.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = library.json; sourceTree = "<group>"; };
+		ED07F9B724AADFE2006D36D1 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		ED07F9B824AADFE2006D36D1 /* CONTRIBUTING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+		ED07F9B924AADFE2006D36D1 /* .clang-format */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ".clang-format"; sourceTree = "<group>"; };
+		ED07F9BB24AADFE2006D36D1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		ED07F9BC24AADFE2006D36D1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		ED07F9BE24AADFE2006D36D1 /* googletest-message-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-message-test.cc"; sourceTree = "<group>"; };
+		ED07F9BF24AADFE2006D36D1 /* googletest-output-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-output-test_.cc"; sourceTree = "<group>"; };
+		ED07F9C024AADFE2006D36D1 /* gtest_pred_impl_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_pred_impl_unittest.cc; sourceTree = "<group>"; };
+		ED07F9C124AADFE2006D36D1 /* gtest_skip_in_environment_setup_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_skip_in_environment_setup_test.cc; sourceTree = "<group>"; };
+		ED07F9C224AADFE2006D36D1 /* gtest_xml_output_unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_xml_output_unittest.py; sourceTree = "<group>"; };
+		ED07F9C324AADFE2006D36D1 /* googletest-param-test-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "googletest-param-test-test.h"; sourceTree = "<group>"; };
+		ED07F9C424AADFE2006D36D1 /* googletest-test-part-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-test-part-test.cc"; sourceTree = "<group>"; };
+		ED07F9C524AADFE2006D36D1 /* gtest_assert_by_exception_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_assert_by_exception_test.cc; sourceTree = "<group>"; };
+		ED07F9C624AADFE2006D36D1 /* gtest_testbridge_test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_testbridge_test_.cc; sourceTree = "<group>"; };
+		ED07F9C724AADFE2006D36D1 /* gtest_main_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_main_unittest.cc; sourceTree = "<group>"; };
+		ED07F9C824AADFE2006D36D1 /* googletest-listener-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-listener-test.cc"; sourceTree = "<group>"; };
+		ED07F9C924AADFE2006D36D1 /* gtest_environment_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_environment_test.cc; sourceTree = "<group>"; };
+		ED07F9CA24AADFE2006D36D1 /* gtest_xml_output_unittest_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_xml_output_unittest_.cc; sourceTree = "<group>"; };
+		ED07F9CB24AADFE2006D36D1 /* googletest-output-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-output-test.py"; sourceTree = "<group>"; };
+		ED07F9CC24AADFE2006D36D1 /* googletest-throw-on-failure-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-throw-on-failure-test_.cc"; sourceTree = "<group>"; };
+		ED07F9CD24AADFE2006D36D1 /* googletest-filter-unittest_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-filter-unittest_.cc"; sourceTree = "<group>"; };
+		ED07F9CE24AADFE2006D36D1 /* googletest-death-test-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-death-test-test.cc"; sourceTree = "<group>"; };
+		ED07F9CF24AADFE2006D36D1 /* googletest-failfast-unittest_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-failfast-unittest_.cc"; sourceTree = "<group>"; };
+		ED07F9D024AADFE2006D36D1 /* gtest_stress_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_stress_test.cc; sourceTree = "<group>"; };
+		ED07F9D124AADFE2006D36D1 /* googletest-uninitialized-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-uninitialized-test_.cc"; sourceTree = "<group>"; };
+		ED07F9D224AADFE2006D36D1 /* production.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = production.cc; sourceTree = "<group>"; };
+		ED07F9D324AADFE2006D36D1 /* googletest-param-test-invalid-name1-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-param-test-invalid-name1-test.py"; sourceTree = "<group>"; };
+		ED07F9D424AADFE2006D36D1 /* gtest_xml_outfile1_test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_xml_outfile1_test_.cc; sourceTree = "<group>"; };
+		ED07F9D524AADFE2006D36D1 /* gtest_help_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_help_test.py; sourceTree = "<group>"; };
+		ED07F9D624AADFE2006D36D1 /* gtest_prod_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_prod_test.cc; sourceTree = "<group>"; };
+		ED07F9D724AADFE2006D36D1 /* googletest-env-var-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-env-var-test_.cc"; sourceTree = "<group>"; };
+		ED07F9D824AADFE2006D36D1 /* gtest-unittest-api_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-unittest-api_test.cc"; sourceTree = "<group>"; };
+		ED07F9D924AADFE2006D36D1 /* gtest_test_utils.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_test_utils.py; sourceTree = "<group>"; };
+		ED07F9DA24AADFE2006D36D1 /* gtest_repeat_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_repeat_test.cc; sourceTree = "<group>"; };
+		ED07F9DB24AADFE2006D36D1 /* googletest-setuptestsuite-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-setuptestsuite-test_.cc"; sourceTree = "<group>"; };
+		ED07F9DC24AADFE2006D36D1 /* gtest_json_test_utils.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_json_test_utils.py; sourceTree = "<group>"; };
+		ED07F9DD24AADFE2006D36D1 /* googletest-param-test-invalid-name2-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-param-test-invalid-name2-test.py"; sourceTree = "<group>"; };
+		ED07F9DE24AADFE2006D36D1 /* gtest_all_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_all_test.cc; sourceTree = "<group>"; };
+		ED07F9DF24AADFE2006D36D1 /* googletest-json-output-unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-json-output-unittest.py"; sourceTree = "<group>"; };
+		ED07F9E024AADFE2006D36D1 /* googletest-break-on-failure-unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-break-on-failure-unittest.py"; sourceTree = "<group>"; };
+		ED07F9E124AADFE2006D36D1 /* googletest-param-test-invalid-name1-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-param-test-invalid-name1-test_.cc"; sourceTree = "<group>"; };
+		ED07F9E224AADFE2006D36D1 /* googletest-catch-exceptions-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-catch-exceptions-test_.cc"; sourceTree = "<group>"; };
+		ED07F9E324AADFE2006D36D1 /* googletest-break-on-failure-unittest_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-break-on-failure-unittest_.cc"; sourceTree = "<group>"; };
+		ED07F9E424AADFE2006D36D1 /* googletest-setuptestsuite-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-setuptestsuite-test.py"; sourceTree = "<group>"; };
+		ED07F9E524AADFE2006D36D1 /* googletest-shuffle-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-shuffle-test_.cc"; sourceTree = "<group>"; };
+		ED07F9E624AADFE2006D36D1 /* gtest_premature_exit_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_premature_exit_test.cc; sourceTree = "<group>"; };
+		ED07F9E724AADFE2006D36D1 /* googletest-list-tests-unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-list-tests-unittest.py"; sourceTree = "<group>"; };
+		ED07F9E824AADFE2006D36D1 /* gtest_xml_outfile2_test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_xml_outfile2_test_.cc; sourceTree = "<group>"; };
+		ED07F9E924AADFE2006D36D1 /* googletest-env-var-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-env-var-test.py"; sourceTree = "<group>"; };
+		ED07F9EA24AADFE2006D36D1 /* gtest_test_macro_stack_footprint_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_test_macro_stack_footprint_test.cc; sourceTree = "<group>"; };
+		ED07F9EB24AADFE2006D36D1 /* googletest-list-tests-unittest_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-list-tests-unittest_.cc"; sourceTree = "<group>"; };
+		ED07F9EC24AADFE2006D36D1 /* googletest-port-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-port-test.cc"; sourceTree = "<group>"; };
+		ED07F9ED24AADFE2006D36D1 /* gtest_list_output_unittest_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_list_output_unittest_.cc; sourceTree = "<group>"; };
+		ED07F9EE24AADFE2006D36D1 /* gtest_skip_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_skip_test.cc; sourceTree = "<group>"; };
+		ED07F9EF24AADFE2006D36D1 /* gtest_no_test_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_no_test_unittest.cc; sourceTree = "<group>"; };
+		ED07F9F024AADFE2006D36D1 /* gtest_xml_outfiles_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_xml_outfiles_test.py; sourceTree = "<group>"; };
+		ED07F9F124AADFE2006D36D1 /* gtest-typed-test_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-typed-test_test.h"; sourceTree = "<group>"; };
+		ED07F9F224AADFE2006D36D1 /* gtest_help_test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_help_test_.cc; sourceTree = "<group>"; };
+		ED07F9F324AADFE2006D36D1 /* googletest-output-test-golden-lin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "googletest-output-test-golden-lin.txt"; sourceTree = "<group>"; };
+		ED07F9F424AADFE2006D36D1 /* gtest_list_output_unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_list_output_unittest.py; sourceTree = "<group>"; };
+		ED07F9F524AADFE2006D36D1 /* googletest-filepath-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-filepath-test.cc"; sourceTree = "<group>"; };
+		ED07F9F624AADFE2006D36D1 /* googletest-param-test-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-param-test-test.cc"; sourceTree = "<group>"; };
+		ED07F9F724AADFE2006D36D1 /* googletest-printers-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-printers-test.cc"; sourceTree = "<group>"; };
+		ED07F9F824AADFE2006D36D1 /* BUILD.bazel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BUILD.bazel; sourceTree = "<group>"; };
+		ED07F9F924AADFE2006D36D1 /* gtest_xml_test_utils.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_xml_test_utils.py; sourceTree = "<group>"; };
+		ED07F9FA24AADFE2006D36D1 /* googletest-param-test2-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-param-test2-test.cc"; sourceTree = "<group>"; };
+		ED07F9FB24AADFE2006D36D1 /* production.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = production.h; sourceTree = "<group>"; };
+		ED07F9FC24AADFE2006D36D1 /* googletest-color-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-color-test.py"; sourceTree = "<group>"; };
+		ED07F9FD24AADFE2006D36D1 /* googletest-filter-unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-filter-unittest.py"; sourceTree = "<group>"; };
+		ED07F9FE24AADFE2006D36D1 /* googletest-param-test-invalid-name2-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-param-test-invalid-name2-test_.cc"; sourceTree = "<group>"; };
+		ED07F9FF24AADFE2006D36D1 /* gtest_skip_check_output_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_skip_check_output_test.py; sourceTree = "<group>"; };
+		ED07FA0024AADFE2006D36D1 /* gtest_testbridge_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_testbridge_test.py; sourceTree = "<group>"; };
+		ED07FA0124AADFE2006D36D1 /* gtest_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_unittest.cc; sourceTree = "<group>"; };
+		ED07FA0224AADFE2006D36D1 /* googletest-throw-on-failure-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-throw-on-failure-test.py"; sourceTree = "<group>"; };
+		ED07FA0324AADFE2006D36D1 /* googletest-shuffle-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-shuffle-test.py"; sourceTree = "<group>"; };
+		ED07FA0424AADFE2006D36D1 /* gtest_sole_header_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_sole_header_test.cc; sourceTree = "<group>"; };
+		ED07FA0524AADFE2006D36D1 /* googletest-uninitialized-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-uninitialized-test.py"; sourceTree = "<group>"; };
+		ED07FA0624AADFE2006D36D1 /* googletest-color-test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-color-test_.cc"; sourceTree = "<group>"; };
+		ED07FA0724AADFE2006D36D1 /* googletest-catch-exceptions-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-catch-exceptions-test.py"; sourceTree = "<group>"; };
+		ED07FA0824AADFE2006D36D1 /* googletest-death-test_ex_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-death-test_ex_test.cc"; sourceTree = "<group>"; };
+		ED07FA0924AADFE2006D36D1 /* googletest-json-outfiles-test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-json-outfiles-test.py"; sourceTree = "<group>"; };
+		ED07FA0A24AADFE2006D36D1 /* gtest_skip_environment_check_output_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gtest_skip_environment_check_output_test.py; sourceTree = "<group>"; };
+		ED07FA0B24AADFE2006D36D1 /* gtest-typed-test2_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-typed-test2_test.cc"; sourceTree = "<group>"; };
+		ED07FA0C24AADFE2006D36D1 /* gtest-typed-test_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-typed-test_test.cc"; sourceTree = "<group>"; };
+		ED07FA0D24AADFE2006D36D1 /* googletest-failfast-unittest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "googletest-failfast-unittest.py"; sourceTree = "<group>"; };
+		ED07FA0E24AADFE2006D36D1 /* googletest-options-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "googletest-options-test.cc"; sourceTree = "<group>"; };
+		ED07FA0F24AADFE2006D36D1 /* gtest_throw_on_failure_ex_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_throw_on_failure_ex_test.cc; sourceTree = "<group>"; };
+		ED07FA1124AADFE2006D36D1 /* internal_utils.cmake */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = internal_utils.cmake; sourceTree = "<group>"; };
+		ED07FA1224AADFE2006D36D1 /* gtest.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gtest.pc.in; sourceTree = "<group>"; };
+		ED07FA1324AADFE2006D36D1 /* gtest_main.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gtest_main.pc.in; sourceTree = "<group>"; };
+		ED07FA1424AADFE2006D36D1 /* Config.cmake.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Config.cmake.in; sourceTree = "<group>"; };
+		ED07FA1524AADFE2006D36D1 /* libgtest.la.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libgtest.la.in; sourceTree = "<group>"; };
+		ED07FA1824AADFE2006D36D1 /* gtest-matchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-matchers.h"; sourceTree = "<group>"; };
+		ED07FA1924AADFE2006D36D1 /* gtest-death-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-death-test.h"; sourceTree = "<group>"; };
+		ED07FA1A24AADFE2006D36D1 /* gtest-spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-spi.h"; sourceTree = "<group>"; };
+		ED07FA1C24AADFE2006D36D1 /* gtest-string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-string.h"; sourceTree = "<group>"; };
+		ED07FA1D24AADFE3006D36D1 /* gtest-death-test-internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-death-test-internal.h"; sourceTree = "<group>"; };
+		ED07FA1E24AADFE3006D36D1 /* gtest-port.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-port.h"; sourceTree = "<group>"; };
+		ED07FA1F24AADFE3006D36D1 /* gtest-port-arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-port-arch.h"; sourceTree = "<group>"; };
+		ED07FA2024AADFE3006D36D1 /* gtest-internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-internal.h"; sourceTree = "<group>"; };
+		ED07FA2124AADFE3006D36D1 /* gtest-param-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-util.h"; sourceTree = "<group>"; };
+		ED07FA2224AADFE3006D36D1 /* gtest-type-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-type-util.h"; sourceTree = "<group>"; };
+		ED07FA2324AADFE3006D36D1 /* gtest-filepath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-filepath.h"; sourceTree = "<group>"; };
+		ED07FA2524AADFE3006D36D1 /* gtest-port.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-port.h"; sourceTree = "<group>"; };
+		ED07FA2624AADFE3006D36D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ED07FA2724AADFE3006D36D1 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
+		ED07FA2824AADFE3006D36D1 /* gtest-printers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-printers.h"; sourceTree = "<group>"; };
+		ED07FA2924AADFE3006D36D1 /* gtest-message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-message.h"; sourceTree = "<group>"; };
+		ED07FA2A24AADFE3006D36D1 /* gtest-param-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-param-test.h"; sourceTree = "<group>"; };
+		ED07FA2B24AADFE3006D36D1 /* gtest-typed-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-typed-test.h"; sourceTree = "<group>"; };
+		ED07FA2C24AADFE3006D36D1 /* gtest_pred_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest_pred_impl.h; sourceTree = "<group>"; };
+		ED07FA2D24AADFE3006D36D1 /* gtest_prod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest_prod.h; sourceTree = "<group>"; };
+		ED07FA2E24AADFE3006D36D1 /* gtest-test-part.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-test-part.h"; sourceTree = "<group>"; };
+		ED07FA2F24AADFE3006D36D1 /* gtest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gtest.h; sourceTree = "<group>"; };
+		ED07FA3024AADFE3006D36D1 /* gtest-printers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-printers.h"; sourceTree = "<group>"; };
+		ED07FA3224AADFE3006D36D1 /* samples.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = samples.md; sourceTree = "<group>"; };
+		ED07FA3324AADFE3006D36D1 /* faq.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = faq.md; sourceTree = "<group>"; };
+		ED07FA3424AADFE3006D36D1 /* primer.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = primer.md; sourceTree = "<group>"; };
+		ED07FA3524AADFE3006D36D1 /* advanced.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = advanced.md; sourceTree = "<group>"; };
+		ED07FA3624AADFE3006D36D1 /* pkgconfig.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = pkgconfig.md; sourceTree = "<group>"; };
+		ED07FA3724AADFE3006D36D1 /* CONTRIBUTORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CONTRIBUTORS; sourceTree = "<group>"; };
+		ED07FA3824AADFE3006D36D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ED07FA3A24AADFE3006D36D1 /* sample6_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample6_unittest.cc; sourceTree = "<group>"; };
+		ED07FA3B24AADFE3006D36D1 /* sample3_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample3_unittest.cc; sourceTree = "<group>"; };
+		ED07FA3C24AADFE3006D36D1 /* sample4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample4.h; sourceTree = "<group>"; };
+		ED07FA3D24AADFE3006D36D1 /* sample9_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample9_unittest.cc; sourceTree = "<group>"; };
+		ED07FA3E24AADFE3006D36D1 /* sample10_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample10_unittest.cc; sourceTree = "<group>"; };
+		ED07FA3F24AADFE3006D36D1 /* sample5_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample5_unittest.cc; sourceTree = "<group>"; };
+		ED07FA4024AADFE3006D36D1 /* sample2.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample2.cc; sourceTree = "<group>"; };
+		ED07FA4124AADFE3006D36D1 /* prime_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prime_tables.h; sourceTree = "<group>"; };
+		ED07FA4224AADFE3006D36D1 /* sample3-inl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sample3-inl.h"; sourceTree = "<group>"; };
+		ED07FA4324AADFE3006D36D1 /* sample1.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample1.cc; sourceTree = "<group>"; };
+		ED07FA4424AADFE3006D36D1 /* sample2_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample2_unittest.cc; sourceTree = "<group>"; };
+		ED07FA4524AADFE3006D36D1 /* sample7_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample7_unittest.cc; sourceTree = "<group>"; };
+		ED07FA4624AADFE3006D36D1 /* sample2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample2.h; sourceTree = "<group>"; };
+		ED07FA4724AADFE3006D36D1 /* sample4.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample4.cc; sourceTree = "<group>"; };
+		ED07FA4824AADFE3006D36D1 /* sample4_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample4_unittest.cc; sourceTree = "<group>"; };
+		ED07FA4924AADFE3006D36D1 /* sample1_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample1_unittest.cc; sourceTree = "<group>"; };
+		ED07FA4A24AADFE3006D36D1 /* sample1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample1.h; sourceTree = "<group>"; };
+		ED07FA4B24AADFE3006D36D1 /* sample8_unittest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sample8_unittest.cc; sourceTree = "<group>"; };
+		ED07FA4D24AADFE3006D36D1 /* release_docs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = release_docs.py; sourceTree = "<group>"; };
+		ED07FA4F24AADFE3006D36D1 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		ED07FA5024AADFE3006D36D1 /* upload.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = upload.py; sourceTree = "<group>"; };
+		ED07FA5124AADFE3006D36D1 /* run_with_path.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = run_with_path.py; sourceTree = "<group>"; };
+		ED07FA5224AADFE3006D36D1 /* fuse_gtest_files.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = fuse_gtest_files.py; sourceTree = "<group>"; };
+		ED07FA5324AADFE3006D36D1 /* gtest-config.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "gtest-config.in"; sourceTree = "<group>"; };
+		ED07FA5424AADFE3006D36D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ED07FA5524AADFE3006D36D1 /* gen_gtest_pred_impl.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gen_gtest_pred_impl.py; sourceTree = "<group>"; };
+		ED07FA5624AADFE3006D36D1 /* common.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = common.py; sourceTree = "<group>"; };
+		ED07FA5724AADFE3006D36D1 /* upload_gtest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = upload_gtest.py; sourceTree = "<group>"; };
+		ED07FA5924AADFE3006D36D1 /* gtest-test-part.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-test-part.cc"; sourceTree = "<group>"; };
+		ED07FA5A24AADFE3006D36D1 /* gtest.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest.cc; sourceTree = "<group>"; };
+		ED07FA5B24AADFE3006D36D1 /* gtest_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gtest_main.cc; sourceTree = "<group>"; };
+		ED07FA5C24AADFE3006D36D1 /* gtest-internal-inl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gtest-internal-inl.h"; sourceTree = "<group>"; };
+		ED07FA5D24AADFE3006D36D1 /* gtest-death-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-death-test.cc"; sourceTree = "<group>"; };
+		ED07FA5E24AADFE3006D36D1 /* gtest-port.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-port.cc"; sourceTree = "<group>"; };
+		ED07FA5F24AADFE3006D36D1 /* gtest-printers.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-printers.cc"; sourceTree = "<group>"; };
+		ED07FA6024AADFE3006D36D1 /* gtest-typed-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-typed-test.cc"; sourceTree = "<group>"; };
+		ED07FA6124AADFE3006D36D1 /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-all.cc"; sourceTree = "<group>"; };
+		ED07FA6224AADFE3006D36D1 /* gtest-filepath.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-filepath.cc"; sourceTree = "<group>"; };
+		ED07FA6324AADFE3006D36D1 /* gtest-matchers.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gtest-matchers.cc"; sourceTree = "<group>"; };
+		ED07FA6424AADFE3006D36D1 /* BUILD.bazel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BUILD.bazel; sourceTree = "<group>"; };
+		ED07FA6624AADFE3006D36D1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		ED07FA6724AADFE3006D36D1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		ED07FA6924AADFE3006D36D1 /* gmock_leak_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gmock_leak_test.py; sourceTree = "<group>"; };
+		ED07FA6A24AADFE3006D36D1 /* gmock_all_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_all_test.cc; sourceTree = "<group>"; };
+		ED07FA6B24AADFE3006D36D1 /* gmock_output_test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_output_test_.cc; sourceTree = "<group>"; };
+		ED07FA6C24AADFE3006D36D1 /* gmock-port_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-port_test.cc"; sourceTree = "<group>"; };
+		ED07FA6D24AADFE3006D36D1 /* gmock_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_test.cc; sourceTree = "<group>"; };
+		ED07FA6E24AADFE3006D36D1 /* gmock-nice-strict_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-nice-strict_test.cc"; sourceTree = "<group>"; };
+		ED07FA6F24AADFE3006D36D1 /* gmock-spec-builders_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-spec-builders_test.cc"; sourceTree = "<group>"; };
+		ED07FA7024AADFE3006D36D1 /* gmock_output_test_golden.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gmock_output_test_golden.txt; sourceTree = "<group>"; };
+		ED07FA7124AADFE3006D36D1 /* gmock_link2_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_link2_test.cc; sourceTree = "<group>"; };
+		ED07FA7224AADFE3006D36D1 /* gmock_link_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_link_test.cc; sourceTree = "<group>"; };
+		ED07FA7324AADFE3006D36D1 /* gmock_leak_test_.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_leak_test_.cc; sourceTree = "<group>"; };
+		ED07FA7424AADFE3006D36D1 /* gmock-generated-actions_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-generated-actions_test.cc"; sourceTree = "<group>"; };
+		ED07FA7524AADFE3006D36D1 /* gmock_ex_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_ex_test.cc; sourceTree = "<group>"; };
+		ED07FA7624AADFE3006D36D1 /* gmock-pp_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-pp_test.cc"; sourceTree = "<group>"; };
+		ED07FA7724AADFE3006D36D1 /* gmock-internal-utils_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-internal-utils_test.cc"; sourceTree = "<group>"; };
+		ED07FA7824AADFE3006D36D1 /* gmock-function-mocker_nc_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "gmock-function-mocker_nc_test.py"; sourceTree = "<group>"; };
+		ED07FA7924AADFE3006D36D1 /* gmock_stress_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_stress_test.cc; sourceTree = "<group>"; };
+		ED07FA7A24AADFE3006D36D1 /* gmock-more-actions_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-more-actions_test.cc"; sourceTree = "<group>"; };
+		ED07FA7B24AADFE3006D36D1 /* gmock-generated-matchers_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-generated-matchers_test.cc"; sourceTree = "<group>"; };
+		ED07FA7C24AADFE3006D36D1 /* gmock-pp-string_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-pp-string_test.cc"; sourceTree = "<group>"; };
+		ED07FA7D24AADFE3006D36D1 /* gmock-actions_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-actions_test.cc"; sourceTree = "<group>"; };
+		ED07FA7E24AADFE3006D36D1 /* gmock-cardinalities_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-cardinalities_test.cc"; sourceTree = "<group>"; };
+		ED07FA7F24AADFE3006D36D1 /* BUILD.bazel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BUILD.bazel; sourceTree = "<group>"; };
+		ED07FA8024AADFE3006D36D1 /* gmock_test_utils.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gmock_test_utils.py; sourceTree = "<group>"; };
+		ED07FA8124AADFE3006D36D1 /* gmock-function-mocker_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-function-mocker_test.cc"; sourceTree = "<group>"; };
+		ED07FA8224AADFE3006D36D1 /* gmock-matchers_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-matchers_test.cc"; sourceTree = "<group>"; };
+		ED07FA8324AADFE3006D36D1 /* pump_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pump_test.py; sourceTree = "<group>"; };
+		ED07FA8424AADFE3006D36D1 /* gmock-function-mocker_nc.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-function-mocker_nc.cc"; sourceTree = "<group>"; };
+		ED07FA8524AADFE3006D36D1 /* gmock_output_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gmock_output_test.py; sourceTree = "<group>"; };
+		ED07FA8624AADFE3006D36D1 /* gmock_link_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmock_link_test.h; sourceTree = "<group>"; };
+		ED07FA8824AADFE3006D36D1 /* gmock_main.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gmock_main.pc.in; sourceTree = "<group>"; };
+		ED07FA8924AADFE3006D36D1 /* gmock.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gmock.pc.in; sourceTree = "<group>"; };
+		ED07FA8C24AADFE3006D36D1 /* gmock-generated-actions.h.pump */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "gmock-generated-actions.h.pump"; sourceTree = "<group>"; };
+		ED07FA8D24AADFE3006D36D1 /* gmock-matchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-matchers.h"; sourceTree = "<group>"; };
+		ED07FA8E24AADFE3006D36D1 /* gmock-more-actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-more-actions.h"; sourceTree = "<group>"; };
+		ED07FA8F24AADFE3006D36D1 /* gmock-generated-actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-generated-actions.h"; sourceTree = "<group>"; };
+		ED07FA9124AADFE3006D36D1 /* gmock-port.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-port.h"; sourceTree = "<group>"; };
+		ED07FA9224AADFE3006D36D1 /* gmock-internal-utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-internal-utils.h"; sourceTree = "<group>"; };
+		ED07FA9324AADFE3006D36D1 /* gmock-pp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-pp.h"; sourceTree = "<group>"; };
+		ED07FA9524AADFE3006D36D1 /* gmock-generated-actions.h.pump */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "gmock-generated-actions.h.pump"; sourceTree = "<group>"; };
+		ED07FA9624AADFE3006D36D1 /* gmock-port.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-port.h"; sourceTree = "<group>"; };
+		ED07FA9724AADFE3006D36D1 /* gmock-matchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-matchers.h"; sourceTree = "<group>"; };
+		ED07FA9824AADFE3006D36D1 /* gmock-generated-actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-generated-actions.h"; sourceTree = "<group>"; };
+		ED07FA9924AADFE3006D36D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ED07FA9A24AADFE3006D36D1 /* gmock-function-mocker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-function-mocker.h"; sourceTree = "<group>"; };
+		ED07FA9B24AADFE3006D36D1 /* gmock-more-matchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-more-matchers.h"; sourceTree = "<group>"; };
+		ED07FA9C24AADFE3006D36D1 /* gmock-cardinalities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-cardinalities.h"; sourceTree = "<group>"; };
+		ED07FA9D24AADFE3006D36D1 /* gmock-spec-builders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-spec-builders.h"; sourceTree = "<group>"; };
+		ED07FA9E24AADFE3006D36D1 /* gmock-nice-strict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-nice-strict.h"; sourceTree = "<group>"; };
+		ED07FA9F24AADFE3006D36D1 /* gmock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmock.h; sourceTree = "<group>"; };
+		ED07FAA024AADFE3006D36D1 /* gmock-actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "gmock-actions.h"; sourceTree = "<group>"; };
+		ED07FAA224AADFE3006D36D1 /* cook_book.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = cook_book.md; sourceTree = "<group>"; };
+		ED07FAA324AADFE3006D36D1 /* for_dummies.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = for_dummies.md; sourceTree = "<group>"; };
+		ED07FAA424AADFE3006D36D1 /* pump_manual.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = pump_manual.md; sourceTree = "<group>"; };
+		ED07FAA524AADFE3006D36D1 /* cheat_sheet.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = cheat_sheet.md; sourceTree = "<group>"; };
+		ED07FAA624AADFE3006D36D1 /* gmock_faq.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = gmock_faq.md; sourceTree = "<group>"; };
+		ED07FAA724AADFE3006D36D1 /* community_created_documentation.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = community_created_documentation.md; sourceTree = "<group>"; };
+		ED07FAA824AADFE3006D36D1 /* CONTRIBUTORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CONTRIBUTORS; sourceTree = "<group>"; };
+		ED07FAA924AADFE3006D36D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ED07FAAB24AADFE3006D36D1 /* pump.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = pump.py; sourceTree = "<group>"; };
+		ED07FAAC24AADFE3006D36D1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ED07FAAE24AADFE3006D36D1 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		ED07FAAF24AADFE4006D36D1 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		ED07FAB124AADFE4006D36D1 /* gmock_class.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gmock_class.py; sourceTree = "<group>"; };
+		ED07FAB224AADFE4006D36D1 /* keywords.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = keywords.py; sourceTree = "<group>"; };
+		ED07FAB324AADFE4006D36D1 /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		ED07FAB424AADFE4006D36D1 /* utils.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = utils.py; sourceTree = "<group>"; };
+		ED07FAB524AADFE4006D36D1 /* ast.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = ast.py; sourceTree = "<group>"; };
+		ED07FAB624AADFE4006D36D1 /* tokenize.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = tokenize.py; sourceTree = "<group>"; };
+		ED07FAB724AADFE4006D36D1 /* gmock_class_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gmock_class_test.py; sourceTree = "<group>"; };
+		ED07FAB824AADFE4006D36D1 /* README.cppclean */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.cppclean; sourceTree = "<group>"; };
+		ED07FAB924AADFE4006D36D1 /* gmock_gen.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gmock_gen.py; sourceTree = "<group>"; };
+		ED07FABA24AADFE4006D36D1 /* fuse_gmock_files.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = fuse_gmock_files.py; sourceTree = "<group>"; };
+		ED07FABC24AADFE4006D36D1 /* gmock-internal-utils.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-internal-utils.cc"; sourceTree = "<group>"; };
+		ED07FABD24AADFE4006D36D1 /* gmock-cardinalities.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-cardinalities.cc"; sourceTree = "<group>"; };
+		ED07FABE24AADFE4006D36D1 /* gmock_main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_main.cc; sourceTree = "<group>"; };
+		ED07FABF24AADFE4006D36D1 /* gmock-matchers.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-matchers.cc"; sourceTree = "<group>"; };
+		ED07FAC024AADFE4006D36D1 /* gmock-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-all.cc"; sourceTree = "<group>"; };
+		ED07FAC124AADFE4006D36D1 /* gmock-spec-builders.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "gmock-spec-builders.cc"; sourceTree = "<group>"; };
+		ED07FAC224AADFE4006D36D1 /* gmock.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock.cc; sourceTree = "<group>"; };
+		ED07FAC324AADFE4006D36D1 /* .travis.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
+		ED07FC3524AAE0AB006D36D1 /* maxmspsdk.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = maxmspsdk.xcconfig; sourceTree = "<group>"; };
+		ED07FC3724AAE15A006D36D1 /* itohex.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = itohex.c; sourceTree = "<group>"; };
+		ED07FC3924AAE178006D36D1 /* HALL.syx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HALL.syx; sourceTree = "<group>"; };
+		ED07FC3A24AAE178006D36D1 /* test1.syx */ = {isa = PBXFileReference; lastKnownFileType = file; path = test1.syx; sourceTree = "<group>"; };
+		ED07FC3B24AAE178006D36D1 /* H9 Algorithms.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "H9 Algorithms.csv"; sourceTree = "<group>"; };
+		ED07FC3C24AAE178006D36D1 /* HRMDLO.syx */ = {isa = PBXFileReference; lastKnownFileType = file; path = HRMDLO.syx; sourceTree = "<group>"; };
 		ED373DFC243AAB00004C2CEB /* midi_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = midi_parser.h; sourceTree = "<group>"; };
 		ED373DFD243AAB00004C2CEB /* midi_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = midi_parser.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,19 +602,13 @@
 		089C166AFE841209C02AAC07 /* iterator */ = {
 			isa = PBXGroup;
 			children = (
-				ED07F99D24AA921F006D36D1 /* utils.h */,
-				ED07F99E24AA921F006D36D1 /* utils.c */,
-				ED07F99C24A98E73006D36D1 /* h9_modules.h */,
-				ED07F98D24A90D62006D36D1 /* main.h */,
-				ED07F98E24A90D62006D36D1 /* main.c */,
-				ED07F98924A44193006D36D1 /* h9.h */,
-				ED07F98A24A44193006D36D1 /* h9.c */,
-				ED373DFC243AAB00004C2CEB /* midi_parser.h */,
-				ED373DFD243AAB00004C2CEB /* midi_parser.c */,
-				22CF10220EE984600054F513 /* maxmspsdk.xcconfig */,
-				22CF122A0EE9AAAD0054F513 /* h9_max_external.c */,
+				ED07FC3224AAE050006D36D1 /* examples */,
 				ED07F99524A91CAC006D36D1 /* h9_test */,
+				ED07F9A224AADFE2006D36D1 /* lib */,
 				19C28FB4FE9D528D11CA2CBB /* Products */,
+				ED07FC3824AAE178006D36D1 /* test_data */,
+				ED07F9A324AADFE2006D36D1 /* third_party */,
+				ED07FC3624AAE102006D36D1 /* utils */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -89,7 +616,7 @@
 		19C28FB4FE9D528D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2FBBEAE508F335360078DB84 /* h9.mxo */,
+				2FBBEAE508F335360078DB84 /* h9.bundle */,
 				ED07F99424A91CAC006D36D1 /* h9_test */,
 			);
 			name = Products;
@@ -102,6 +629,543 @@
 			path = h9_test;
 			sourceTree = "<group>";
 		};
+		ED07F9A224AADFE2006D36D1 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				ED07F99D24AA921F006D36D1 /* utils.h */,
+				ED07F99E24AA921F006D36D1 /* utils.c */,
+				ED07F99C24A98E73006D36D1 /* h9_modules.h */,
+				ED07F98924A44193006D36D1 /* h9.h */,
+				ED07F98A24A44193006D36D1 /* h9.c */,
+				ED373DFC243AAB00004C2CEB /* midi_parser.h */,
+				ED373DFD243AAB00004C2CEB /* midi_parser.c */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		ED07F9A324AADFE2006D36D1 /* third_party */ = {
+			isa = PBXGroup;
+			children = (
+				ED07F9A424AADFE2006D36D1 /* googletest */,
+			);
+			path = third_party;
+			sourceTree = "<group>";
+		};
+		ED07F9A424AADFE2006D36D1 /* googletest */ = {
+			isa = PBXGroup;
+			children = (
+				ED07F9A524AADFE2006D36D1 /* CMakeLists.txt */,
+				ED07F9A624AADFE2006D36D1 /* LICENSE */,
+				ED07F9A724AADFE2006D36D1 /* ci */,
+				ED07F9B224AADFE2006D36D1 /* WORKSPACE */,
+				ED07F9B324AADFE2006D36D1 /* platformio.ini */,
+				ED07F9B424AADFE2006D36D1 /* README.md */,
+				ED07F9B524AADFE2006D36D1 /* appveyor.yml */,
+				ED07F9B624AADFE2006D36D1 /* library.json */,
+				ED07F9B724AADFE2006D36D1 /* .gitignore */,
+				ED07F9B824AADFE2006D36D1 /* CONTRIBUTING.md */,
+				ED07F9B924AADFE2006D36D1 /* .clang-format */,
+				ED07F9BA24AADFE2006D36D1 /* googletest */,
+				ED07FA6424AADFE3006D36D1 /* BUILD.bazel */,
+				ED07FA6524AADFE3006D36D1 /* googlemock */,
+				ED07FAC324AADFE4006D36D1 /* .travis.yml */,
+			);
+			path = googletest;
+			sourceTree = "<group>";
+		};
+		ED07F9A724AADFE2006D36D1 /* ci */ = {
+			isa = PBXGroup;
+			children = (
+				ED07F9A824AADFE2006D36D1 /* env-linux.sh */,
+				ED07F9A924AADFE2006D36D1 /* env-osx.sh */,
+				ED07F9AA24AADFE2006D36D1 /* build-platformio.sh */,
+				ED07F9AB24AADFE2006D36D1 /* get-nprocessors.sh */,
+				ED07F9AC24AADFE2006D36D1 /* travis.sh */,
+				ED07F9AD24AADFE2006D36D1 /* install-osx.sh */,
+				ED07F9AE24AADFE2006D36D1 /* install-platformio.sh */,
+				ED07F9AF24AADFE2006D36D1 /* install-linux.sh */,
+				ED07F9B024AADFE2006D36D1 /* build-linux-bazel.sh */,
+				ED07F9B124AADFE2006D36D1 /* log-config.sh */,
+			);
+			path = ci;
+			sourceTree = "<group>";
+		};
+		ED07F9BA24AADFE2006D36D1 /* googletest */ = {
+			isa = PBXGroup;
+			children = (
+				ED07F9BB24AADFE2006D36D1 /* CMakeLists.txt */,
+				ED07F9BC24AADFE2006D36D1 /* LICENSE */,
+				ED07F9BD24AADFE2006D36D1 /* test */,
+				ED07FA1024AADFE2006D36D1 /* cmake */,
+				ED07FA1624AADFE2006D36D1 /* include */,
+				ED07FA3124AADFE3006D36D1 /* docs */,
+				ED07FA3724AADFE3006D36D1 /* CONTRIBUTORS */,
+				ED07FA3824AADFE3006D36D1 /* README.md */,
+				ED07FA3924AADFE3006D36D1 /* samples */,
+				ED07FA4C24AADFE3006D36D1 /* scripts */,
+				ED07FA5824AADFE3006D36D1 /* src */,
+			);
+			path = googletest;
+			sourceTree = "<group>";
+		};
+		ED07F9BD24AADFE2006D36D1 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				ED07F9BE24AADFE2006D36D1 /* googletest-message-test.cc */,
+				ED07F9BF24AADFE2006D36D1 /* googletest-output-test_.cc */,
+				ED07F9C024AADFE2006D36D1 /* gtest_pred_impl_unittest.cc */,
+				ED07F9C124AADFE2006D36D1 /* gtest_skip_in_environment_setup_test.cc */,
+				ED07F9C224AADFE2006D36D1 /* gtest_xml_output_unittest.py */,
+				ED07F9C324AADFE2006D36D1 /* googletest-param-test-test.h */,
+				ED07F9C424AADFE2006D36D1 /* googletest-test-part-test.cc */,
+				ED07F9C524AADFE2006D36D1 /* gtest_assert_by_exception_test.cc */,
+				ED07F9C624AADFE2006D36D1 /* gtest_testbridge_test_.cc */,
+				ED07F9C724AADFE2006D36D1 /* gtest_main_unittest.cc */,
+				ED07F9C824AADFE2006D36D1 /* googletest-listener-test.cc */,
+				ED07F9C924AADFE2006D36D1 /* gtest_environment_test.cc */,
+				ED07F9CA24AADFE2006D36D1 /* gtest_xml_output_unittest_.cc */,
+				ED07F9CB24AADFE2006D36D1 /* googletest-output-test.py */,
+				ED07F9CC24AADFE2006D36D1 /* googletest-throw-on-failure-test_.cc */,
+				ED07F9CD24AADFE2006D36D1 /* googletest-filter-unittest_.cc */,
+				ED07F9CE24AADFE2006D36D1 /* googletest-death-test-test.cc */,
+				ED07F9CF24AADFE2006D36D1 /* googletest-failfast-unittest_.cc */,
+				ED07F9D024AADFE2006D36D1 /* gtest_stress_test.cc */,
+				ED07F9D124AADFE2006D36D1 /* googletest-uninitialized-test_.cc */,
+				ED07F9D224AADFE2006D36D1 /* production.cc */,
+				ED07F9D324AADFE2006D36D1 /* googletest-param-test-invalid-name1-test.py */,
+				ED07F9D424AADFE2006D36D1 /* gtest_xml_outfile1_test_.cc */,
+				ED07F9D524AADFE2006D36D1 /* gtest_help_test.py */,
+				ED07F9D624AADFE2006D36D1 /* gtest_prod_test.cc */,
+				ED07F9D724AADFE2006D36D1 /* googletest-env-var-test_.cc */,
+				ED07F9D824AADFE2006D36D1 /* gtest-unittest-api_test.cc */,
+				ED07F9D924AADFE2006D36D1 /* gtest_test_utils.py */,
+				ED07F9DA24AADFE2006D36D1 /* gtest_repeat_test.cc */,
+				ED07F9DB24AADFE2006D36D1 /* googletest-setuptestsuite-test_.cc */,
+				ED07F9DC24AADFE2006D36D1 /* gtest_json_test_utils.py */,
+				ED07F9DD24AADFE2006D36D1 /* googletest-param-test-invalid-name2-test.py */,
+				ED07F9DE24AADFE2006D36D1 /* gtest_all_test.cc */,
+				ED07F9DF24AADFE2006D36D1 /* googletest-json-output-unittest.py */,
+				ED07F9E024AADFE2006D36D1 /* googletest-break-on-failure-unittest.py */,
+				ED07F9E124AADFE2006D36D1 /* googletest-param-test-invalid-name1-test_.cc */,
+				ED07F9E224AADFE2006D36D1 /* googletest-catch-exceptions-test_.cc */,
+				ED07F9E324AADFE2006D36D1 /* googletest-break-on-failure-unittest_.cc */,
+				ED07F9E424AADFE2006D36D1 /* googletest-setuptestsuite-test.py */,
+				ED07F9E524AADFE2006D36D1 /* googletest-shuffle-test_.cc */,
+				ED07F9E624AADFE2006D36D1 /* gtest_premature_exit_test.cc */,
+				ED07F9E724AADFE2006D36D1 /* googletest-list-tests-unittest.py */,
+				ED07F9E824AADFE2006D36D1 /* gtest_xml_outfile2_test_.cc */,
+				ED07F9E924AADFE2006D36D1 /* googletest-env-var-test.py */,
+				ED07F9EA24AADFE2006D36D1 /* gtest_test_macro_stack_footprint_test.cc */,
+				ED07F9EB24AADFE2006D36D1 /* googletest-list-tests-unittest_.cc */,
+				ED07F9EC24AADFE2006D36D1 /* googletest-port-test.cc */,
+				ED07F9ED24AADFE2006D36D1 /* gtest_list_output_unittest_.cc */,
+				ED07F9EE24AADFE2006D36D1 /* gtest_skip_test.cc */,
+				ED07F9EF24AADFE2006D36D1 /* gtest_no_test_unittest.cc */,
+				ED07F9F024AADFE2006D36D1 /* gtest_xml_outfiles_test.py */,
+				ED07F9F124AADFE2006D36D1 /* gtest-typed-test_test.h */,
+				ED07F9F224AADFE2006D36D1 /* gtest_help_test_.cc */,
+				ED07F9F324AADFE2006D36D1 /* googletest-output-test-golden-lin.txt */,
+				ED07F9F424AADFE2006D36D1 /* gtest_list_output_unittest.py */,
+				ED07F9F524AADFE2006D36D1 /* googletest-filepath-test.cc */,
+				ED07F9F624AADFE2006D36D1 /* googletest-param-test-test.cc */,
+				ED07F9F724AADFE2006D36D1 /* googletest-printers-test.cc */,
+				ED07F9F824AADFE2006D36D1 /* BUILD.bazel */,
+				ED07F9F924AADFE2006D36D1 /* gtest_xml_test_utils.py */,
+				ED07F9FA24AADFE2006D36D1 /* googletest-param-test2-test.cc */,
+				ED07F9FB24AADFE2006D36D1 /* production.h */,
+				ED07F9FC24AADFE2006D36D1 /* googletest-color-test.py */,
+				ED07F9FD24AADFE2006D36D1 /* googletest-filter-unittest.py */,
+				ED07F9FE24AADFE2006D36D1 /* googletest-param-test-invalid-name2-test_.cc */,
+				ED07F9FF24AADFE2006D36D1 /* gtest_skip_check_output_test.py */,
+				ED07FA0024AADFE2006D36D1 /* gtest_testbridge_test.py */,
+				ED07FA0124AADFE2006D36D1 /* gtest_unittest.cc */,
+				ED07FA0224AADFE2006D36D1 /* googletest-throw-on-failure-test.py */,
+				ED07FA0324AADFE2006D36D1 /* googletest-shuffle-test.py */,
+				ED07FA0424AADFE2006D36D1 /* gtest_sole_header_test.cc */,
+				ED07FA0524AADFE2006D36D1 /* googletest-uninitialized-test.py */,
+				ED07FA0624AADFE2006D36D1 /* googletest-color-test_.cc */,
+				ED07FA0724AADFE2006D36D1 /* googletest-catch-exceptions-test.py */,
+				ED07FA0824AADFE2006D36D1 /* googletest-death-test_ex_test.cc */,
+				ED07FA0924AADFE2006D36D1 /* googletest-json-outfiles-test.py */,
+				ED07FA0A24AADFE2006D36D1 /* gtest_skip_environment_check_output_test.py */,
+				ED07FA0B24AADFE2006D36D1 /* gtest-typed-test2_test.cc */,
+				ED07FA0C24AADFE2006D36D1 /* gtest-typed-test_test.cc */,
+				ED07FA0D24AADFE2006D36D1 /* googletest-failfast-unittest.py */,
+				ED07FA0E24AADFE2006D36D1 /* googletest-options-test.cc */,
+				ED07FA0F24AADFE2006D36D1 /* gtest_throw_on_failure_ex_test.cc */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		ED07FA1024AADFE2006D36D1 /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA1124AADFE2006D36D1 /* internal_utils.cmake */,
+				ED07FA1224AADFE2006D36D1 /* gtest.pc.in */,
+				ED07FA1324AADFE2006D36D1 /* gtest_main.pc.in */,
+				ED07FA1424AADFE2006D36D1 /* Config.cmake.in */,
+				ED07FA1524AADFE2006D36D1 /* libgtest.la.in */,
+			);
+			path = cmake;
+			sourceTree = "<group>";
+		};
+		ED07FA1624AADFE2006D36D1 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA1724AADFE2006D36D1 /* gtest */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		ED07FA1724AADFE2006D36D1 /* gtest */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA1824AADFE2006D36D1 /* gtest-matchers.h */,
+				ED07FA1924AADFE2006D36D1 /* gtest-death-test.h */,
+				ED07FA1A24AADFE2006D36D1 /* gtest-spi.h */,
+				ED07FA1B24AADFE2006D36D1 /* internal */,
+				ED07FA2924AADFE3006D36D1 /* gtest-message.h */,
+				ED07FA2A24AADFE3006D36D1 /* gtest-param-test.h */,
+				ED07FA2B24AADFE3006D36D1 /* gtest-typed-test.h */,
+				ED07FA2C24AADFE3006D36D1 /* gtest_pred_impl.h */,
+				ED07FA2D24AADFE3006D36D1 /* gtest_prod.h */,
+				ED07FA2E24AADFE3006D36D1 /* gtest-test-part.h */,
+				ED07FA2F24AADFE3006D36D1 /* gtest.h */,
+				ED07FA3024AADFE3006D36D1 /* gtest-printers.h */,
+			);
+			path = gtest;
+			sourceTree = "<group>";
+		};
+		ED07FA1B24AADFE2006D36D1 /* internal */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA1C24AADFE2006D36D1 /* gtest-string.h */,
+				ED07FA1D24AADFE3006D36D1 /* gtest-death-test-internal.h */,
+				ED07FA1E24AADFE3006D36D1 /* gtest-port.h */,
+				ED07FA1F24AADFE3006D36D1 /* gtest-port-arch.h */,
+				ED07FA2024AADFE3006D36D1 /* gtest-internal.h */,
+				ED07FA2124AADFE3006D36D1 /* gtest-param-util.h */,
+				ED07FA2224AADFE3006D36D1 /* gtest-type-util.h */,
+				ED07FA2324AADFE3006D36D1 /* gtest-filepath.h */,
+				ED07FA2424AADFE3006D36D1 /* custom */,
+			);
+			path = internal;
+			sourceTree = "<group>";
+		};
+		ED07FA2424AADFE3006D36D1 /* custom */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA2524AADFE3006D36D1 /* gtest-port.h */,
+				ED07FA2624AADFE3006D36D1 /* README.md */,
+				ED07FA2724AADFE3006D36D1 /* gtest.h */,
+				ED07FA2824AADFE3006D36D1 /* gtest-printers.h */,
+			);
+			path = custom;
+			sourceTree = "<group>";
+		};
+		ED07FA3124AADFE3006D36D1 /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA3224AADFE3006D36D1 /* samples.md */,
+				ED07FA3324AADFE3006D36D1 /* faq.md */,
+				ED07FA3424AADFE3006D36D1 /* primer.md */,
+				ED07FA3524AADFE3006D36D1 /* advanced.md */,
+				ED07FA3624AADFE3006D36D1 /* pkgconfig.md */,
+			);
+			path = docs;
+			sourceTree = "<group>";
+		};
+		ED07FA3924AADFE3006D36D1 /* samples */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA3A24AADFE3006D36D1 /* sample6_unittest.cc */,
+				ED07FA3B24AADFE3006D36D1 /* sample3_unittest.cc */,
+				ED07FA3C24AADFE3006D36D1 /* sample4.h */,
+				ED07FA3D24AADFE3006D36D1 /* sample9_unittest.cc */,
+				ED07FA3E24AADFE3006D36D1 /* sample10_unittest.cc */,
+				ED07FA3F24AADFE3006D36D1 /* sample5_unittest.cc */,
+				ED07FA4024AADFE3006D36D1 /* sample2.cc */,
+				ED07FA4124AADFE3006D36D1 /* prime_tables.h */,
+				ED07FA4224AADFE3006D36D1 /* sample3-inl.h */,
+				ED07FA4324AADFE3006D36D1 /* sample1.cc */,
+				ED07FA4424AADFE3006D36D1 /* sample2_unittest.cc */,
+				ED07FA4524AADFE3006D36D1 /* sample7_unittest.cc */,
+				ED07FA4624AADFE3006D36D1 /* sample2.h */,
+				ED07FA4724AADFE3006D36D1 /* sample4.cc */,
+				ED07FA4824AADFE3006D36D1 /* sample4_unittest.cc */,
+				ED07FA4924AADFE3006D36D1 /* sample1_unittest.cc */,
+				ED07FA4A24AADFE3006D36D1 /* sample1.h */,
+				ED07FA4B24AADFE3006D36D1 /* sample8_unittest.cc */,
+			);
+			path = samples;
+			sourceTree = "<group>";
+		};
+		ED07FA4C24AADFE3006D36D1 /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA4D24AADFE3006D36D1 /* release_docs.py */,
+				ED07FA4E24AADFE3006D36D1 /* test */,
+				ED07FA5024AADFE3006D36D1 /* upload.py */,
+				ED07FA5124AADFE3006D36D1 /* run_with_path.py */,
+				ED07FA5224AADFE3006D36D1 /* fuse_gtest_files.py */,
+				ED07FA5324AADFE3006D36D1 /* gtest-config.in */,
+				ED07FA5424AADFE3006D36D1 /* README.md */,
+				ED07FA5524AADFE3006D36D1 /* gen_gtest_pred_impl.py */,
+				ED07FA5624AADFE3006D36D1 /* common.py */,
+				ED07FA5724AADFE3006D36D1 /* upload_gtest.py */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		ED07FA4E24AADFE3006D36D1 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA4F24AADFE3006D36D1 /* Makefile */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		ED07FA5824AADFE3006D36D1 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA5924AADFE3006D36D1 /* gtest-test-part.cc */,
+				ED07FA5A24AADFE3006D36D1 /* gtest.cc */,
+				ED07FA5B24AADFE3006D36D1 /* gtest_main.cc */,
+				ED07FA5C24AADFE3006D36D1 /* gtest-internal-inl.h */,
+				ED07FA5D24AADFE3006D36D1 /* gtest-death-test.cc */,
+				ED07FA5E24AADFE3006D36D1 /* gtest-port.cc */,
+				ED07FA5F24AADFE3006D36D1 /* gtest-printers.cc */,
+				ED07FA6024AADFE3006D36D1 /* gtest-typed-test.cc */,
+				ED07FA6124AADFE3006D36D1 /* gtest-all.cc */,
+				ED07FA6224AADFE3006D36D1 /* gtest-filepath.cc */,
+				ED07FA6324AADFE3006D36D1 /* gtest-matchers.cc */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		ED07FA6524AADFE3006D36D1 /* googlemock */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA6624AADFE3006D36D1 /* CMakeLists.txt */,
+				ED07FA6724AADFE3006D36D1 /* LICENSE */,
+				ED07FA6824AADFE3006D36D1 /* test */,
+				ED07FA8724AADFE3006D36D1 /* cmake */,
+				ED07FA8A24AADFE3006D36D1 /* include */,
+				ED07FAA124AADFE3006D36D1 /* docs */,
+				ED07FAA824AADFE3006D36D1 /* CONTRIBUTORS */,
+				ED07FAA924AADFE3006D36D1 /* README.md */,
+				ED07FAAA24AADFE3006D36D1 /* scripts */,
+				ED07FABB24AADFE4006D36D1 /* src */,
+			);
+			path = googlemock;
+			sourceTree = "<group>";
+		};
+		ED07FA6824AADFE3006D36D1 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA6924AADFE3006D36D1 /* gmock_leak_test.py */,
+				ED07FA6A24AADFE3006D36D1 /* gmock_all_test.cc */,
+				ED07FA6B24AADFE3006D36D1 /* gmock_output_test_.cc */,
+				ED07FA6C24AADFE3006D36D1 /* gmock-port_test.cc */,
+				ED07FA6D24AADFE3006D36D1 /* gmock_test.cc */,
+				ED07FA6E24AADFE3006D36D1 /* gmock-nice-strict_test.cc */,
+				ED07FA6F24AADFE3006D36D1 /* gmock-spec-builders_test.cc */,
+				ED07FA7024AADFE3006D36D1 /* gmock_output_test_golden.txt */,
+				ED07FA7124AADFE3006D36D1 /* gmock_link2_test.cc */,
+				ED07FA7224AADFE3006D36D1 /* gmock_link_test.cc */,
+				ED07FA7324AADFE3006D36D1 /* gmock_leak_test_.cc */,
+				ED07FA7424AADFE3006D36D1 /* gmock-generated-actions_test.cc */,
+				ED07FA7524AADFE3006D36D1 /* gmock_ex_test.cc */,
+				ED07FA7624AADFE3006D36D1 /* gmock-pp_test.cc */,
+				ED07FA7724AADFE3006D36D1 /* gmock-internal-utils_test.cc */,
+				ED07FA7824AADFE3006D36D1 /* gmock-function-mocker_nc_test.py */,
+				ED07FA7924AADFE3006D36D1 /* gmock_stress_test.cc */,
+				ED07FA7A24AADFE3006D36D1 /* gmock-more-actions_test.cc */,
+				ED07FA7B24AADFE3006D36D1 /* gmock-generated-matchers_test.cc */,
+				ED07FA7C24AADFE3006D36D1 /* gmock-pp-string_test.cc */,
+				ED07FA7D24AADFE3006D36D1 /* gmock-actions_test.cc */,
+				ED07FA7E24AADFE3006D36D1 /* gmock-cardinalities_test.cc */,
+				ED07FA7F24AADFE3006D36D1 /* BUILD.bazel */,
+				ED07FA8024AADFE3006D36D1 /* gmock_test_utils.py */,
+				ED07FA8124AADFE3006D36D1 /* gmock-function-mocker_test.cc */,
+				ED07FA8224AADFE3006D36D1 /* gmock-matchers_test.cc */,
+				ED07FA8324AADFE3006D36D1 /* pump_test.py */,
+				ED07FA8424AADFE3006D36D1 /* gmock-function-mocker_nc.cc */,
+				ED07FA8524AADFE3006D36D1 /* gmock_output_test.py */,
+				ED07FA8624AADFE3006D36D1 /* gmock_link_test.h */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		ED07FA8724AADFE3006D36D1 /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA8824AADFE3006D36D1 /* gmock_main.pc.in */,
+				ED07FA8924AADFE3006D36D1 /* gmock.pc.in */,
+			);
+			path = cmake;
+			sourceTree = "<group>";
+		};
+		ED07FA8A24AADFE3006D36D1 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA8B24AADFE3006D36D1 /* gmock */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		ED07FA8B24AADFE3006D36D1 /* gmock */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA8C24AADFE3006D36D1 /* gmock-generated-actions.h.pump */,
+				ED07FA8D24AADFE3006D36D1 /* gmock-matchers.h */,
+				ED07FA8E24AADFE3006D36D1 /* gmock-more-actions.h */,
+				ED07FA8F24AADFE3006D36D1 /* gmock-generated-actions.h */,
+				ED07FA9024AADFE3006D36D1 /* internal */,
+				ED07FA9A24AADFE3006D36D1 /* gmock-function-mocker.h */,
+				ED07FA9B24AADFE3006D36D1 /* gmock-more-matchers.h */,
+				ED07FA9C24AADFE3006D36D1 /* gmock-cardinalities.h */,
+				ED07FA9D24AADFE3006D36D1 /* gmock-spec-builders.h */,
+				ED07FA9E24AADFE3006D36D1 /* gmock-nice-strict.h */,
+				ED07FA9F24AADFE3006D36D1 /* gmock.h */,
+				ED07FAA024AADFE3006D36D1 /* gmock-actions.h */,
+			);
+			path = gmock;
+			sourceTree = "<group>";
+		};
+		ED07FA9024AADFE3006D36D1 /* internal */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA9124AADFE3006D36D1 /* gmock-port.h */,
+				ED07FA9224AADFE3006D36D1 /* gmock-internal-utils.h */,
+				ED07FA9324AADFE3006D36D1 /* gmock-pp.h */,
+				ED07FA9424AADFE3006D36D1 /* custom */,
+			);
+			path = internal;
+			sourceTree = "<group>";
+		};
+		ED07FA9424AADFE3006D36D1 /* custom */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FA9524AADFE3006D36D1 /* gmock-generated-actions.h.pump */,
+				ED07FA9624AADFE3006D36D1 /* gmock-port.h */,
+				ED07FA9724AADFE3006D36D1 /* gmock-matchers.h */,
+				ED07FA9824AADFE3006D36D1 /* gmock-generated-actions.h */,
+				ED07FA9924AADFE3006D36D1 /* README.md */,
+			);
+			path = custom;
+			sourceTree = "<group>";
+		};
+		ED07FAA124AADFE3006D36D1 /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FAA224AADFE3006D36D1 /* cook_book.md */,
+				ED07FAA324AADFE3006D36D1 /* for_dummies.md */,
+				ED07FAA424AADFE3006D36D1 /* pump_manual.md */,
+				ED07FAA524AADFE3006D36D1 /* cheat_sheet.md */,
+				ED07FAA624AADFE3006D36D1 /* gmock_faq.md */,
+				ED07FAA724AADFE3006D36D1 /* community_created_documentation.md */,
+			);
+			path = docs;
+			sourceTree = "<group>";
+		};
+		ED07FAAA24AADFE3006D36D1 /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FAAB24AADFE3006D36D1 /* pump.py */,
+				ED07FAAC24AADFE3006D36D1 /* README.md */,
+				ED07FAAD24AADFE3006D36D1 /* generator */,
+				ED07FABA24AADFE4006D36D1 /* fuse_gmock_files.py */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
+		ED07FAAD24AADFE3006D36D1 /* generator */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FAAE24AADFE3006D36D1 /* LICENSE */,
+				ED07FAAF24AADFE4006D36D1 /* README */,
+				ED07FAB024AADFE4006D36D1 /* cpp */,
+				ED07FAB824AADFE4006D36D1 /* README.cppclean */,
+				ED07FAB924AADFE4006D36D1 /* gmock_gen.py */,
+			);
+			path = generator;
+			sourceTree = "<group>";
+		};
+		ED07FAB024AADFE4006D36D1 /* cpp */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FAB124AADFE4006D36D1 /* gmock_class.py */,
+				ED07FAB224AADFE4006D36D1 /* keywords.py */,
+				ED07FAB324AADFE4006D36D1 /* __init__.py */,
+				ED07FAB424AADFE4006D36D1 /* utils.py */,
+				ED07FAB524AADFE4006D36D1 /* ast.py */,
+				ED07FAB624AADFE4006D36D1 /* tokenize.py */,
+				ED07FAB724AADFE4006D36D1 /* gmock_class_test.py */,
+			);
+			path = cpp;
+			sourceTree = "<group>";
+		};
+		ED07FABB24AADFE4006D36D1 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FABC24AADFE4006D36D1 /* gmock-internal-utils.cc */,
+				ED07FABD24AADFE4006D36D1 /* gmock-cardinalities.cc */,
+				ED07FABE24AADFE4006D36D1 /* gmock_main.cc */,
+				ED07FABF24AADFE4006D36D1 /* gmock-matchers.cc */,
+				ED07FAC024AADFE4006D36D1 /* gmock-all.cc */,
+				ED07FAC124AADFE4006D36D1 /* gmock-spec-builders.cc */,
+				ED07FAC224AADFE4006D36D1 /* gmock.cc */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		ED07FC3224AAE050006D36D1 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FC3424AAE099006D36D1 /* cmd */,
+				ED07FC3324AAE063006D36D1 /* max-external */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		ED07FC3324AAE063006D36D1 /* max-external */ = {
+			isa = PBXGroup;
+			children = (
+				22CF122A0EE9AAAD0054F513 /* h9_external.c */,
+				ED07FC3524AAE0AB006D36D1 /* maxmspsdk.xcconfig */,
+			);
+			path = "max-external";
+			sourceTree = "<group>";
+		};
+		ED07FC3424AAE099006D36D1 /* cmd */ = {
+			isa = PBXGroup;
+			children = (
+				ED07F98D24A90D62006D36D1 /* main.h */,
+				ED07F98E24A90D62006D36D1 /* main.c */,
+			);
+			path = cmd;
+			sourceTree = "<group>";
+		};
+		ED07FC3624AAE102006D36D1 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FC3724AAE15A006D36D1 /* itohex.c */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		ED07FC3824AAE178006D36D1 /* test_data */ = {
+			isa = PBXGroup;
+			children = (
+				ED07FC3924AAE178006D36D1 /* HALL.syx */,
+				ED07FC3A24AAE178006D36D1 /* test1.syx */,
+				ED07FC3B24AAE178006D36D1 /* H9 Algorithms.csv */,
+				ED07FC3C24AAE178006D36D1 /* HRMDLO.syx */,
+			);
+			path = test_data;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -110,8 +1174,56 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED07F99F24AA921F006D36D1 /* utils.h in Headers */,
+				ED07FB7624AADFE4006D36D1 /* gtest_pred_impl.h in Headers */,
+				ED07FC0824AADFE4006D36D1 /* gmock-cardinalities.h in Headers */,
+				ED07FB7224AADFE4006D36D1 /* gtest-printers.h in Headers */,
+				ED07FBB224AADFE4006D36D1 /* gtest-internal-inl.h in Headers */,
+				ED07FC0324AADFE4006D36D1 /* gmock-matchers.h in Headers */,
+				ED07FB4124AADFE4006D36D1 /* production.h in Headers */,
+				ED07FB6424AADFE4006D36D1 /* gtest-matchers.h in Headers */,
+				ED07FC0B24AADFE4006D36D1 /* gmock.h in Headers */,
+				ED07FB9E24AADFE4006D36D1 /* sample1.h in Headers */,
+				ED07FC0724AADFE4006D36D1 /* gmock-more-matchers.h in Headers */,
+				ED07FC0024AADFE4006D36D1 /* gmock-pp.h in Headers */,
+				ED07FC0924AADFE4006D36D1 /* gmock-spec-builders.h in Headers */,
+				ED07FBFB24AADFE4006D36D1 /* gmock-matchers.h in Headers */,
+				ED07FBFE24AADFE4006D36D1 /* gmock-port.h in Headers */,
+				ED07FC0624AADFE4006D36D1 /* gmock-function-mocker.h in Headers */,
+				ED07FB6A24AADFE4006D36D1 /* gtest-port-arch.h in Headers */,
+				ED07FC0224AADFE4006D36D1 /* gmock-port.h in Headers */,
+				ED07FB6E24AADFE4006D36D1 /* gtest-filepath.h in Headers */,
+				ED07FB7424AADFE4006D36D1 /* gtest-param-test.h in Headers */,
+				ED07FB7124AADFE4006D36D1 /* gtest.h in Headers */,
+				ED07FB7324AADFE4006D36D1 /* gtest-message.h in Headers */,
+				ED07FB6924AADFE4006D36D1 /* gtest-port.h in Headers */,
+				ED07FB6B24AADFE4006D36D1 /* gtest-internal.h in Headers */,
+				ED07FB6C24AADFE4006D36D1 /* gtest-param-util.h in Headers */,
+				ED07FB7724AADFE4006D36D1 /* gtest_prod.h in Headers */,
+				ED07FB8624AADFE4006D36D1 /* sample4.h in Headers */,
+				ED07FC0424AADFE4006D36D1 /* gmock-generated-actions.h in Headers */,
+				ED07FBFC24AADFE4006D36D1 /* gmock-more-actions.h in Headers */,
+				ED07FB7524AADFE4006D36D1 /* gtest-typed-test.h in Headers */,
+				ED07FB6724AADFE4006D36D1 /* gtest-string.h in Headers */,
+				ED07FB6D24AADFE4006D36D1 /* gtest-type-util.h in Headers */,
+				ED07FBFD24AADFE4006D36D1 /* gmock-generated-actions.h in Headers */,
 				ED373DFE243AAB00004C2CEB /* midi_parser.h in Headers */,
+				ED07FB9724AADFE4006D36D1 /* sample2.h in Headers */,
+				ED07FB7924AADFE4006D36D1 /* gtest.h in Headers */,
+				ED07FB3224AADFE4006D36D1 /* gtest-typed-test_test.h in Headers */,
+				ED07FB7824AADFE4006D36D1 /* gtest-test-part.h in Headers */,
+				ED07FC0C24AADFE4006D36D1 /* gmock-actions.h in Headers */,
 				ED07F98B24A44193006D36D1 /* h9.h in Headers */,
+				ED07FB6624AADFE4006D36D1 /* gtest-spi.h in Headers */,
+				ED07FAE324AADFE4006D36D1 /* googletest-param-test-test.h in Headers */,
+				ED07FB8F24AADFE4006D36D1 /* prime_tables.h in Headers */,
+				ED07FB6F24AADFE4006D36D1 /* gtest-port.h in Headers */,
+				ED07FC0A24AADFE4006D36D1 /* gmock-nice-strict.h in Headers */,
+				ED07FB7A24AADFE4006D36D1 /* gtest-printers.h in Headers */,
+				ED07FB6824AADFE4006D36D1 /* gtest-death-test-internal.h in Headers */,
+				ED07FB6524AADFE4006D36D1 /* gtest-death-test.h in Headers */,
+				ED07FBFF24AADFE4006D36D1 /* gmock-internal-utils.h in Headers */,
+				ED07FB9024AADFE4006D36D1 /* sample3-inl.h in Headers */,
+				ED07FBF724AADFE4006D36D1 /* gmock_link_test.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +1246,7 @@
 			);
 			name = "max-external";
 			productName = iterator;
-			productReference = 2FBBEAE508F335360078DB84 /* h9.mxo */;
+			productReference = 2FBBEAE508F335360078DB84 /* h9.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		ED07F99324A91CAC006D36D1 /* h9_test */ = {
@@ -190,6 +1302,120 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED07FC1524AADFE4006D36D1 /* pump.py in Resources */,
+				ED07FC0F24AADFE4006D36D1 /* pump_manual.md in Resources */,
+				ED07FB5424AADFE4006D36D1 /* googletest-json-outfiles-test.py in Resources */,
+				ED07FBA524AADFE4006D36D1 /* run_with_path.py in Resources */,
+				ED07FAF224AADFE4006D36D1 /* googletest-output-test.py in Resources */,
+				ED07FB5124AADFE4006D36D1 /* googletest-catch-exceptions-test.py in Resources */,
+				ED07FAC624AADFE4006D36D1 /* env-linux.sh in Resources */,
+				ED07FB1024AADFE4006D36D1 /* gtest_json_test_utils.py in Resources */,
+				ED07FBAA24AADFE4006D36D1 /* common.py in Resources */,
+				ED07FAE224AADFE4006D36D1 /* gtest_xml_output_unittest.py in Resources */,
+				ED07FC1724AADFE4006D36D1 /* LICENSE in Resources */,
+				ED07FACC24AADFE4006D36D1 /* install-platformio.sh in Resources */,
+				ED07FC3E24AAE178006D36D1 /* test1.syx in Resources */,
+				ED07FBC324AADFE4006D36D1 /* LICENSE in Resources */,
+				ED07FC1D24AADFE4006D36D1 /* ast.py in Resources */,
+				ED07FC1624AADFE4006D36D1 /* README.md in Resources */,
+				ED07FB5524AADFE4006D36D1 /* gtest_skip_environment_check_output_test.py in Resources */,
+				ED07FBF624AADFE4006D36D1 /* gmock_output_test.py in Resources */,
+				ED07FBC224AADFE4006D36D1 /* CMakeLists.txt in Resources */,
+				ED07FB3524AADFE4006D36D1 /* googletest-output-test-golden-lin.txt in Resources */,
+				ED07FB4324AADFE4006D36D1 /* googletest-filter-unittest.py in Resources */,
+				ED07FAD424AADFE4006D36D1 /* library.json in Resources */,
+				ED07FBD124AADFE4006D36D1 /* gmock_output_test_golden.txt in Resources */,
+				ED07FB3D24AADFE4006D36D1 /* BUILD.bazel in Resources */,
+				ED07FBF824AADFE4006D36D1 /* gmock_main.pc.in in Resources */,
+				ED07FB2124AADFE4006D36D1 /* googletest-list-tests-unittest.py in Resources */,
+				ED07FAD324AADFE4006D36D1 /* appveyor.yml in Resources */,
+				ED07FAC824AADFE4006D36D1 /* build-platformio.sh in Resources */,
+				ED07FBAB24AADFE4006D36D1 /* upload_gtest.py in Resources */,
+				ED07FBA124AADFE4006D36D1 /* release_docs.py in Resources */,
+				ED07FAD024AADFE4006D36D1 /* WORKSPACE in Resources */,
+				ED07FAD724AADFE4006D36D1 /* .clang-format in Resources */,
+				ED07FB4224AADFE4006D36D1 /* googletest-color-test.py in Resources */,
+				ED07FBA924AADFE4006D36D1 /* gen_gtest_pred_impl.py in Resources */,
+				ED07FC2124AADFE4006D36D1 /* gmock_gen.py in Resources */,
+				ED07FB5F24AADFE4006D36D1 /* internal_utils.cmake in Resources */,
+				ED07FACF24AADFE4006D36D1 /* log-config.sh in Resources */,
+				ED07FC3D24AAE178006D36D1 /* HALL.syx in Resources */,
+				ED07FB0124AADFE4006D36D1 /* googletest-param-test-invalid-name1-test.py in Resources */,
+				ED07FC1424AADFE4006D36D1 /* README.md in Resources */,
+				ED07FB1124AADFE4006D36D1 /* googletest-param-test-invalid-name2-test.py in Resources */,
+				ED07FB4B24AADFE4006D36D1 /* googletest-shuffle-test.py in Resources */,
+				ED07FC0D24AADFE4006D36D1 /* cook_book.md in Resources */,
+				ED07FC1024AADFE4006D36D1 /* cheat_sheet.md in Resources */,
+				ED07FB3124AADFE4006D36D1 /* gtest_xml_outfiles_test.py in Resources */,
+				ED07FBA724AADFE4006D36D1 /* gtest-config.in in Resources */,
+				ED07FB8124AADFE4006D36D1 /* README.md in Resources */,
+				ED07FAD124AADFE4006D36D1 /* platformio.ini in Resources */,
+				ED07FB6324AADFE4006D36D1 /* libgtest.la.in in Resources */,
+				ED07FC1824AADFE4006D36D1 /* README in Resources */,
+				ED07FBF924AADFE4006D36D1 /* gmock.pc.in in Resources */,
+				ED07FAC524AADFE4006D36D1 /* LICENSE in Resources */,
+				ED07FC2224AADFE4006D36D1 /* fuse_gmock_files.py in Resources */,
+				ED07FB4624AADFE4006D36D1 /* gtest_skip_check_output_test.py in Resources */,
+				ED07FBFA24AADFE4006D36D1 /* gmock-generated-actions.h.pump in Resources */,
+				ED07FC0524AADFE4006D36D1 /* README.md in Resources */,
+				ED07FB6224AADFE4006D36D1 /* Config.cmake.in in Resources */,
+				ED07FAC424AADFE4006D36D1 /* CMakeLists.txt in Resources */,
+				ED07FC2024AADFE4006D36D1 /* README.cppclean in Resources */,
+				ED07FB6024AADFE4006D36D1 /* gtest.pc.in in Resources */,
+				ED07FB7B24AADFE4006D36D1 /* samples.md in Resources */,
+				ED07FBEE24AADFE4006D36D1 /* gmock_test_utils.py in Resources */,
+				ED07FC3124AADFE4006D36D1 /* .travis.yml in Resources */,
+				ED07FBA424AADFE4006D36D1 /* upload.py in Resources */,
+				ED07FB7E24AADFE4006D36D1 /* advanced.md in Resources */,
+				ED07FAD824AADFE4006D36D1 /* CMakeLists.txt in Resources */,
+				ED07FC1E24AADFE4006D36D1 /* tokenize.py in Resources */,
+				ED07FB4A24AADFE4006D36D1 /* googletest-throw-on-failure-test.py in Resources */,
+				ED07FB7F24AADFE4006D36D1 /* pkgconfig.md in Resources */,
+				ED07FAC724AADFE4006D36D1 /* env-osx.sh in Resources */,
+				ED07FACE24AADFE4006D36D1 /* build-linux-bazel.sh in Resources */,
+				ED07FB0B24AADFE4006D36D1 /* gtest_test_utils.py in Resources */,
+				ED07FC1B24AADFE4006D36D1 /* __init__.py in Resources */,
+				ED07FB4724AADFE4006D36D1 /* gtest_testbridge_test.py in Resources */,
+				ED07FB0424AADFE4006D36D1 /* gtest_help_test.py in Resources */,
+				ED07FC1F24AADFE4006D36D1 /* gmock_class_test.py in Resources */,
+				ED07FC1224AADFE4006D36D1 /* community_created_documentation.md in Resources */,
+				ED07FB7024AADFE4006D36D1 /* README.md in Resources */,
+				ED07FBF324AADFE4006D36D1 /* pump_test.py in Resources */,
+				ED07FACB24AADFE4006D36D1 /* install-osx.sh in Resources */,
+				ED07FB2424AADFE4006D36D1 /* googletest-env-var-test.py in Resources */,
+				ED07FB3E24AADFE4006D36D1 /* gtest_xml_test_utils.py in Resources */,
+				ED07FB5A24AADFE4006D36D1 /* googletest-failfast-unittest.py in Resources */,
+				ED07FB7D24AADFE4006D36D1 /* primer.md in Resources */,
+				ED07FB1424AADFE4006D36D1 /* googletest-json-output-unittest.py in Resources */,
+				ED07FBC124AADFE4006D36D1 /* BUILD.bazel in Resources */,
+				ED07FACD24AADFE4006D36D1 /* install-linux.sh in Resources */,
+				ED07FBA824AADFE4006D36D1 /* README.md in Resources */,
+				ED07FBC424AADFE4006D36D1 /* gmock_leak_test.py in Resources */,
+				ED07FC1324AADFE4006D36D1 /* CONTRIBUTORS in Resources */,
+				ED07FC3F24AAE178006D36D1 /* H9 Algorithms.csv in Resources */,
+				ED07FAD924AADFE4006D36D1 /* LICENSE in Resources */,
+				ED07FC0E24AADFE4006D36D1 /* for_dummies.md in Resources */,
+				ED07FB7C24AADFE4006D36D1 /* faq.md in Resources */,
+				ED07FC1924AADFE4006D36D1 /* gmock_class.py in Resources */,
+				ED07FAD624AADFE4006D36D1 /* CONTRIBUTING.md in Resources */,
+				ED07FB6124AADFE4006D36D1 /* gtest_main.pc.in in Resources */,
+				ED07FB4E24AADFE4006D36D1 /* googletest-uninitialized-test.py in Resources */,
+				ED07FB1524AADFE4006D36D1 /* googletest-break-on-failure-unittest.py in Resources */,
+				ED07FAD224AADFE4006D36D1 /* README.md in Resources */,
+				ED07FC4024AAE178006D36D1 /* HRMDLO.syx in Resources */,
+				ED07FBA624AADFE4006D36D1 /* fuse_gtest_files.py in Resources */,
+				ED07FAC924AADFE4006D36D1 /* get-nprocessors.sh in Resources */,
+				ED07FAD524AADFE4006D36D1 /* .gitignore in Resources */,
+				ED07FB8024AADFE4006D36D1 /* CONTRIBUTORS in Resources */,
+				ED07FB3624AADFE4006D36D1 /* gtest_list_output_unittest.py in Resources */,
+				ED07FC1A24AADFE4006D36D1 /* keywords.py in Resources */,
+				ED07FB1C24AADFE4006D36D1 /* googletest-setuptestsuite-test.py in Resources */,
+				ED07FC1124AADFE4006D36D1 /* gmock_faq.md in Resources */,
+				ED07FBE024AADFE4006D36D1 /* gmock-function-mocker_nc_test.py in Resources */,
+				ED07FACA24AADFE4006D36D1 /* travis.sh in Resources */,
+				ED07FBED24AADFE4006D36D1 /* BUILD.bazel in Resources */,
+				ED07FC1C24AADFE4006D36D1 /* utils.py in Resources */,
+				ED07FC0124AADFE4006D36D1 /* gmock-generated-actions.h.pump in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,10 +1436,114 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED07FBBD24AADFE4006D36D1 /* gtest-filepath.cc in Sources */,
+				ED07FBA224AADFE4006D36D1 /* Makefile in Sources */,
+				ED07FB0524AADFE4006D36D1 /* gtest_prod_test.cc in Sources */,
+				ED07FBCD24AADFE4006D36D1 /* gmock-nice-strict_test.cc in Sources */,
+				ED07FAEC24AADFE4006D36D1 /* googletest-listener-test.cc in Sources */,
+				ED07FBAE24AADFE4006D36D1 /* gtest.cc in Sources */,
+				ED07FB8924AADFE4006D36D1 /* sample10_unittest.cc in Sources */,
+				ED07FB3924AADFE4006D36D1 /* googletest-param-test-test.cc in Sources */,
+				ED07FBD224AADFE4006D36D1 /* gmock_link2_test.cc in Sources */,
+				ED07FB9824AADFE4006D36D1 /* sample4.cc in Sources */,
+				ED07FB5224AADFE4006D36D1 /* googletest-death-test_ex_test.cc in Sources */,
+				ED07FC2B24AADFE4006D36D1 /* gmock-all.cc in Sources */,
+				ED07FAF324AADFE4006D36D1 /* googletest-throw-on-failure-test_.cc in Sources */,
 				ED07F98F24A91C0E006D36D1 /* h9.c in Sources */,
+				ED07FBF424AADFE4006D36D1 /* gmock-function-mocker_nc.cc in Sources */,
+				ED07FAF524AADFE4006D36D1 /* googletest-filter-unittest_.cc in Sources */,
+				ED07FB4F24AADFE4006D36D1 /* googletest-color-test_.cc in Sources */,
+				ED07FB0224AADFE4006D36D1 /* gtest_xml_outfile1_test_.cc in Sources */,
+				ED07FAE024AADFE4006D36D1 /* gtest_skip_in_environment_setup_test.cc in Sources */,
+				ED07FB9F24AADFE4006D36D1 /* sample8_unittest.cc in Sources */,
+				ED07FBB324AADFE4006D36D1 /* gtest-death-test.cc in Sources */,
+				ED07FAFB24AADFE4006D36D1 /* gtest_stress_test.cc in Sources */,
+				ED07FB3324AADFE4006D36D1 /* gtest_help_test_.cc in Sources */,
+				ED07FC2724AADFE4006D36D1 /* gmock_main.cc in Sources */,
+				ED07FADE24AADFE4006D36D1 /* gtest_pred_impl_unittest.cc in Sources */,
+				ED07FBCF24AADFE4006D36D1 /* gmock-spec-builders_test.cc in Sources */,
+				ED07FB2224AADFE4006D36D1 /* gtest_xml_outfile2_test_.cc in Sources */,
+				ED07FC2924AADFE4006D36D1 /* gmock-matchers.cc in Sources */,
+				ED07FB9A24AADFE4006D36D1 /* sample4_unittest.cc in Sources */,
+				ED07FADA24AADFE4006D36D1 /* googletest-message-test.cc in Sources */,
+				ED07FB4424AADFE4006D36D1 /* googletest-param-test-invalid-name2-test_.cc in Sources */,
+				ED07FB3B24AADFE4006D36D1 /* googletest-printers-test.cc in Sources */,
+				ED07FAF724AADFE4006D36D1 /* googletest-death-test-test.cc in Sources */,
+				ED07FB0724AADFE4006D36D1 /* googletest-env-var-test_.cc in Sources */,
+				ED07FB2F24AADFE4006D36D1 /* gtest_no_test_unittest.cc in Sources */,
+				ED07FBEF24AADFE4006D36D1 /* gmock-function-mocker_test.cc in Sources */,
+				ED07FB3F24AADFE4006D36D1 /* googletest-param-test2-test.cc in Sources */,
+				ED07FBC524AADFE4006D36D1 /* gmock_all_test.cc in Sources */,
+				ED07FBF124AADFE4006D36D1 /* gmock-matchers_test.cc in Sources */,
+				ED07FBC724AADFE4006D36D1 /* gmock_output_test_.cc in Sources */,
+				ED07FBD624AADFE4006D36D1 /* gmock_leak_test_.cc in Sources */,
 				ED07F9A024AA921F006D36D1 /* utils.c in Sources */,
-				22CF122B0EE9AAAD0054F513 /* h9_max_external.c in Sources */,
+				ED07FAFF24AADFE4006D36D1 /* production.cc in Sources */,
+				ED07FB4C24AADFE4006D36D1 /* gtest_sole_header_test.cc in Sources */,
+				ED07FBBF24AADFE4006D36D1 /* gtest-matchers.cc in Sources */,
+				ED07FBD824AADFE4006D36D1 /* gmock-generated-actions_test.cc in Sources */,
+				ED07FB5824AADFE4006D36D1 /* gtest-typed-test_test.cc in Sources */,
+				ED07FB8424AADFE4006D36D1 /* sample3_unittest.cc in Sources */,
+				ED07FB9C24AADFE4006D36D1 /* sample1_unittest.cc in Sources */,
+				ED07FB1224AADFE4006D36D1 /* gtest_all_test.cc in Sources */,
+				ED07FB0C24AADFE4006D36D1 /* gtest_repeat_test.cc in Sources */,
+				ED07FBE524AADFE4006D36D1 /* gmock-generated-matchers_test.cc in Sources */,
+				ED07FBC924AADFE4006D36D1 /* gmock-port_test.cc in Sources */,
+				ED07FB5D24AADFE4006D36D1 /* gtest_throw_on_failure_ex_test.cc in Sources */,
+				ED07FB0924AADFE4006D36D1 /* gtest-unittest-api_test.cc in Sources */,
+				ED07FB9524AADFE4006D36D1 /* sample7_unittest.cc in Sources */,
+				ED07FBD424AADFE4006D36D1 /* gmock_link_test.cc in Sources */,
+				ED07FAE824AADFE4006D36D1 /* gtest_testbridge_test_.cc in Sources */,
+				ED07FBDC24AADFE4006D36D1 /* gmock-pp_test.cc in Sources */,
+				ED07FBDE24AADFE4006D36D1 /* gmock-internal-utils_test.cc in Sources */,
+				ED07FB2724AADFE4006D36D1 /* googletest-list-tests-unittest_.cc in Sources */,
+				ED07FB9124AADFE4006D36D1 /* sample1.cc in Sources */,
+				ED07FAFD24AADFE4006D36D1 /* googletest-uninitialized-test_.cc in Sources */,
+				ED07FB4824AADFE4006D36D1 /* gtest_unittest.cc in Sources */,
+				22CF122B0EE9AAAD0054F513 /* h9_external.c in Sources */,
+				ED07FAE624AADFE4006D36D1 /* gtest_assert_by_exception_test.cc in Sources */,
+				ED07FB5624AADFE4006D36D1 /* gtest-typed-test2_test.cc in Sources */,
+				ED07FBE124AADFE4006D36D1 /* gmock_stress_test.cc in Sources */,
+				ED07FC2524AADFE4006D36D1 /* gmock-cardinalities.cc in Sources */,
+				ED07FB2924AADFE4006D36D1 /* googletest-port-test.cc in Sources */,
+				ED07FB9324AADFE4006D36D1 /* sample2_unittest.cc in Sources */,
+				ED07FBB724AADFE4006D36D1 /* gtest-printers.cc in Sources */,
+				ED07FC2324AADFE4006D36D1 /* gmock-internal-utils.cc in Sources */,
+				ED07FAF024AADFE4006D36D1 /* gtest_xml_output_unittest_.cc in Sources */,
+				ED07FBDA24AADFE4006D36D1 /* gmock_ex_test.cc in Sources */,
+				ED07FB8724AADFE4006D36D1 /* sample9_unittest.cc in Sources */,
+				ED07FB8D24AADFE4006D36D1 /* sample2.cc in Sources */,
+				ED07FB2524AADFE4006D36D1 /* gtest_test_macro_stack_footprint_test.cc in Sources */,
+				ED07FBEB24AADFE4006D36D1 /* gmock-cardinalities_test.cc in Sources */,
+				ED07FB1A24AADFE4006D36D1 /* googletest-break-on-failure-unittest_.cc in Sources */,
+				ED07FBCB24AADFE4006D36D1 /* gmock_test.cc in Sources */,
+				ED07FBAC24AADFE4006D36D1 /* gtest-test-part.cc in Sources */,
+				ED07FAEE24AADFE4006D36D1 /* gtest_environment_test.cc in Sources */,
+				ED07FB2B24AADFE4006D36D1 /* gtest_list_output_unittest_.cc in Sources */,
+				ED07FAEA24AADFE4006D36D1 /* gtest_main_unittest.cc in Sources */,
+				ED07FBE724AADFE4006D36D1 /* gmock-pp-string_test.cc in Sources */,
+				ED07FAF924AADFE4006D36D1 /* googletest-failfast-unittest_.cc in Sources */,
+				ED07FB5B24AADFE4006D36D1 /* googletest-options-test.cc in Sources */,
+				ED07FBB524AADFE4006D36D1 /* gtest-port.cc in Sources */,
+				ED07FC2F24AADFE4006D36D1 /* gmock.cc in Sources */,
+				ED07FBB924AADFE4006D36D1 /* gtest-typed-test.cc in Sources */,
 				ED373DFF243AAB00004C2CEB /* midi_parser.c in Sources */,
+				ED07FBE324AADFE4006D36D1 /* gmock-more-actions_test.cc in Sources */,
+				ED07FB8B24AADFE4006D36D1 /* sample5_unittest.cc in Sources */,
+				ED07FB1D24AADFE4006D36D1 /* googletest-shuffle-test_.cc in Sources */,
+				ED07FAE424AADFE4006D36D1 /* googletest-test-part-test.cc in Sources */,
+				ED07FB2D24AADFE4006D36D1 /* gtest_skip_test.cc in Sources */,
+				ED07FB3724AADFE4006D36D1 /* googletest-filepath-test.cc in Sources */,
+				ED07FADC24AADFE4006D36D1 /* googletest-output-test_.cc in Sources */,
+				ED07FBBB24AADFE4006D36D1 /* gtest-all.cc in Sources */,
+				ED07FC2D24AADFE4006D36D1 /* gmock-spec-builders.cc in Sources */,
+				ED07FB0E24AADFE4006D36D1 /* googletest-setuptestsuite-test_.cc in Sources */,
+				ED07FB1F24AADFE4006D36D1 /* gtest_premature_exit_test.cc in Sources */,
+				ED07FBB024AADFE4006D36D1 /* gtest_main.cc in Sources */,
+				ED07FB1624AADFE4006D36D1 /* googletest-param-test-invalid-name1-test_.cc in Sources */,
+				ED07FB8224AADFE4006D36D1 /* sample6_unittest.cc in Sources */,
+				ED07FB1824AADFE4006D36D1 /* googletest-catch-exceptions-test_.cc in Sources */,
+				ED07FBE924AADFE4006D36D1 /* gmock-actions_test.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,7 +1637,6 @@
 		};
 		2FBBEAE108F335360078DB84 /* Development */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 22CF10220EE984600054F513 /* maxmspsdk.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer: malacalypse@studiodccreative.com (7FTV8QNK36)";
@@ -327,7 +1656,6 @@
 		};
 		2FBBEAE208F335360078DB84 /* Deployment */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 22CF10220EE984600054F513 /* maxmspsdk.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer: malacalypse@studiodccreative.com (7FTV8QNK36)";

@@ -38,7 +38,8 @@
       enableASanStackUseAfterReturn = "YES"
       enableUBSanitizer = "YES"
       launchStyle = "0"
-      useCustomWorkingDirectory = "NO"
+      useCustomWorkingDirectory = "YES"
+      customWorkingDirectory = "/Users/studiodc/Development/max-sdk/source/studiodc/h9"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -55,7 +56,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/studiodc/Development/max-sdk/source/studiodc/h9/test1.syx"
+            argument = "test_data/test1.syx"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
