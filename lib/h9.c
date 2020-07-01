@@ -145,7 +145,7 @@ bool h9_preset_loaded(h9* h9) {
 }
 
 // Knob, Expr, and PSW operations
-void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_action cb_action) {
+void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_action cc_cb_action) {
     if (control >= NUM_CONTROLS) {
         return;  // Control is invalid
     }
@@ -167,7 +167,7 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
                 update_display_value(h9, control, knob->current_value);
             }
     }
-    if (cb_action == kH9_TRIGGER_CALLBACK) {
+    if (cc_cb_action == kH9_TRIGGER_CALLBACK) {
         cc_callback(h9, control, value);
     }
 }

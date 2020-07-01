@@ -173,7 +173,7 @@ size_t            h9_numModules(h9* h9);
 bool              h9_preset_loaded(h9* h9);
 h9_preset*        h9_preset_new(void);
 void              h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
-void              h9_setControl(h9* h9, control_id knob_num, control_value value, h9_callback_action cb_action);
+void              h9_setControl(h9* h9, control_id knob_num, control_value value, h9_callback_action cc_cb_action);
 void              h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw);
 
 #ifdef __cplusplus
