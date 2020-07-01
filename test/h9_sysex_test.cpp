@@ -98,4 +98,13 @@ TEST_F(TEST_CLASS, h9_dump_dumps_loaded_sysex) {
     }
 }
 
+/*
+ Tests to do:
+ - Test that knob values are populated from preset properly
+ - Test that display values are synched
+ - Examine pedal behaviour with expression pedal on load and see what it does (does it reset the expression pedal position, does it "ignore" it until it updates? - and does the catch-up mode matter?) and then test that the behaviour matches.
+ - Validate that callbacks fire properly on load
+ - Test dirty behaviour with sync
+ */
+
 }  // namespace h9_test

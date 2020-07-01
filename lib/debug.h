@@ -22,7 +22,6 @@
 #define debug_annoy(...)
 #endif
 
-
 #if (DEBUG_LEVEL >= DEBUG_INFO)
 #define debug_info(...) printf(__VA_ARGS__)
 #else
@@ -35,11 +34,11 @@
 #define debug_error(...)
 #endif
 
-#else // DEBUG_LEVEL
+#else  // DEBUG_LEVEL
 #define debug_info(...)
 #define debug_error(...)
 #define debug_annoy(...)
-#endif // DEBUG_LEVEL
+#endif  // DEBUG_LEVEL
 
 #else
 #define debug_info(...)

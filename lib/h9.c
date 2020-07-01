@@ -8,15 +8,17 @@
 #include "h9.h"
 
 #include <assert.h>
+#include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <math.h>
 
 #include "h9_modules.h"
 #include "utils.h"
 
-#define MIDI_MAX 32767 // 2^15 - 1 for 14-bit MIDI
+#define MIDI_MAX          32767  // 2^15 - 1 for 14-bit MIDI
+#define DEFAULT_MODULE    4      // zero-indexed
+#define DEFAULT_ALGORITHM 0
 
 #define DEBUG_LEVEL DEBUG_ERROR
 #include "debug.h"
@@ -34,7 +36,7 @@ static void reset_knobs(h9* h9) {
 
 // This exists to handle future callbacks or other dynamic behaviour
 static void update_display_value(h9* h9, control_id control, control_value value) {
-    h9_knob* knob = &h9->preset->knobs[control];
+    h9_knob* knob       = &h9->preset->knobs[control];
     knob->display_value = knob->current_value;
     if (h9->display_callback != NULL) {
         h9->display_callback(h9, control, value);
@@ -82,16 +84,25 @@ static bool h9_getPsw(h9* h9) {
 // Create
 h9* h9_new(void) {
     h9* h9 = malloc(sizeof(*h9));
-    assert(h9 != NULL);
-    h9->preset = malloc(sizeof(*(h9->preset)));
-    assert(h9->preset != NULL);
-    h9->sysex_id = 1U; // Default
+    if (h9 == NULL) {
+        return h9;
+    }
+
+    // Init the preset object
+    h9->preset = h9_preset_new();
+    if (h9->preset == NULL) {
+        h9_delete(h9);
+        h9 = NULL;
+        return h9;
+    }
+
+    // Set sane default values so the object functions correctly
+    h9->sysex_id   = 1U;  // Default
     h9->expression = 0.0f;
     return h9;
 }
 
-// Free / Delete
-void h9_free(h9* h9) {
+void h9_delete(h9* h9) {
     if (h9 == NULL) {
         return;
     }
@@ -101,15 +112,31 @@ void h9_free(h9* h9) {
     free(h9);
 }
 
+h9_preset* h9_preset_new(void) {
+    h9_preset* h9_preset = malloc(sizeof(*h9_preset));
+    if (h9_preset == NULL) {
+        return h9_preset;
+    }
+
+    // Set up a safe (but not very useful) default preset
+    h9_preset->module    = &modules[DEFAULT_MODULE];
+    h9_preset->algorithm = &h9_preset->module->algorithms[DEFAULT_ALGORITHM];
+    strncpy(h9_preset->name, h9_preset->algorithm->name, H9_MAX_NAME_LEN);
+    h9_preset->output_gain = 0.0f;
+    h9_preset->tempo       = 120.0f;
+
+    return h9_preset;
+}
+
 // Common H9 operations
 
 static void cc_callback(h9* h9, control_id control, float value) {
     if ((h9->cc_callback == NULL) || (h9->midi_config.cc_tx_map[control] == 0)) {
         return;
     }
-    uint8_t midi_channel = h9->midi_config.midi_channel;
-    uint8_t control_cc = h9->midi_config.cc_tx_map[control];
-    uint16_t cc_value = clip(value, 0.0f, 1.0f) * MIDI_MAX;
+    uint8_t  midi_channel = h9->midi_config.midi_channel;
+    uint8_t  control_cc   = h9->midi_config.cc_tx_map[control];
+    uint16_t cc_value     = clip(value, 0.0f, 1.0f) * MIDI_MAX;
     h9->cc_callback(h9, midi_channel, control_cc, (uint8_t)(cc_value >> 8), (uint8_t)cc_value);
 }
 
@@ -118,29 +145,31 @@ bool h9_preset_loaded(h9* h9) {
 }
 
 // Knob, Expr, and PSW operations
-void h9_setControl(h9* h9, control_id control, control_value value) {
+void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_action cb_action) {
     if (control >= NUM_CONTROLS) {
-        return; // Control is invalid
+        return;  // Control is invalid
     }
 
     // Knobs can be set even if a preset isn't loaded.
     h9_knob* knob;
-    switch(control) {
+    switch (control) {
         case EXPR:
             h9_setExpr(h9, value);
             break;
         case PSW:
             h9_setPsw(h9, (value > 0));
             break;
-        default: // A knob
-            knob = &h9->preset->knobs[control];
+        default:  // A knob
+            knob                = &h9->preset->knobs[control];
             knob->current_value = value;
-            h9->dirty = true;
+            h9->dirty           = true;
             if (knob->current_value != knob->display_value) {
                 update_display_value(h9, control, knob->current_value);
             }
     }
-    cc_callback(h9, control, value);
+    if (cb_action == kH9_TRIGGER_CALLBACK) {
+        cc_callback(h9, control, value);
+    }
 }
 
 void h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw) {
@@ -150,52 +179,53 @@ void h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_v
     h9_knob* knob = &h9->preset->knobs[knob_num];
     knob->exp_min = exp_min;
     knob->exp_max = exp_max;
-    knob->psw = psw;
+    knob->psw     = psw;
 }
 
-control_value h9_getControl(h9* h9, control_id control) {
+control_value h9_controlValue(h9* h9, control_id control) {
+    if (control > NUM_CONTROLS) {
+        return -1.0f;
+    }
+
     h9_knob* knob;
 
-    switch(control) {
+    switch (control) {
         case EXPR:
             return h9_getExpr(h9);
         case PSW:
             return h9_getPsw(h9) ? 0.0f : 1.0f;
         default:
-            if (control > KNOB9) {
-                return -1.0f;
-            }
             knob = &h9->preset->knobs[control];
             return knob->current_value;
     }
 }
 
-control_value h9_getKnobDisplay(h9* h9, control_id knob_num) {
-    if (knob_num > KNOB9) {
-        return -1.0f;
+control_value h9_displayValue(h9* h9, control_id control) {
+    if (control > KNOB9) {
+        return h9_controlValue(h9, control);
     }
-    h9_knob* knob = &h9->preset->knobs[knob_num];
+    h9_knob* knob = &h9->preset->knobs[control];
     return knob->display_value;
 }
 
-void h9_getKnobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw) {
+void h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw) {
     if (knob_num > KNOB9) {
         return;
     }
     h9_knob* knob = &h9->preset->knobs[knob_num];
-    *exp_min = knob->exp_min;
-    *exp_max = knob->exp_max;
-    *psw = knob->psw;
+    *exp_min      = knob->exp_min;
+    *exp_max      = knob->exp_max;
+    *psw          = knob->psw;
 }
 
 // Preset Operations
-void h9_switchAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
+void h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
     assert(module_sysex_id > 0 && module_sysex_id <= H9_NUM_MODULES);
-    h9_module *module = &modules[module_sysex_id];
+    h9_module* module = &modules[module_sysex_id];
     assert(algorithm_sysex_id < module->num_algorithms);
-    h9->preset->module = module;
+    h9->preset->module    = module;
     h9->preset->algorithm = &module->algorithms[algorithm_sysex_id];
-    h9->dirty = true;
+    h9->dirty             = true;
     reset_knobs(h9);
 }
 
@@ -250,11 +280,11 @@ const char* h9_currentAlgorithmName(h9* h9) {
 
 // Syncing
 size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len) {
-    size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->sysex_id, kH9_DUMP_ONE);
-    return bytes_written; // No +1 here, the f7 is the terminator.
+    size_t bytes_written = snprintf((char*)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->sysex_id, kH9_DUMP_ONE);
+    return bytes_written;  // No +1 here, the f7 is the terminator.
 }
 
 size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len) {
-    size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->sysex_id, kH9_TJ_SYSVARS_WANT);
-    return bytes_written; // No +1 here, the f7 is the terminator.
+    size_t bytes_written = snprintf((char*)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->sysex_id, kH9_TJ_SYSVARS_WANT);
+    return bytes_written;  // No +1 here, the f7 is the terminator.
 }

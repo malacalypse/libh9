@@ -14,16 +14,16 @@
 #include "debug.h"
 
 #ifndef MAX_SYSEX_BUFFER_SIZE
-#define MAX_SYSEX_BUFFER_SIZE  8192 // Adjust to taste. Some sample sysex can be MB.
+#define MAX_SYSEX_BUFFER_SIZE 8192  // Adjust to taste. Some sample sysex can be MB.
 #endif
 
-#define INIT_SYSEX_BUFFER_SIZE 256 // Large enough for many implementations, will auto-scale.
+#define INIT_SYSEX_BUFFER_SIZE 256  // Large enough for many implementations, will auto-scale.
 
 static void midi_reset(midi_parser *parser);
 static void midi_sysex_complete(midi_parser *parser);
 static void midi_cc_complete(midi_parser *parser, uint8_t n);
 
-midi_parser * midi_parser_new(void *context, midi_sysex_callback sysex_callback, midi_cc_callback cc_callback) {
+midi_parser *midi_parser_new(void *context, midi_sysex_callback sysex_callback, midi_cc_callback cc_callback) {
     midi_parser *parser = malloc(sizeof(*parser));
 
     if (parser == NULL) {
@@ -31,7 +31,7 @@ midi_parser * midi_parser_new(void *context, midi_sysex_callback sysex_callback,
     }
 
     // Init a reasonable sysex buffer
-    parser->buffer_len = INIT_SYSEX_BUFFER_SIZE;
+    parser->buffer_len   = INIT_SYSEX_BUFFER_SIZE;
     parser->sysex_buffer = malloc(sizeof(*parser->sysex_buffer) * parser->buffer_len);
     if (parser->sysex_buffer == NULL) {
         parser->buffer_len = 0;
@@ -39,16 +39,16 @@ midi_parser * midi_parser_new(void *context, midi_sysex_callback sysex_callback,
 
     // Clear the preamble buffer of any cruft
     parser->sysex_preamble_len = 0;
-    parser->sysex_preamble = NULL;
+    parser->sysex_preamble     = NULL;
 
     // Zero any important other variables
-    parser->state = kIDLE;
-    parser->sysex_len = 0;
+    parser->state             = kIDLE;
+    parser->sysex_len         = 0;
     parser->listening_channel = 0;
 
     // Setup callbacks
     parser->sysex_callback = sysex_callback;
-    parser->cc_callback = cc_callback;
+    parser->cc_callback    = cc_callback;
 
     parser->context = context;
 
@@ -134,7 +134,7 @@ void midi_parse(midi_parser *parser, uint8_t n) {
                         return;
                     }
                     parser->sysex_buffer = new_buffer;
-                    parser->buffer_len = new_len;
+                    parser->buffer_len   = new_len;
                     return;
                 }
             } else {
@@ -145,7 +145,7 @@ void midi_parse(midi_parser *parser, uint8_t n) {
                     // per MIDI spec, any non-realtime status byte is valid for ending sysex
                     midi_sysex_complete(parser);
                     if (n < 0xF7) {
-                        midi_parse(parser, n); // status byte still needs independent processing.
+                        midi_parse(parser, n);  // status byte still needs independent processing.
                     }
                 }
             }
@@ -179,7 +179,7 @@ void midi_parse(midi_parser *parser, uint8_t n) {
             }
             midi_cc_complete(parser, n);
             break;
-        default: // should be kIDLE, but just in case...
+        default:  // should be kIDLE, but just in case...
             parser->state = kIDLE;
             debug_annoy("Midi Parser: kIDLE: Parsing %u\n", n);
             if (n == 0xF0) {
@@ -203,7 +203,7 @@ void midi_parse(midi_parser *parser, uint8_t n) {
 
 static void midi_reset(midi_parser *parser) {
     debug_info("Midi Parser: midi_reset\n");
-    parser->state = kIDLE;
+    parser->state     = kIDLE;
     parser->sysex_len = 0;
 }
 

@@ -14,9 +14,9 @@
 #define DEBUG_LEVEL DEBUG_ERROR
 #include "debug.h"
 
-size_t hexdump(char *dest, size_t max_len, uint8_t* data, size_t len) {
+size_t hexdump(char *dest, size_t max_len, uint8_t *data, size_t len) {
     char *cursor = dest;
-    char *end = dest + max_len;
+    char *end    = dest + max_len;
     for (size_t i = 0; i < len; i++) {
         if (cursor < (end - 2)) {
             cursor += sprintf(cursor, "%02x", (int)data[i]);
@@ -30,7 +30,7 @@ size_t hexdump(char *dest, size_t max_len, uint8_t* data, size_t len) {
 }
 
 size_t scanhex(char *str, uint32_t *dest, size_t len) {
-    FILE *stream;
+    FILE * stream;
     size_t i = 0;
 
     stream = fmemopen(str, strlen(str), "r");
@@ -50,8 +50,8 @@ size_t scanhex(char *str, uint32_t *dest, size_t len) {
     return i;
 }
 
-size_t scanfloat(char* str, float *dest, size_t len) {
-    FILE *stream;
+size_t scanfloat(char *str, float *dest, size_t len) {
+    FILE * stream;
     size_t i = 0;
 
     stream = fmemopen(str, strlen(str), "r");
