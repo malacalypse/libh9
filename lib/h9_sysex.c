@@ -31,16 +31,16 @@ typedef struct h9_sysex_preset {
     int      preset_num;
     int      module;
     int      algorithm;
-    uint32_t knob_values[12];   // Spec: 12 entries in this row, 11th is expr, 12th unknown, perhaps PSW
-    uint32_t knob_map[30];      // Spec: 30 entries in this row
-    uint32_t options[8];        // Spec: 8 entries in this row
-    float    mknob_values[12];  // Spec: 12 entries in this row, 11th/12th always seem to be 65000
+    uint32_t control_values[12];  // Spec: 12 entries in this row, 11th is expr, 12th unknown, perhaps PSW
+    uint32_t knob_map[30];        // Spec: 30 entries in this row
+    uint32_t options[8];          // Spec: 8 entries in this row
+    float    mknob_values[12];    // Spec: 12 entries in this row, 11th/12th always seem to be 65000
     int      checksum;
     char     patch_name[H9_MAX_NAME_LEN];
 } h9_sysex_preset;
 
 //////////////////// Private Function Declarations
-static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset, float expression);
+static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset);
 
 //////////////////// Private Functions
 
@@ -82,33 +82,46 @@ static void export_knob_mknob(float *value_row, size_t index, h9_knob *knobs) {
     value_row[indices[index]] = export_mknob_value(knob->current_value);
 }
 
-static void import_knob_values(h9_knob *knobs, size_t index, uint32_t *value_row) {
-    h9_knob *knob = &knobs[index];
-
-    size_t   indices[]  = {9, 8, 7, 6, 5, 4, 0, 1, 2, 3};
-    uint32_t raw_value  = value_row[indices[index]];
-    knob->current_value = raw_value / (float)KNOB_MAX;  // Scale between 0.0 and 1.0
-    knob->display_value = knob->current_value;
+static float import_control_value(uint32_t sysex_value) {
+    return (float)sysex_value / (float)KNOB_MAX;
 }
 
-static void import_knob_map(h9_knob *knobs, size_t index, uint32_t *knob_expr_psw_row) {
-    h9_knob *knob = &knobs[index];
+static void import_control_values(h9_preset *preset, uint32_t *value_row) {
+    const size_t indices[] = {9, 8, 7, 6, 5, 4, 0, 1, 2, 3};
 
+    for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
+        h9_knob *knob       = &preset->knobs[i];
+        uint32_t raw_value  = value_row[indices[i]];
+        knob->current_value = import_control_value(raw_value);
+        knob->display_value = knob->current_value;
+    }
+    preset->expression = import_control_value(value_row[10]);
+    preset->psw        = (value_row[11] > 0);
+}
+
+static void import_knob_map(h9_preset *preset, uint32_t *knob_expr_psw_row) {
     size_t min_indices[] = {18, 16, 14, 12, 10, 8, 0, 2, 4, 6};
     size_t max_indices[] = {19, 17, 15, 13, 11, 9, 1, 3, 5, 7};
     size_t psw_indices[] = {29, 28, 27, 26, 25, 24, 20, 21, 22, 23};
-    knob->exp_min        = knob_expr_psw_row[min_indices[index]] / (float)KNOB_MAX;
-    knob->exp_max        = knob_expr_psw_row[max_indices[index]] / (float)KNOB_MAX;
-    knob->psw            = knob_expr_psw_row[psw_indices[index]] / (float)KNOB_MAX;
-    knob->exp_mapped     = (knob->exp_min != 0.0 || knob->exp_max != 0.0);
-    knob->psw_mapped     = (knob->psw != 0.0);
+
+    for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
+        h9_knob *knob = &preset->knobs[i];
+
+        knob->exp_min    = import_control_value(knob_expr_psw_row[min_indices[i]]);
+        knob->exp_max    = import_control_value(knob_expr_psw_row[max_indices[i]]);
+        knob->psw        = import_control_value(knob_expr_psw_row[psw_indices[i]]);
+        knob->exp_mapped = (knob->exp_min != 0.0 || knob->exp_max != 0.0);
+        knob->psw_mapped = (knob->psw != 0.0);
+    }
 }
 
-static void import_knob_mknob(h9_knob *knobs, size_t index, float *mknob_row) {
-    h9_knob *knob = &knobs[index];
+static void import_mknob_values(h9_preset *preset, float *mknob_row) {
+    size_t indices[] = {9, 8, 7, 6, 5, 4, 0, 1, 2, 3};
 
-    size_t indices[]  = {9, 8, 7, 6, 5, 4, 0, 1, 2, 3};
-    knob->mknob_value = mknob_row[indices[index]];
+    for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
+        h9_knob *knob     = &preset->knobs[i];
+        knob->mknob_value = mknob_row[indices[i]];
+    }
 }
 
 static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
@@ -149,7 +162,7 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
 
     // Unpack Line 2: hex ascii knob values, order: 7 8 9 10 6 5 4 3 2 1 expression <unused>
     size_t expected_values = 12;
-    found                  = scanhex(lines[1], sxpreset->knob_values, expected_values);
+    found                  = scanhex(lines[1], sxpreset->control_values, expected_values);
     if (found != expected_values) {
         debug_info("Line 2 did not validate, found %zu.\n", found);
         return false;
@@ -201,7 +214,7 @@ static uint16_t checksum(h9_sysex_preset *sxpreset) {
     //       The resulting INTEGER is then formatted as HEX and the last 4 characters are compared
     //       to the characters on line 6.
     uint16_t checksum = 0U;
-    checksum += array_sum(sxpreset->knob_values, 12);
+    checksum += array_sum(sxpreset->control_values, 12);
     checksum += array_sum(sxpreset->knob_map, 30);
     checksum += array_sum(sxpreset->options, 8);
     checksum += iarray_sumf(sxpreset->mknob_values, 12);
@@ -227,11 +240,9 @@ static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
     strncpy(preset->name, sxpreset->patch_name, H9_MAX_NAME_LEN);
     preset->module    = &modules[module_index];
     preset->algorithm = &modules[module_index].algorithms[sxpreset->algorithm];
-    for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
-        import_knob_values(preset->knobs, i, sxpreset->knob_values);
-        import_knob_map(preset->knobs, i, sxpreset->knob_map);
-        import_knob_mknob(preset->knobs, i, sxpreset->mknob_values);
-    }
+    import_control_values(preset, sxpreset->control_values);
+    import_knob_map(preset, sxpreset->knob_map);
+    import_mknob_values(preset, sxpreset->mknob_values);
     preset->tempo               = (float)sxpreset->options[1] / 100.0;
     preset->tempo_enabled       = (sxpreset->options[2] != 0);
     preset->xyz_map[0]          = sxpreset->options[4];
@@ -244,22 +255,22 @@ static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
     preset->output_gain = ((int32_t)(sxpreset->options[3] << 8) >> 8) * 0.1f;
 }
 
-static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset, float expression) {
+static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset) {
     sxpreset->module     = preset->module->sysex_num;
     sxpreset->algorithm  = preset->algorithm->id;
     sxpreset->preset_num = DEFAULT_PRESET_NUM;
 
     // Dump knob values
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
-        export_knob_values(sxpreset->knob_values, i, preset->knobs);
+        export_knob_values(sxpreset->control_values, i, preset->knobs);
         export_knob_map(sxpreset->knob_map, i, preset->knobs);
         export_knob_mknob(sxpreset->mknob_values, i, preset->knobs);
     }
 
     // Dump expression pedal value
-    sxpreset->knob_values[10]  = export_knob_value(expression);
-    sxpreset->mknob_values[10] = export_mknob_value(expression);
-    sxpreset->mknob_values[11] = export_mknob_value(KNOB_MAX);  // Always seems to be constant.
+    sxpreset->control_values[10] = export_knob_value(preset->expression);
+    sxpreset->mknob_values[10]   = export_mknob_value(preset->expression);
+    sxpreset->mknob_values[11]   = export_mknob_value(KNOB_MAX);  // Always seems to be constant.
 
     // Dump translated option values
     sxpreset->options[1] = (uint16_t)rintf(preset->tempo * 100.0f);
@@ -298,17 +309,17 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
                                     sxpreset->preset_num,
                                     sxpreset->algorithm,
                                     sxpreset->module,  // Line 1, etc..
-                                    sxpreset->knob_values[0],
-                                    sxpreset->knob_values[1],
-                                    sxpreset->knob_values[2],
-                                    sxpreset->knob_values[3],
-                                    sxpreset->knob_values[4],
-                                    sxpreset->knob_values[5],
-                                    sxpreset->knob_values[6],
-                                    sxpreset->knob_values[7],
-                                    sxpreset->knob_values[8],
-                                    sxpreset->knob_values[9],
-                                    sxpreset->knob_values[10],
+                                    sxpreset->control_values[0],
+                                    sxpreset->control_values[1],
+                                    sxpreset->control_values[2],
+                                    sxpreset->control_values[3],
+                                    sxpreset->control_values[4],
+                                    sxpreset->control_values[5],
+                                    sxpreset->control_values[6],
+                                    sxpreset->control_values[7],
+                                    sxpreset->control_values[8],
+                                    sxpreset->control_values[9],
+                                    sxpreset->control_values[10],
                                     sxpreset->knob_map[0],
                                     sxpreset->knob_map[1],
                                     sxpreset->knob_map[2],
@@ -432,8 +443,8 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
     h9_reset_knobs(h9);
     // load_preset doesn't update the expression and psw values or callback for them, so do that manually.
     // TODO: Validate that we actually want to update the pedal's memory for this position from the preset:
-    h9_setControl(h9, EXPR, sxpreset.knob_values[EXPR], kH9_SUPPRESS_CALLBACK);
-    h9_setControl(h9, PSW, sxpreset.knob_values[PSW], kH9_SUPPRESS_CALLBACK);
+    h9_setControl(h9, EXPR, sxpreset.control_values[EXPR], kH9_SUPPRESS_CALLBACK);
+    h9_setControl(h9, PSW, sxpreset.control_values[PSW], kH9_SUPPRESS_CALLBACK);
 
     h9->dirty = false;
 
@@ -445,7 +456,7 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
 
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));
-    dump_preset(&sxpreset, h9->preset, h9->expression);
+    dump_preset(&sxpreset, h9->preset);
 
     size_t bytes_written = format_sysex(sysex, max_len, &sxpreset, h9->midi_config.sysex_id);
     if (bytes_written <= max_len && update_dirty_flag) {

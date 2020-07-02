@@ -112,6 +112,8 @@ typedef struct h9_preset {
     h9_module*    module;
     h9_algorithm* algorithm;
     h9_knob       knobs[H9_NUM_KNOBS];
+    control_value expression;
+    bool          psw;
     float         tempo;
     float         output_gain;
     uint8_t       xyz_map[3];
@@ -147,10 +149,7 @@ typedef struct h9 {
     char           name[H9_MAX_NAME_LEN];
     h9_midi_config midi_config;
     h9_preset*     preset;
-    bool           dirty;         // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
-    control_value  expression;    // 0.00 to 1.00
-    bool           expr_changed;  // true if the expression pedal has been moved after loading the preset
-    bool           psw;           // switch, on (true) or off (false)
+    bool           dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
 
     // Observer registration
     h9_display_callback display_callback;

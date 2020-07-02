@@ -29,12 +29,11 @@
 #include "debug.h"
 
 /* ==== Private Function Declarations ============================================= */
-static void          h9_setExpr(h9* h9, control_value value);
-static control_value h9_getExpr(h9* h9);
-static void          h9_setPsw(h9* h9, bool psw_on);
-static bool          h9_getPsw(h9* h9);
-static void          display_callback(h9* h9, control_id control, float value);
-static void          cc_callback(h9* h9, control_id control, float value);
+static void h9_setExpr(h9* h9, control_value value);
+static void h9_setPsw(h9* h9, bool psw_on);
+static void h9_setKnob(h9* h9, control_id control, control_value value);
+static void display_callback(h9* h9, control_id control, float value);
+static void cc_callback(h9* h9, control_id control, float value);
 
 /* ==== MODULE Private Function Definitions (implements h9_module.h) ============== */
 void h9_reset_knobs(h9* h9) {
@@ -58,7 +57,7 @@ void h9_update_display_value(h9* h9, control_id control, control_value value) {
 static void h9_setExpr(h9* h9, control_value value) {
     control_value expval = clip(value, 0.0f, 1.0f);
 
-    h9->expression = expval;
+    h9->preset->expression = expval;
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
         h9_knob* knob = &h9->preset->knobs[i];
         if (knob->exp_mapped) {
@@ -69,12 +68,8 @@ static void h9_setExpr(h9* h9, control_value value) {
     display_callback(h9, EXPR, value);
 }
 
-static control_value h9_getExpr(h9* h9) {
-    return h9->expression;
-}
-
 static void h9_setPsw(h9* h9, bool psw_on) {
-    h9->psw = psw_on;
+    h9->preset->psw = psw_on;
 
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
         h9_knob* knob = &h9->preset->knobs[i];
@@ -85,8 +80,12 @@ static void h9_setPsw(h9* h9, bool psw_on) {
     display_callback(h9, PSW, psw_on ? 1.0 : 0.0f);
 }
 
-static bool h9_getPsw(h9* h9) {
-    return h9->psw;
+static void h9_setKnob(h9* h9, control_id control, control_value value) {
+    h9_knob* knob       = &h9->preset->knobs[control];
+    knob->current_value = value;
+    if (knob->current_value != knob->display_value) {
+        h9_update_display_value(h9, control, knob->current_value);
+    }
 }
 
 static void display_callback(h9* h9, control_id control, float value) {
@@ -133,7 +132,6 @@ h9* h9_new(void) {
     h9->midi_config.cc_rx_map[PSW]  = DEFAULT_PSW_CC;
     h9->midi_config.cc_tx_map[PSW]  = DEFAULT_PSW_CC;
 
-    h9->expression       = 0.0f;
     h9->cc_callback      = NULL;
     h9->display_callback = NULL;
     h9->sysex_callback   = NULL;
@@ -179,8 +177,6 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
         return;  // Control is invalid
     }
 
-    // Knobs can be set even if a preset isn't loaded.
-    h9_knob* knob;
     switch (control) {
         case EXPR:
             h9_setExpr(h9, value);
@@ -189,13 +185,9 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
             h9_setPsw(h9, (value > 0.0f));
             break;
         default:  // A knob
-            knob                = &h9->preset->knobs[control];
-            knob->current_value = value;
-            h9->dirty           = true;
-            if (knob->current_value != knob->display_value) {
-                h9_update_display_value(h9, control, knob->current_value);
-            }
+            h9_setKnob(h9, control, value);
     }
+    h9->dirty = true;
     if (cc_cb_action == kH9_TRIGGER_CALLBACK) {
         cc_callback(h9->callback_context, control, value);
     }
@@ -220,9 +212,9 @@ control_value h9_controlValue(h9* h9, control_id control) {
 
     switch (control) {
         case EXPR:
-            return h9_getExpr(h9);
+            return h9->preset->expression;
         case PSW:
-            return h9_getPsw(h9) ? 1.0f : 0.0f;
+            return h9->preset->psw ? 1.0f : 0.0f;
         default:
             knob = &h9->preset->knobs[control];
             return knob->current_value;
