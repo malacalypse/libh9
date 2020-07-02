@@ -168,9 +168,13 @@ TEST_F(TEST_CLASS, h9_load_triggers_display_callback) {
 
 TEST_F(TEST_CLASS, h9_load_doesNOT_trigger_cc_callback) {
     h9obj->cc_callback = cc_callback;
+    h9_midi_config midi_config;
+    h9_copyMidiConfig(h9obj, &midi_config);
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        h9obj->midi_config.cc_rx_map[i] = i;
+        midi_config.cc_rx_map[i] = i;
     }
+    h9_setMidiConfig(h9obj, &midi_config);
+
     // Ensure that it's cleared before we run
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
         EXPECT_EQ(cc_callback_tracker[h9obj->midi_config.cc_rx_map[i]], -1);

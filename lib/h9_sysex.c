@@ -456,3 +456,14 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
 
     return bytes_written;
 }
+
+// Syncing
+size_t h9_sysexGenRequestCurrentPreset(h9 *h9, uint8_t *sysex, size_t max_len) {
+    size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_DUMP_ONE);
+    return bytes_written;  // No +1 here, the f7 is the terminator.
+}
+
+size_t h9_sysexGenRequestSystemConfig(h9 *h9, uint8_t *sysex, size_t max_len) {
+    size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_TJ_SYSVARS_WANT);
+    return bytes_written;  // No +1 here, the f7 is the terminator.
+}

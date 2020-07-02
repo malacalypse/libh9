@@ -20,6 +20,9 @@
 #define MIDI_MAX          32767  // 2^15 - 1 for 14-bit MIDI
 #define DEFAULT_MODULE    4      // zero-indexed
 #define DEFAULT_ALGORITHM 0
+#define DEFAULT_KNOB_CC   22
+#define DEFAULT_EXPR_CC   15
+#define DEFAULT_PSW_CC    0  // Disabled
 
 #define DEBUG_LEVEL DEBUG_ERROR
 #include "debug.h"
@@ -114,11 +117,21 @@ h9* h9_new(void) {
     }
 
     // Set sane default values so the object functions correctly
-    h9->midi_config.sysex_id = 1U;  // Default
-    h9->expression           = 0.0f;
-    h9->cc_callback          = NULL;
-    h9->display_callback     = NULL;
-    h9->sysex_callback       = NULL;
+    h9->midi_config.sysex_id     = 1U;
+    h9->midi_config.midi_channel = 0U;
+    for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
+        h9->midi_config.cc_rx_map[i] = DEFAULT_KNOB_CC + i;
+        h9->midi_config.cc_tx_map[i] = DEFAULT_KNOB_CC + i;
+    }
+    h9->midi_config.cc_rx_map[EXPR] = DEFAULT_EXPR_CC;
+    h9->midi_config.cc_tx_map[EXPR] = DEFAULT_EXPR_CC;
+    h9->midi_config.cc_rx_map[PSW]  = DEFAULT_PSW_CC;
+    h9->midi_config.cc_tx_map[PSW]  = DEFAULT_PSW_CC;
+
+    h9->expression       = 0.0f;
+    h9->cc_callback      = NULL;
+    h9->display_callback = NULL;
+    h9->sysex_callback   = NULL;
     return h9;
 }
 
@@ -288,13 +301,31 @@ const char* h9_currentAlgorithmName(h9* h9) {
     return h9->preset->algorithm->name;
 }
 
-// Syncing
-size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len) {
-    size_t bytes_written = snprintf((char*)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_DUMP_ONE);
-    return bytes_written;  // No +1 here, the f7 is the terminator.
+// MIDI configuration
+
+// Copies the config, does not retain a reference
+bool h9_setMidiConfig(h9* h9, const h9_midi_config* midi_config) {
+    if (midi_config == NULL) {
+        return false;
+    }
+    if (midi_config->sysex_id < 1 || midi_config->sysex_id > 16) {
+        return false;
+    }
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        if (midi_config->cc_rx_map[i] != CC_DISABLE && midi_config->cc_rx_map[i] > MAX_CC) {
+            return false;
+        }
+        if (midi_config->cc_tx_map[i] != CC_DISABLE && midi_config->cc_tx_map[i] > MAX_CC) {
+            return false;
+        }
+    }
+    memcpy(&h9->midi_config, midi_config, sizeof(*midi_config));
+    return true;
 }
 
-size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len) {
-    size_t bytes_written = snprintf((char*)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_TJ_SYSVARS_WANT);
-    return bytes_written;  // No +1 here, the f7 is the terminator.
+void h9_copyMidiConfig(h9* h9, h9_midi_config* dest_copy) {
+    if (dest_copy == NULL) {
+        return;
+    }
+    memcpy(dest_copy, &h9->midi_config, sizeof(*dest_copy));
 }
