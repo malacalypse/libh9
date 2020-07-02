@@ -189,7 +189,7 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
     }
     h9->dirty = true;
     if (cc_cb_action == kH9_TRIGGER_CALLBACK) {
-        cc_callback(h9->callback_context, control, value);
+        cc_callback(h9, control, value);
     }
 }
 
