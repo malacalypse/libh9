@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "h9.h"
+#include "h9_module.h"
 #include "utils.h"
 
 #define DEBUG_LEVEL DEBUG_ERROR
@@ -388,7 +389,7 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
     }
 
     // Validate preamble
-    uint8_t preamble[] = {H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->sysex_id, kH9_PROGRAM};
+    uint8_t preamble[] = {H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_PROGRAM};
     for (size_t i = 0; i < sizeof(preamble) / sizeof(*preamble); i++) {
         if (*cursor++ != preamble[i]) {
             return kH9_SYSEX_PREAMBLE_INCORRECT;
@@ -426,6 +427,14 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
     }
 
     load_preset(h9->preset, &sxpreset);
+
+    // Sync control state, trigger display callbacks
+    h9_reset_knobs(h9);
+    // load_preset doesn't update the expression and psw values or callback for them, so do that manually.
+    // TODO: Validate that we actually want to update the pedal's memory for this position from the preset:
+    h9_setControl(h9, EXPR, sxpreset.knob_values[EXPR], kH9_SUPPRESS_CALLBACK);
+    h9_setControl(h9, PSW, sxpreset.knob_values[PSW], kH9_SUPPRESS_CALLBACK);
+
     h9->dirty = false;
 
     return kH9_OK;
@@ -440,7 +449,7 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
     memset(&sxpreset, 0x0, sizeof(sxpreset));
     dump_preset(&sxpreset, h9->preset, h9->expression);
 
-    size_t bytes_written = format_sysex(sysex, max_len, &sxpreset, h9->sysex_id);
+    size_t bytes_written = format_sysex(sysex, max_len, &sxpreset, h9->midi_config.sysex_id);
     if (bytes_written <= max_len && update_dirty_flag) {
         h9->dirty = false;
     }

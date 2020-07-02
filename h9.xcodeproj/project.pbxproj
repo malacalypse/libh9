@@ -331,6 +331,7 @@
 		ED07FC7724AB8A52006D36D1 /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		ED1CF0BF24ABE775003684BF /* h9_sysex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = h9_sysex.h; sourceTree = "<group>"; };
 		ED1CF0C024ABE775003684BF /* h9_sysex.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = h9_sysex.c; sourceTree = "<group>"; };
+		ED1CF0C524AD611C003684BF /* h9_module.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = h9_module.h; sourceTree = "<group>"; };
 		ED373DFC243AAB00004C2CEB /* midi_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = midi_parser.h; sourceTree = "<group>"; };
 		ED373DFD243AAB00004C2CEB /* midi_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = midi_parser.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -391,6 +392,7 @@
 				ED07FC7724AB8A52006D36D1 /* debug.h */,
 				ED1CF0BF24ABE775003684BF /* h9_sysex.h */,
 				ED1CF0C024ABE775003684BF /* h9_sysex.c */,
+				ED1CF0C524AD611C003684BF /* h9_module.h */,
 			);
 			path = lib;
 			sourceTree = "<group>";

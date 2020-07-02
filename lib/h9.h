@@ -121,8 +121,10 @@ struct h9;
 typedef struct h9 h9;
 typedef void (*h9_display_callback)(h9* h9, control_id control, float value);
 typedef void (*h9_cc_callback)(h9* h9, uint8_t midi_channel, uint8_t cc, uint8_t msb, uint8_t lsb);
+typedef void (*h9_sysex_callback)(h9* h9, uint8_t* sysex, size_t len);
 
 typedef struct h9_midi_config {
+    uint8_t sysex_id;
     uint8_t midi_channel;
     uint8_t cc_rx_map[NUM_CONTROLS];
     uint8_t cc_tx_map[NUM_CONTROLS];
@@ -130,25 +132,18 @@ typedef struct h9_midi_config {
 
 // The core H9 model
 typedef struct h9 {
-    // Device info
-    char name[H9_MAX_NAME_LEN];
-
-    // MIDI and communications settings
-    uint8_t        sysex_id;
+    char           name[H9_MAX_NAME_LEN];
     h9_midi_config midi_config;
-
-    // Current loaded preset
-    h9_preset* preset;
-    bool       dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
-
-    // Current physical control states
-    float expression;    // 0.00 to 1.00
-    bool  expr_changed;  // true if the expression pedal has been moved after loading the preset
-    bool  psw;           // switch, on (true) or off (false)
+    h9_preset*     preset;
+    bool           dirty;         // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
+    control_value  expression;    // 0.00 to 1.00
+    bool           expr_changed;  // true if the expression pedal has been moved after loading the preset
+    bool           psw;           // switch, on (true) or off (false)
 
     // Observer registration
     h9_display_callback display_callback;
     h9_cc_callback      cc_callback;
+    h9_sysex_callback   sysex_callback;
 } h9;
 
 #ifdef __cplusplus

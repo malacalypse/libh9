@@ -7,12 +7,12 @@
 		<key>h9_gtest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>5</integer>
+			<integer>2</integer>
 		</dict>
 		<key>h9cmd.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>1</integer>
 		</dict>
 		<key>max-h9-external.xcscheme_^#shared#^_</key>
 		<dict>
@@ -23,6 +23,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>ED07F99324A91CAC006D36D1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>ED07FC6024AAEDE9006D36D1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
