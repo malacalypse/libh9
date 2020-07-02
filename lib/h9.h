@@ -21,7 +21,7 @@
 #define H9_SYSEX_H9       0x70
 #define H9_NOMODULE       -1
 #define H9_NOALGORITHM    -1
-#define CC_DISABLE        255
+#define CC_DISABLED       255
 #define MAX_CC            99
 
 typedef enum h9_status {
@@ -130,7 +130,7 @@ typedef void (*h9_sysex_callback)(h9* h9, uint8_t* sysex, size_t len);
  midi_channel can be 0-15 (equals channels 1-16)
 
  The CC maps map cc numbers to the defined control_id values, so cc_rx_map[EXPR] is the cc number for the expression pedal.
- Allowed values are 0-MAX_CC, or CC_DISABLE.
+ Allowed values are 0-MAX_CC, or CC_DISABLED.
  NOTE: The definition of rx/tx is from the perspective of the pedal (matching the memory on the pedal)!!
  > cc_rx_map contains the cc number the PEDAL receives data on (e.g. the value the plugin should SEND data using)
  > cc_tx_map contains the cc number the PEDAL transmits data on (e.g. the value the plugin should LISTEN to)
@@ -172,14 +172,13 @@ int8_t            h9_currentAlgorithm(h9* h9);  // returns NOALGORITHM if unload
 const char*       h9_currentAlgorithmName(h9* h9);
 int8_t            h9_currentModule(h9* h9);  // returns NOMODULE if unloaded
 const char*       h9_currentModuleName(h9* h9);
+bool              h9_dirty(h9* h9);
 control_value     h9_displayValue(h9* h9, control_id control);
 void              h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw);
 const char* const h9_moduleName(uint8_t module_sysex_id);
 h9*               h9_new(void);  // Allocates and returns a pointer to a new H9 instance
 size_t            h9_numAlgorithms(h9* h9, uint8_t module_sysex_id);
 size_t            h9_numModules(h9* h9);
-bool              h9_preset_loaded(h9* h9);
-h9_preset*        h9_preset_new(void);
 void              h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
 void              h9_setControl(h9* h9, control_id knob_num, control_value value, h9_callback_action cc_cb_action);
 void              h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw);

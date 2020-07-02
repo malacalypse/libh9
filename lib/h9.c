@@ -17,12 +17,13 @@
 #include "h9_modules.h"
 #include "utils.h"
 
-#define MIDI_MAX          32767  // 2^15 - 1 for 14-bit MIDI
+#define MIDI_MAX          16383  // 2^14 - 1 for 14-bit MIDI
 #define DEFAULT_MODULE    4      // zero-indexed
 #define DEFAULT_ALGORITHM 0
 #define DEFAULT_KNOB_CC   22
 #define DEFAULT_EXPR_CC   15
-#define DEFAULT_PSW_CC    0  // Disabled
+#define DEFAULT_PSW_CC    CC_DISABLED
+#define EMPTY_PRESET_NAME "Empty"
 
 #define DEBUG_LEVEL DEBUG_ERROR
 #include "debug.h"
@@ -91,13 +92,13 @@ static bool h9_getPsw(h9* h9) {
 }
 
 static void cc_callback(h9* h9, control_id control, float value) {
-    if ((h9->cc_callback == NULL) || (h9->midi_config.cc_tx_map[control] == 0)) {
+    if ((h9->cc_callback == NULL) || (h9->midi_config.cc_rx_map[control] == CC_DISABLED)) {
         return;
     }
     uint8_t  midi_channel = h9->midi_config.midi_channel;
-    uint8_t  control_cc   = h9->midi_config.cc_tx_map[control];
+    uint8_t  control_cc   = h9->midi_config.cc_rx_map[control];
     uint16_t cc_value     = clip(value, 0.0f, 1.0f) * MIDI_MAX;
-    h9->cc_callback(h9, midi_channel, control_cc, (uint8_t)(cc_value >> 8), (uint8_t)cc_value);
+    h9->cc_callback(h9, midi_channel, control_cc, (uint8_t)(cc_value >> 7), (uint8_t)(cc_value & 0x7F));
 }
 
 /* ==== PUBLIC (exported) Functions =============================================== */
@@ -123,7 +124,7 @@ h9* h9_new(void) {
         h9->midi_config.cc_rx_map[i] = DEFAULT_KNOB_CC + i;
         h9->midi_config.cc_tx_map[i] = DEFAULT_KNOB_CC + i;
     }
-    h9->midi_config.cc_rx_map[EXPR] = DEFAULT_EXPR_CC;
+    h9->midi_config.cc_rx_map[EXPR] = CC_DISABLED;  // Per the user guide, the default for RX is disabled.
     h9->midi_config.cc_tx_map[EXPR] = DEFAULT_EXPR_CC;
     h9->midi_config.cc_rx_map[PSW]  = DEFAULT_PSW_CC;
     h9->midi_config.cc_tx_map[PSW]  = DEFAULT_PSW_CC;
@@ -154,7 +155,7 @@ h9_preset* h9_preset_new(void) {
     // Set up a safe (but not very useful) default preset
     h9_preset->module    = &modules[DEFAULT_MODULE];
     h9_preset->algorithm = &h9_preset->module->algorithms[DEFAULT_ALGORITHM];
-    strncpy(h9_preset->name, h9_preset->algorithm->name, H9_MAX_NAME_LEN);
+    strncpy(h9_preset->name, EMPTY_PRESET_NAME, H9_MAX_NAME_LEN);
     h9_preset->output_gain = 0.0f;
     h9_preset->tempo       = 120.0f;
 
@@ -180,7 +181,7 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
             h9_setExpr(h9, value);
             break;
         case PSW:
-            h9_setPsw(h9, (value > 0));
+            h9_setPsw(h9, (value > 0.0f));
             break;
         default:  // A knob
             knob                = &h9->preset->knobs[control];
@@ -216,7 +217,7 @@ control_value h9_controlValue(h9* h9, control_id control) {
         case EXPR:
             return h9_getExpr(h9);
         case PSW:
-            return h9_getPsw(h9) ? 0.0f : 1.0f;
+            return h9_getPsw(h9) ? 1.0f : 0.0f;
         default:
             knob = &h9->preset->knobs[control];
             return knob->current_value;
@@ -312,10 +313,10 @@ bool h9_setMidiConfig(h9* h9, const h9_midi_config* midi_config) {
         return false;
     }
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        if (midi_config->cc_rx_map[i] != CC_DISABLE && midi_config->cc_rx_map[i] > MAX_CC) {
+        if (midi_config->cc_rx_map[i] != CC_DISABLED && midi_config->cc_rx_map[i] > MAX_CC) {
             return false;
         }
-        if (midi_config->cc_tx_map[i] != CC_DISABLE && midi_config->cc_tx_map[i] > MAX_CC) {
+        if (midi_config->cc_tx_map[i] != CC_DISABLED && midi_config->cc_tx_map[i] > MAX_CC) {
             return false;
         }
     }
@@ -328,4 +329,8 @@ void h9_copyMidiConfig(h9* h9, h9_midi_config* dest_copy) {
         return;
     }
     memcpy(dest_copy, &h9->midi_config, sizeof(*dest_copy));
+}
+
+bool h9_dirty(h9* h9) {
+    return h9->dirty;
 }

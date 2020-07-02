@@ -167,14 +167,19 @@ TEST_F(TEST_CLASS, h9_dump_works_without_previously_loading) {
     EXPECT_GT(bytes_written, 200);
 }
 
+TEST_F(TEST_CLASS, h9_load_flags_preset_clean) {
+    h9obj->dirty = true;  // force it
+    EXPECT_TRUE(h9_dirty(h9obj));
+    LoadPatch(h9obj, sysex_hrmdlo);
+    ASSERT_FALSE(h9_dirty(h9obj));
+}
+
 /*
- Tests to do:
- - Test that knob values are populated from preset properly
- - Test that display values are synched
- - Examine pedal behaviour with expression pedal on load and see what it does (does it reset the expression pedal position, does it "ignore" it until it updates? - and does the
- catch-up mode matter?) and then test that the behaviour matches.
- - Validate that callbacks fire properly on load
- - Test dirty behaviour with sync
- */
+Tests to do:
+- Test that knob values are populated from preset properly
+- Examine pedal behaviour with expression pedal across preset load and see what it does
+    (does it reset the expression pedal position, does it "ignore" it until it updates? - and does the catch-up mode matter?)
+    and then test that the behaviour matches.
+*/
 
 }  // namespace h9_test

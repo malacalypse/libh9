@@ -441,9 +441,7 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
 }
 
 size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
-    if (!h9_preset_loaded(h9)) {
-        return 0;
-    }
+    assert(h9->preset && h9->preset->module && h9->preset->algorithm);
 
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));
