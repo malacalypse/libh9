@@ -121,9 +121,9 @@ typedef struct h9_preset {
 
 struct h9;
 typedef struct h9 h9;
-typedef void (*h9_display_callback)(h9* h9, control_id control, float value);
-typedef void (*h9_cc_callback)(h9* h9, uint8_t midi_channel, uint8_t cc, uint8_t msb, uint8_t lsb);
-typedef void (*h9_sysex_callback)(h9* h9, uint8_t* sysex, size_t len);
+typedef void (*h9_display_callback)(void *ctx, control_id control, float value);
+typedef void (*h9_cc_callback)(void *ctx, uint8_t midi_channel, uint8_t cc, uint8_t msb, uint8_t lsb);
+typedef void (*h9_sysex_callback)(void *ctx, uint8_t* sysex, size_t len);
 
 /*
  sysex_id can be 1-16 (0 is prohibited as it is the broadcast value). 1 is the pedal default.
@@ -156,6 +156,7 @@ typedef struct h9 {
     h9_display_callback display_callback;
     h9_cc_callback      cc_callback;
     h9_sysex_callback   sysex_callback;
+    void * callback_context;
 } h9;
 
 #ifdef __cplusplus

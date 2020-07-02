@@ -65,7 +65,7 @@ static void h9_setExpr(h9* h9, control_value value) {
         }
     }
     if (h9->display_callback != NULL) {
-        h9->display_callback(h9, EXPR, value);
+        h9->display_callback(h9->callback_context, EXPR, value);
     }
 }
 
@@ -83,7 +83,7 @@ static void h9_setPsw(h9* h9, bool psw_on) {
         }
     }
     if (h9->display_callback != NULL) {
-        h9->display_callback(h9, PSW, psw_on ? 1.0 : 0.0f);
+        h9->display_callback(h9->callback_context, PSW, psw_on ? 1.0 : 0.0f);
     }
 }
 
@@ -98,7 +98,7 @@ static void cc_callback(h9* h9, control_id control, float value) {
     uint8_t  midi_channel = h9->midi_config.midi_channel;
     uint8_t  control_cc   = h9->midi_config.cc_rx_map[control];
     uint16_t cc_value     = clip(value, 0.0f, 1.0f) * MIDI_MAX;
-    h9->cc_callback(h9, midi_channel, control_cc, (uint8_t)(cc_value >> 7), (uint8_t)(cc_value & 0x7F));
+    h9->cc_callback(h9->callback_context, midi_channel, control_cc, (uint8_t)(cc_value >> 7), (uint8_t)(cc_value & 0x7F));
 }
 
 /* ==== PUBLIC (exported) Functions =============================================== */
@@ -133,6 +133,7 @@ h9* h9_new(void) {
     h9->cc_callback      = NULL;
     h9->display_callback = NULL;
     h9->sysex_callback   = NULL;
+    h9->callback_context = (void *)h9;
     return h9;
 }
 
@@ -188,11 +189,11 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
             knob->current_value = value;
             h9->dirty           = true;
             if (knob->current_value != knob->display_value) {
-                h9_update_display_value(h9, control, knob->current_value);
+                h9_update_display_value(h9->callback_context, control, knob->current_value);
             }
     }
     if (cc_cb_action == kH9_TRIGGER_CALLBACK) {
-        cc_callback(h9, control, value);
+        cc_callback(h9->callback_context, control, value);
     }
 }
 

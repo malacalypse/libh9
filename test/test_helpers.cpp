@@ -19,16 +19,16 @@ static uint32_t cc_callback_counter = 0U;
 static uint8_t *sysex_callback_tracker;
 static size_t   sysex_callback_tracker_len;
 
-void cc_callback(h9 *h9obj, uint8_t midi_channel, uint8_t cc_num, uint8_t msb, uint8_t lsb) {
+void cc_callback(void *ctx, uint8_t midi_channel, uint8_t cc_num, uint8_t msb, uint8_t lsb) {
     cc_callback_tracker[cc_num] = static_cast<int8_t>(msb);
     cc_callback_counter++;
 }
 
-void display_callback(h9 *h9obj, control_id control, control_value value) {
+void display_callback(void *ctx, control_id control, control_value value) {
     display_callback_tracker[control] = value;
 }
 
-void sysex_callback(h9 *h9obj, uint8_t *sysex, size_t len) {
+void sysex_callback(void *ctx, uint8_t *sysex, size_t len) {
     sysex_callback_tracker     = sysex;
     sysex_callback_tracker_len = len;
 }
