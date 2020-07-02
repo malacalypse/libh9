@@ -8,11 +8,12 @@
 #include <math.h>
 #include <string.h>
 #include "h9.h"
+#include "test_helpers.hpp"
 #include "utils.h"
 
 #include "gtest/gtest.h"
 
-#define TEST_CLASS H9Test
+#define TEST_CLASS H9SysexTest
 #define KNOB_MAX   0x7fe0
 
 // Various sysex constants for testing certian things
@@ -25,23 +26,6 @@ char sysex_hrmdlo[] =
     " 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000 65000\r\n"
     "C_ee49\r\n"
     "HRMDLO\r\n";
-float    display_callback_tracker[12];
-int8_t   cc_callback_tracker[128];
-uint8_t *sysex_callback_tracker;
-size_t   sysex_callback_tracker_len;
-
-void cc_callback(h9 *h9obj, uint8_t midi_channel, uint8_t cc_num, uint8_t msb, uint8_t lsb) {
-    cc_callback_tracker[cc_num] = static_cast<int8_t>(msb);
-}
-
-void display_callback(h9 *h9obj, control_id control, control_value value) {
-    display_callback_tracker[control] = value;
-}
-
-void sysex_callback(h9 *h9obj, uint8_t *sysex, size_t len) {
-    sysex_callback_tracker     = sysex;
-    sysex_callback_tracker_len = len;
-}
 
 namespace h9_test {
 
@@ -64,14 +48,7 @@ class TEST_CLASS : public ::testing::Test {
 
     void SetUp() override {
         h9obj = h9_new();
-        for (size_t i = 0; i < sizeof(display_callback_tracker) / sizeof(*display_callback_tracker); i++) {
-            display_callback_tracker[i] = -1.0f;
-        }
-        for (size_t i = 0; i < sizeof(cc_callback_tracker) / sizeof(*cc_callback_tracker); i++) {
-            cc_callback_tracker[i] = -1;
-        }
-        sysex_callback_tracker     = NULL;
-        sysex_callback_tracker_len = 0;
+        init_callback_helpers();
     }
 
     void TearDown() override {
@@ -87,12 +64,6 @@ class TEST_CLASS : public ::testing::Test {
     // Class members declared here can be used by all tests in the test suite
     h9 *h9obj;
 };
-
-// Tests that h9_new does not leave the object with a NULL preset pointer
-TEST_F(TEST_CLASS, h9_new_populates_empty_preset) {
-    ASSERT_NE(h9obj, nullptr);
-    EXPECT_NE(h9obj->preset, nullptr);
-}
 
 // Tests that h9_load correctly parses valid sysex
 TEST_F(TEST_CLASS, h9_load_withCorrectSysex_returns_kH9_OK) {
@@ -156,13 +127,13 @@ TEST_F(TEST_CLASS, h9_load_triggers_display_callback) {
     h9obj->display_callback = display_callback;
     // Ensure that it's cleared before we run
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        EXPECT_EQ(display_callback_tracker[i], -1);
+        EXPECT_FALSE(display_callback_triggered(control_id(i), NULL));
     }
 
     // Load the patch and assert the display callback fired for each control
     LoadPatch(h9obj, sysex_hrmdlo);
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        EXPECT_NE(display_callback_tracker[i], -1);
+        EXPECT_TRUE(display_callback_triggered(control_id(i), nullptr));
     }
 }
 
@@ -177,12 +148,14 @@ TEST_F(TEST_CLASS, h9_load_doesNOT_trigger_cc_callback) {
 
     // Ensure that it's cleared before we run
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        EXPECT_EQ(cc_callback_tracker[h9obj->midi_config.cc_rx_map[i]], -1);
+        uint8_t cc = h9obj->midi_config.cc_rx_map[i];
+        EXPECT_FALSE(cc_callback_triggered(cc, nullptr));
     }
     // Load the patch and assert that we didn't update any of them
     LoadPatch(h9obj, sysex_hrmdlo);
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        EXPECT_EQ(cc_callback_tracker[h9obj->midi_config.cc_rx_map[i]], -1);
+        uint8_t cc = h9obj->midi_config.cc_rx_map[i];
+        EXPECT_FALSE(cc_callback_triggered(cc, nullptr));
     }
 }
 
