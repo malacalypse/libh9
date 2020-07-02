@@ -33,6 +33,8 @@ static void          h9_setExpr(h9* h9, control_value value);
 static control_value h9_getExpr(h9* h9);
 static void          h9_setPsw(h9* h9, bool psw_on);
 static bool          h9_getPsw(h9* h9);
+static void          display_callback(h9* h9, control_id control, float value);
+static void          cc_callback(h9* h9, control_id control, float value);
 
 /* ==== MODULE Private Function Definitions (implements h9_module.h) ============== */
 void h9_reset_knobs(h9* h9) {
@@ -44,11 +46,11 @@ void h9_reset_knobs(h9* h9) {
 
 // This exists to handle future callbacks or other dynamic behaviour
 void h9_update_display_value(h9* h9, control_id control, control_value value) {
-    h9_knob* knob       = &h9->preset->knobs[control];
-    knob->display_value = knob->current_value;
-    if (h9->display_callback != NULL) {
-        h9->display_callback(h9, control, value);
+    if (control < H9_NUM_KNOBS) {
+        h9_knob* knob       = &h9->preset->knobs[control];
+        knob->display_value = value;
     }
+    display_callback(h9, control, value);
 }
 
 /* ==== Private Functions ========================================================= */
@@ -64,9 +66,7 @@ static void h9_setExpr(h9* h9, control_value value) {
             h9_update_display_value(h9, (control_id)i, interpolated_value);
         }
     }
-    if (h9->display_callback != NULL) {
-        h9->display_callback(h9->callback_context, EXPR, value);
-    }
+    display_callback(h9, EXPR, value);
 }
 
 static control_value h9_getExpr(h9* h9) {
@@ -82,13 +82,17 @@ static void h9_setPsw(h9* h9, bool psw_on) {
             h9_update_display_value(h9, (control_id)i, knob->psw);
         }
     }
-    if (h9->display_callback != NULL) {
-        h9->display_callback(h9->callback_context, PSW, psw_on ? 1.0 : 0.0f);
-    }
+    display_callback(h9, PSW, psw_on ? 1.0 : 0.0f);
 }
 
 static bool h9_getPsw(h9* h9) {
     return h9->psw;
+}
+
+static void display_callback(h9* h9, control_id control, float value) {
+    if (h9->display_callback != NULL) {
+        h9->display_callback(h9->callback_context, control, value);
+    }
 }
 
 static void cc_callback(h9* h9, control_id control, float value) {
@@ -133,7 +137,7 @@ h9* h9_new(void) {
     h9->cc_callback      = NULL;
     h9->display_callback = NULL;
     h9->sysex_callback   = NULL;
-    h9->callback_context = (void *)h9;
+    h9->callback_context = (void*)h9;
     return h9;
 }
 
