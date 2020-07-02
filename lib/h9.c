@@ -193,7 +193,7 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
             knob->current_value = value;
             h9->dirty           = true;
             if (knob->current_value != knob->display_value) {
-                h9_update_display_value(h9->callback_context, control, knob->current_value);
+                h9_update_display_value(h9, control, knob->current_value);
             }
     }
     if (cc_cb_action == kH9_TRIGGER_CALLBACK) {
