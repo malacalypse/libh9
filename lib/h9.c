@@ -59,6 +59,10 @@ void h9_update_display_value(h9* h9, control_id control, control_value value) {
 static void h9_setExpr(h9* h9, control_value value) {
     control_value expval = clip(value, 0.0f, 1.0f);
 
+    if (h9->preset->expression == expval) {
+        return; // break update cyclic loops
+    }
+
     h9->preset->expression = expval;
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
         h9_knob* knob = &h9->preset->knobs[i];
@@ -71,8 +75,11 @@ static void h9_setExpr(h9* h9, control_value value) {
 }
 
 static void h9_setPsw(h9* h9, bool psw_on) {
-    h9->preset->psw = psw_on;
+    if (h9->preset->psw == psw_on) {
+        return; // break cyclic loops
+    }
 
+    h9->preset->psw = psw_on;
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
         h9_knob* knob = &h9->preset->knobs[i];
         if (knob->psw_mapped) {
