@@ -13,7 +13,7 @@
 #include "h9.h"
 
 void     cc_callback(void *ctx, uint8_t midi_channel, uint8_t cc_num, uint8_t msb, uint8_t lsb);
-void     display_callback(void *ctx, control_id control, control_value value);
+void     display_callback(void *ctx, control_id control, control_value current_value, control_value display_value);
 void     sysex_callback(void *ctx, uint8_t *sysex, size_t len);
 void     init_callback_helpers(void);
 bool     cc_callback_triggered(uint8_t cc, uint8_t *callback_value);

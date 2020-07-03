@@ -24,8 +24,8 @@ void cc_callback(void *ctx, uint8_t midi_channel, uint8_t cc_num, uint8_t msb, u
     cc_callback_counter++;
 }
 
-void display_callback(void *ctx, control_id control, control_value value) {
-    display_callback_tracker[control] = value;
+void display_callback(void *ctx, control_id control, control_value current_value, control_value display_value) {
+    display_callback_tracker[control] = display_value;
 }
 
 void sysex_callback(void *ctx, uint8_t *sysex, size_t len) {

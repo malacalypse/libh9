@@ -123,7 +123,7 @@ typedef struct h9_preset {
 
 struct h9;
 typedef struct h9 h9;
-typedef void (*h9_display_callback)(void* ctx, control_id control, float value);
+typedef void (*h9_display_callback)(void* ctx, control_id control, control_value current_value, control_value display_value);
 typedef void (*h9_cc_callback)(void* ctx, uint8_t midi_channel, uint8_t cc, uint8_t msb, uint8_t lsb);
 typedef void (*h9_sysex_callback)(void* ctx, uint8_t* sysex, size_t len);
 
