@@ -36,11 +36,13 @@ static void display_callback(h9* h9, control_id control, float value);
 static void cc_callback(h9* h9, control_id control, float value);
 
 /* ==== MODULE Private Function Definitions (implements h9_module.h) ============== */
-void h9_reset_knobs(h9* h9) {
+void h9_reset_display_values(h9* h9) {
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
         h9_knob* knob = &h9->preset->knobs[i];
         h9_update_display_value(h9, (control_id)i, knob->current_value);
     }
+    h9_update_display_value(h9, EXPR, h9->preset->expression);
+    h9_update_display_value(h9, PSW, h9->preset->psw ? 1.0f : 0.0f);
 }
 
 // This exists to handle future callbacks or other dynamic behaviour
@@ -247,7 +249,7 @@ void h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id
     h9->preset->module    = module;
     h9->preset->algorithm = &module->algorithms[algorithm_sysex_id];
     h9->dirty             = true;
-    h9_reset_knobs(h9);
+    h9_reset_display_values(h9);
 }
 
 // (S)Setters and getters for preset name, module (by name or number), and algorithm (by name or number).

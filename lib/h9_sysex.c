@@ -440,11 +440,7 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
     load_preset(h9->preset, &sxpreset);
 
     // Sync control state, trigger display callbacks
-    h9_reset_knobs(h9);
-    // load_preset doesn't update the expression and psw values or callback for them, so do that manually.
-    // TODO: Validate that we actually want to update the pedal's memory for this position from the preset:
-    h9_setControl(h9, EXPR, sxpreset.control_values[EXPR], kH9_SUPPRESS_CALLBACK);
-    h9_setControl(h9, PSW, sxpreset.control_values[PSW], kH9_SUPPRESS_CALLBACK);
+    h9_reset_display_values(h9);
 
     h9->dirty = false;
 
