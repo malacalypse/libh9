@@ -179,7 +179,7 @@ const char* const h9_moduleName(uint8_t module_sysex_id);
 h9*               h9_new(void);  // Allocates and returns a pointer to a new H9 instance
 size_t            h9_numAlgorithms(h9* h9, uint8_t module_sysex_id);
 size_t            h9_numModules(h9* h9);
-void              h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
+bool              h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
 void              h9_setControl(h9* h9, control_id knob_num, control_value value, h9_callback_action cc_cb_action);
 void              h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw);
 bool              h9_setMidiConfig(h9* h9, const h9_midi_config* midi_config);

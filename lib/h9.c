@@ -251,14 +251,19 @@ void h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_val
 }
 
 // Preset Operations
-void h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
-    assert(module_sysex_id > 0 && module_sysex_id <= H9_NUM_MODULES);
+bool h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
+    if (module_sysex_id >= H9_NUM_MODULES) {
+        return false;
+    }
     h9_module* module = &modules[module_sysex_id];
-    assert(algorithm_sysex_id < module->num_algorithms);
+    if(algorithm_sysex_id >= module->num_algorithms) {
+        return false;
+    }
     h9->preset->module    = module;
     h9->preset->algorithm = &module->algorithms[algorithm_sysex_id];
     h9->dirty             = true;
     h9_reset_display_values(h9);
+    return true;
 }
 
 // (S)Setters and getters for preset name, module (by name or number), and algorithm (by name or number).
