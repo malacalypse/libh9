@@ -208,6 +208,8 @@ void h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_v
     knob->exp_min = exp_min;
     knob->exp_max = exp_max;
     knob->psw     = psw;
+    knob->exp_mapped = (exp_min != exp_max);
+    knob->psw_mapped = (psw != 0.0f && psw != knob->current_value);
 }
 
 control_value h9_controlValue(h9* h9, control_id control) {
