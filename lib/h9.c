@@ -62,7 +62,7 @@ static void h9_setExpr(h9* h9, control_value value) {
     control_value expval = clip(value, 0.0f, 1.0f);
 
     if (h9->preset->expression == expval) {
-        return; // break update cyclic loops
+        return;  // break update cyclic loops
     }
 
     h9->preset->expression = expval;
@@ -78,7 +78,7 @@ static void h9_setExpr(h9* h9, control_value value) {
 
 static void h9_setPsw(h9* h9, bool psw_on) {
     if (h9->preset->psw == psw_on) {
-        return; // break cyclic loops
+        return;  // break cyclic loops
     }
 
     h9->preset->psw = psw_on;
@@ -178,10 +178,6 @@ h9_preset* h9_preset_new(void) {
 
 // Common H9 operations
 
-bool h9_preset_loaded(h9* h9) {
-    return (h9->preset->algorithm != NULL && h9->preset->module != NULL);
-}
-
 // Knob, Expr, and PSW operations
 void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_action cc_cb_action) {
     if (control >= NUM_CONTROLS) {
@@ -251,16 +247,16 @@ void h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_val
 }
 
 // Preset Operations
-bool h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
-    if (module_sysex_id >= H9_NUM_MODULES) {
+bool h9_setAlgorithm(h9* h9, uint8_t module_zero_indexed_id, uint8_t algorithm_zero_indexed_id) {
+    if (module_zero_indexed_id >= H9_NUM_MODULES) {
         return false;
     }
-    h9_module* module = &modules[module_sysex_id];
-    if(algorithm_sysex_id >= module->num_algorithms) {
+    h9_module* module = &modules[module_zero_indexed_id];
+    if (algorithm_zero_indexed_id >= module->num_algorithms) {
         return false;
     }
     h9->preset->module    = module;
-    h9->preset->algorithm = &module->algorithms[algorithm_sysex_id];
+    h9->preset->algorithm = &module->algorithms[algorithm_zero_indexed_id];
     h9->dirty             = true;
     h9_reset_display_values(h9);
     return true;
@@ -276,16 +272,19 @@ size_t h9_numAlgorithms(h9* h9, uint8_t module_sysex_id) {
     return modules[module_sysex_id - 1].num_algorithms;
 }
 
-int8_t h9_currentModule(h9* h9) {
-    if (!h9_preset_loaded(h9)) {
-        return -1;
-    }
-    return h9->preset->module->sysex_num;
+h9_module* h9_currentModule(h9* h9) {
+    return h9->preset->module;
 }
-int8_t h9_currentAlgorithm(h9* h9) {
-    if (!h9_preset_loaded(h9)) {
-        return -1;
-    }
+
+uint8_t h9_currentModuleIndex(h9* h9) {
+    return h9->preset->module->sysex_num - 1;  // Zero index externally
+}
+
+h9_algorithm* h9_currentAlgorithm(h9* h9) {
+    return h9->preset->algorithm;
+}
+
+uint8_t h9_currentAlgorithmIndex(h9* h9) {
     return h9->preset->algorithm->id;
 }
 
@@ -295,9 +294,6 @@ const char* const h9_moduleName(uint8_t module_sysex_id) {
 }
 
 const char* h9_currentModuleName(h9* h9) {
-    if (!h9_preset_loaded(h9)) {
-        return NULL;
-    }
     return h9->preset->module->name;
 }
 
@@ -309,9 +305,6 @@ const char* const h9_algorithmName(uint8_t module_sysex_id, uint8_t algorithm_sy
 }
 
 const char* h9_currentAlgorithmName(h9* h9) {
-    if (!h9_preset_loaded(h9)) {
-        return NULL;
-    }
     return h9->preset->algorithm->name;
 }
 

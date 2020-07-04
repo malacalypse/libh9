@@ -168,9 +168,11 @@ const char* const h9_algorithmName(uint8_t module_sysex_id, uint8_t algorithm_sy
 void              h9_delete(h9* h9);
 control_value     h9_controlValue(h9* h9, control_id control);
 void              h9_copyMidiConfig(h9* h9, h9_midi_config* dest_copy);
-int8_t            h9_currentAlgorithm(h9* h9);  // returns NOALGORITHM if unloaded
+h9_algorithm*     h9_currentAlgorithm(h9* h9);
+uint8_t           h9_currentAlgorithmIndex(h9* h9);
 const char*       h9_currentAlgorithmName(h9* h9);
-int8_t            h9_currentModule(h9* h9);  // returns NOMODULE if unloaded
+h9_module*        h9_currentModule(h9* h9);
+uint8_t           h9_currentModuleIndex(h9* h9);
 const char*       h9_currentModuleName(h9* h9);
 bool              h9_dirty(h9* h9);
 control_value     h9_displayValue(h9* h9, control_id control);
