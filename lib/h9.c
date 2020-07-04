@@ -85,7 +85,8 @@ static void h9_setPsw(h9* h9, bool psw_on) {
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
         h9_knob* knob = &h9->preset->knobs[i];
         if (knob->psw_mapped) {
-            h9_update_display_value(h9, (control_id)i, knob->psw);
+            // There might be an issue here if the expression has moved the knob and the PSW is turned on then off. Check vs. the pedal's behaviour.
+            h9_update_display_value(h9, (control_id)i, psw_on ? knob->psw : knob->current_value);
         }
     }
     h9_update_display_value(h9, PSW, psw_on ? 1.0 : 0.0f);
