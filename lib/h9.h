@@ -174,6 +174,8 @@ const char*       h9_currentAlgorithmName(h9* h9);
 h9_module*        h9_currentModule(h9* h9);
 uint8_t           h9_currentModuleIndex(h9* h9);
 const char*       h9_currentModuleName(h9* h9);
+const char*       h9_presetName(h9* h9, size_t* len);
+bool              h9_setPresetName(h9* h9, const char* name, size_t len);
 bool              h9_dirty(h9* h9);
 control_value     h9_displayValue(h9* h9, control_id control);
 void              h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw);

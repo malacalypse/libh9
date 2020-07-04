@@ -205,10 +205,10 @@ void h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_v
     if (knob_num > KNOB9) {
         return;
     }
-    h9_knob* knob = &h9->preset->knobs[knob_num];
-    knob->exp_min = exp_min;
-    knob->exp_max = exp_max;
-    knob->psw     = psw;
+    h9_knob* knob    = &h9->preset->knobs[knob_num];
+    knob->exp_min    = exp_min;
+    knob->exp_max    = exp_max;
+    knob->psw        = psw;
     knob->exp_mapped = (exp_min != exp_max);
     knob->psw_mapped = (psw != 0.0f && psw != knob->current_value);
 }
@@ -298,6 +298,47 @@ const char* const h9_moduleName(uint8_t module_sysex_id) {
 
 const char* h9_currentModuleName(h9* h9) {
     return h9->preset->module->name;
+}
+
+const char* h9_presetName(h9* h9, size_t* len) {
+    if (len != NULL) {
+        *len = strnlen(h9->preset->name, H9_MAX_NAME_LEN);
+    }
+    return h9->preset->name;
+}
+
+bool h9_setPresetName(h9* h9, const char* name, size_t len) {
+    char              new_name[H9_MAX_NAME_LEN];
+    const char* const valid_characters        = " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ|_-+*abcdefghijklmnopqrstuvwxyz";
+    const size_t      valid_characters_length = strlen(valid_characters);
+    size_t            len_to_scan             = (len <= H9_MAX_NAME_LEN ? len : H9_MAX_NAME_LEN);
+    size_t            valid_len               = 0;
+    size_t            accumulated_spaces      = 0;
+    // Simultaneously strip trailing spaces and validate string
+    for (size_t i = 0; i < len_to_scan; i++) {
+        for (size_t j = 0; j < valid_characters_length; j++) {
+            if (name[i] == valid_characters[j]) {
+                new_name[i] = name[i];
+                if (j == 0) {
+                    accumulated_spaces++;
+                } else {
+                    // Add any accumulated spaces plus the current character
+                    valid_len += accumulated_spaces;
+                    accumulated_spaces = 0;
+                    valid_len++;
+                }
+            } else {
+                new_name[i] = ' ';  // replace invalid characters with spaces
+                accumulated_spaces++;
+            }
+        }
+    }
+    if (valid_len > 0) {
+        strncpy(h9->preset->name, new_name, valid_len);
+        return true;
+    } else {
+        return false;  // Blank names are not permitted by the pedal.
+    }
 }
 
 const char* const h9_algorithmName(uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
