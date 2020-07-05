@@ -130,7 +130,6 @@ typedef struct h9_midi_config {
 
 // The core H9 model
 typedef struct h9 {
-    char           name[H9_MAX_NAME_LEN];
     h9_midi_config midi_config;
     h9_preset*     preset;
     bool           dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save

@@ -52,7 +52,7 @@ typedef enum h9_message_code {
 
 typedef enum h9_sysvar {
     // Boolean read/write (set to 0 or 1, returns 0 or 1)
-    unused1 = SYSVAR_BOOL_BASE + 0,  // 0
+    unused1 = SYSVAR_BOOL_BASE + 0,  // 0 + 0x100
     unused2,                         // 1
     sp_bypass,                       // 2
     sp_kill_dry_global,              // 3 : The global setting. There's also one in the preset (see DUMMY section); the two together apply to the effective value.
@@ -86,7 +86,7 @@ typedef enum h9_sysvar {
     sp_send_PC_on_rx_PC,             // 31 : send PC when PC received
 
     // Byte params
-    sp_bypass_mode = SYSVAR_BYTE_BASE + 0,  // 0
+    sp_bypass_mode = SYSVAR_BYTE_BASE + 0,  // 0 + 0x200
     unused10,                               // 1
     sp_startup_mode,                        // 2 : 0 = effect, 1 = preset
     sp_midi_rx_channel,                     // 3 : 0 to 15
@@ -113,31 +113,11 @@ typedef enum h9_sysvar {
     sp_knob_mode = SYSVAR_BYTE_BASE + 69,  // 69
 
     // WORD parameters (a WORD is a UINT16_t in H9 parlance)
-    sp_os_version = SYSVAR_WORD_BASE,       // 0
+    sp_os_version = SYSVAR_WORD_BASE,       // 0 + 0x300
     sp_mix_knob,                            // 1
     sp_tempo,                               // 2
-                                            //
-    sp_kb1_min,                             // 3 : Realtime control over exp mapping!
-    sp_kb1_max,                             // 4
-    sp_kb2_min,                             // 5
-    sp_kb2_max,                             // 6
-    sp_kb3_min,                             // 7
-    sp_kb3_max,                             // 8
-    sp_kb4_min,                             // 9
-    sp_kb4_max,                             // 10
-    sp_kb5_min,                             // 11
-    sp_kb5_max,                             // 12
-    sp_kb6_min,                             // 13
-    sp_kb6_max,                             // 14
-    sp_kb7_min,                             // 15
-    sp_kb7_max,                             // 16
-    sp_kb8_min,                             // 17
-    sp_kb8_max,                             // 18
-    sp_kb9_min,                             // 19
-    sp_kb9_max,                             // 20
-    sp_kb10_min,                            // 21
-    sp_kb10_max,                            // 22
-                                            // AUX mapping skipped for now
+                                            // Mapping skipped - it only sets knob limits, not actual expression mapping.
+                                            // You still have to load the preset, update the map, and dump it back.
     sp_input_gain = SYSVAR_WORD_BASE + 43,  // 43 : In 0.5 dB steps
     sp_output_gain,                         // 44 : In 0.5 dB steps
     sp_version,                             // 45 : encoded (v[0] << 12) + (v[1] << 8) + v[2] (x.y.z[a] - not including a)
