@@ -52,6 +52,13 @@ size_t h9_dump(h9* h9, uint8_t* sysex, size_t max_len, bool update_dirty_flag);
 
 size_t h9_sysexGenRequestCurrentPreset(h9* h9, uint8_t* sysex, size_t max_len);
 size_t h9_sysexGenRequestSystemConfig(h9* h9, uint8_t* sysex, size_t max_len);
+size_t h9_sysexGenRequestConfigVar(h9* h9, uint16_t key, uint8_t* sysex, size_t max_len);
+size_t h9_sysexGenWriteConfigVar(h9* h9, uint16_t key, uint16_t value, uint8_t* sysex, size_t max_len);
+
+void h9_sysexRequestCurrentPreset(h9* h9);
+void h9_sysexRequestSystemConfig(h9* h9);
+void h9_sysexRequestConfigVar(h9* h9, uint16_t key);
+void h9_sysexWriteConfigVar(h9* h9, uint16_t key, uint16_t value);
 
 #ifdef __cplusplus
 }

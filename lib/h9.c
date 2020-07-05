@@ -341,8 +341,8 @@ bool h9_setPresetName(h9* h9, const char* name, size_t len) {
     }
     if (valid_len > 0) {
         if (valid_len < H9_MAX_NAME_LEN) {
-            valid_len++; // Add room for the null terminator
-        } // otherwise truncate to make room for it. 
+            valid_len++;  // Add room for the null terminator
+        }                 // otherwise truncate to make room for it.
         strlcpy(h9->preset->name, new_name, valid_len);
         return true;
     } else {

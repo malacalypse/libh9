@@ -32,22 +32,6 @@ typedef enum h9_status {
     kH9_SYSEX_CHECKSUM_INVALID,
 } h9_status;
 
-typedef enum h9_message_code {
-    // kH9_OK is returned by the pedal often to confirm the last request.
-    kH9_ERROR             = 0x0d,  // Response from pedal with problem. Body of response is ASCII readable error description.
-    kH9_USER_VALUE_PUT    = 0x2d,  // COMMAND to set indicated key to value. Data format: [key]<space>[value] in "ASCII hex". Response is VALUE_DUMP
-    kH9_SYSEX_VALUE_DUMP  = 0x2e,  // Response containing a single value as "ASCII hex"
-    kH9_OBJECTINFO_WANT   = 0x31,  // Request value of specified key. Data format: [key] = ["ASCII hex", e.g. "201" = 0x32 0x30 0x31 0x00]
-    kH9_VALUE_WANT        = 0x3b,  // Same as OBJECTINFO_WANT. Both reply with a VALUE_DUMP.
-    kH9_USER_OBJECT_SHORT = 0x3c,  // COMMAND: XXXX YY = [key] [value], same as VALUE_PUT.
-    kH9_DUMP_ALL          = 0x48,  // Requests all programs. Response is a PROGRAM_DUMP.
-    kH9_PROGRAM_DUMP      = 0x49,  // Response containing all programs in memory on the unit, sequentially.
-    kH9_TJ_SYSVARS_WANT   = 0x4c,  // Request full sysvars. Response is a TJ_SYSVARS_DUMP.
-    kH9_TJ_SYSVARS_DUMP   = 0x4d,  // Response to SYSVARS_WANT, contains full sysvar dump in unspecified format.
-    kH9_DUMP_ONE          = 0x4e,  // Requests the currently loaded PROGRAM. Response is PROGRAM.
-    kH9_PROGRAM           = 0x4f,  // COMMAND to set temporary PROGRAM, RESPONSE contains indicated PROGRAM.
-} h9_message_code;
-
 typedef enum control_id {
     KNOB0 = 0U,  // KNOB 0 MUST REMAIN 0
     KNOB1,

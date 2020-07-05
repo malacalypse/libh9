@@ -27,6 +27,22 @@
 
 extern h9_module modules[H9_NUM_MODULES];
 
+typedef enum h9_message_code {
+    kH9_SYSEX_OK          = 0x0,
+    kH9_ERROR             = 0x0d,  // Response from pedal with problem. Body of response is ASCII readable error description.
+    kH9_USER_VALUE_PUT    = 0x2d,  // COMMAND to set indicated key to value. Data format: [key]<space>[value] in "ASCII hex". Response is VALUE_DUMP
+    kH9_SYSEX_VALUE_DUMP  = 0x2e,  // Response containing a single value as "ASCII hex"
+    kH9_OBJECTINFO_WANT   = 0x31,  // Request value of specified key. Data format: [key] = ["ASCII hex", e.g. "201" = 0x32 0x30 0x31 0x00]
+    kH9_VALUE_WANT        = 0x3b,  // Same as OBJECTINFO_WANT. Both reply with a VALUE_DUMP.
+    kH9_USER_OBJECT_SHORT = 0x3c,  // COMMAND: XXXX YY = [key] [value], same as VALUE_PUT.
+    kH9_DUMP_ALL          = 0x48,  // Requests all programs. Response is a PROGRAM_DUMP.
+    kH9_PROGRAM_DUMP      = 0x49,  // Response containing all programs in memory on the unit, sequentially.
+    kH9_TJ_SYSVARS_WANT   = 0x4c,  // Request full sysvars. Response is a TJ_SYSVARS_DUMP.
+    kH9_TJ_SYSVARS_DUMP   = 0x4d,  // Response to SYSVARS_WANT, contains full sysvar dump in unspecified format.
+    kH9_DUMP_ONE          = 0x4e,  // Requests the currently loaded PROGRAM. Response is PROGRAM.
+    kH9_PROGRAM           = 0x4f,  // COMMAND to set temporary PROGRAM, RESPONSE contains indicated PROGRAM.
+} h9_message_code;
+
 typedef struct h9_sysex_preset {
     int      preset_num;
     int      module;
@@ -477,7 +493,7 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
     return bytes_written;
 }
 
-// Syncing
+// Requests and Writes = sysexGen* names generate the sysex but do not send via the callback, other names only send.
 size_t h9_sysexGenRequestCurrentPreset(h9 *h9, uint8_t *sysex, size_t max_len) {
     size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_DUMP_ONE);
     return bytes_written;  // No +1 here, the f7 is the terminator.
@@ -486,4 +502,51 @@ size_t h9_sysexGenRequestCurrentPreset(h9 *h9, uint8_t *sysex, size_t max_len) {
 size_t h9_sysexGenRequestSystemConfig(h9 *h9, uint8_t *sysex, size_t max_len) {
     size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_TJ_SYSVARS_WANT);
     return bytes_written;  // No +1 here, the f7 is the terminator.
+}
+
+size_t h9_sysexGenRequestConfigVar(h9 *h9, uint16_t key, uint8_t *sysex, size_t max_len) {
+    size_t bytes_written = snprintf((char *)sysex, max_len, "\xf0%c%c%c%c%x%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_VALUE_WANT, key, 0x0);
+    return bytes_written;  // No +1 here, the f7 is the terminator.
+}
+
+size_t h9_sysexGenWriteConfigVar(h9 *h9, uint16_t key, uint16_t value, uint8_t *sysex, size_t max_len) {
+    size_t bytes_written =
+        snprintf((char *)sysex, max_len, "\xf0%c%c%c%c%x %x%c\xf7", H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_USER_VALUE_PUT, key, value, 0x0);
+    return bytes_written;  // No +1 here, the f7 is the terminator.
+}
+
+void h9_sysexRequestCurrentPreset(h9 *h9) {
+    size_t  len = 15;
+    uint8_t sysex[len];
+    size_t  bytes_written = h9_sysexGenRequestCurrentPreset(h9, sysex, len);
+    if (bytes_written <= len && h9->sysex_callback != NULL) {
+        h9->sysex_callback(h9, sysex, bytes_written);
+    }
+}
+
+void h9_sysexRequestSystemConfig(h9 *h9) {
+    size_t  len = 15;
+    uint8_t sysex[len];
+    size_t  bytes_written = h9_sysexGenRequestSystemConfig(h9, sysex, len);
+    if (bytes_written <= len && h9->sysex_callback != NULL) {
+        h9->sysex_callback(h9, sysex, bytes_written);
+    }
+}
+
+void h9_sysexRequestConfigVar(h9 *h9, uint16_t key) {
+    size_t  len = 15;
+    uint8_t sysex[len];
+    size_t  bytes_written = h9_sysexGenRequestConfigVar(h9, key, sysex, len);
+    if (bytes_written <= len && h9->sysex_callback != NULL) {
+        h9->sysex_callback(h9, sysex, bytes_written);
+    }
+}
+
+void h9_sysexWriteConfigVar(h9 *h9, uint16_t key, uint16_t value) {
+    size_t  len = 15;
+    uint8_t sysex[len];
+    size_t  bytes_written = h9_sysexGenWriteConfigVar(h9, key, value, sysex, len);
+    if (bytes_written <= len && h9->sysex_callback != NULL) {
+        h9->sysex_callback(h9, sysex, bytes_written);
+    }
 }
