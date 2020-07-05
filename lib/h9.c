@@ -316,8 +316,9 @@ bool h9_setPresetName(h9* h9, const char* name, size_t len) {
     size_t            accumulated_spaces      = 0;
     // Simultaneously strip trailing spaces and validate string
     for (size_t i = 0; i < len_to_scan; i++) {
-        for (size_t j = 0; j < valid_characters_length; j++) {
+        for (size_t j = 0; j <= valid_characters_length; j++) {
             if (name[i] == valid_characters[j]) {
+                // We found a valid character
                 new_name[i] = name[i];
                 if (j == 0) {
                     accumulated_spaces++;
@@ -327,16 +328,22 @@ bool h9_setPresetName(h9* h9, const char* name, size_t len) {
                     accumulated_spaces = 0;
                     valid_len++;
                 }
+                break;
             } else {
-                if (j == (valid_characters_length - 1)) {  // Character is not valid
-                    new_name[i] = ' ';                     // replace invalid characters with spaces
+                // Valid character not found at this position
+                if (j == valid_characters_length) {
+                    // We're at the end of the array, character is not valid
+                    new_name[i] = ' ';  // replace invalid characters with spaces
                     accumulated_spaces++;
                 }
             }
         }
     }
     if (valid_len > 0) {
-        strncpy(h9->preset->name, new_name, valid_len);
+        if (valid_len < H9_MAX_NAME_LEN) {
+            valid_len++; // Add room for the null terminator
+        } // otherwise truncate to make room for it. 
+        strlcpy(h9->preset->name, new_name, valid_len);
         return true;
     } else {
         return false;  // Blank names are not permitted by the pedal.
