@@ -43,6 +43,132 @@ typedef enum h9_message_code {
     kH9_PROGRAM           = 0x4f,  // COMMAND to set temporary PROGRAM, RESPONSE contains indicated PROGRAM.
 } h9_message_code;
 
+#define SYSVAR_BOOL_BASE   0x100
+#define SYSVAR_BYTE_BASE   0x200
+#define SYSVAR_WORD_BASE   0x300
+#define SYSVAR_DUMMY_BASE  0x400
+#define SYSVAR_CC_DISABLED 0x0
+#define SYSVAR_CC_BASE     0x5  // CC0 value
+
+typedef enum h9_sysvar {
+    // Boolean read/write (set to 0 or 1, returns 0 or 1)
+    unused1 = SYSVAR_BOOL_BASE + 0,  // 0
+    unused2,                         // 1
+    sp_bypass,                       // 2
+    sp_kill_dry_global,              // 3 : The global setting. There's also one in the preset (see DUMMY section); the two together apply to the effective value.
+    sp_midi_in,                      // 4 : 0 = DIN, 1 = USB
+    unused3,                         // 5
+    unused4,                         // 6
+    sp_tap_syn,                      // 7 : tempo enabled
+    unused5,                         // 8
+    unused6,                         // 9
+    sp_midiclock_enable,             // 10
+    sp_tx_midi_cc,                   // 11
+    sp_tx_midi_pchg,                 // 12
+    sp_global_mix,                   // 13
+    unused7,                         // 14
+    unused8,                         // 15
+    sp_global_tempo,                 // 16 : Use global tempo (= 1) or preset (= 0)
+    sp_mod_display,                  // 17 : MF only, UNUSED for H9
+    sp_midiclock_out,                // 18
+    sp_midiclock_filter,             // 19
+    sp_pedal_locked,                 // 20 : TF/SPC Only, UNUSED for H9
+    sp_bluetooth_disabled,           // 21 : H9 Only
+    sp_x_unlocked,                   // 22 : H9 Only, put x button in expert mode (= 1) or not (= 0)
+    sp_y_unlocked,                   // 23 : Ibid, but y.
+    sp_z_unlocked,                   // 24 : Ibid, but z.
+    sp_pedal_cal_disabled,           // 25 : H9 Only
+    unused9,                         // 26
+    sp_ui_tempo_mode,                // 27 : put switch 3 in TAP mode (H9 Only)
+    sp_blue_midi_enable,             // 28
+    sp_global_inswell,               // 29
+    sp_global_outswell,              // 30
+    sp_send_PC_on_rx_PC,             // 31 : send PC when PC received
+
+    // Byte params
+    sp_bypass_mode = SYSVAR_BYTE_BASE + 0,  // 0
+    unused10,                               // 1
+    sp_startup_mode,                        // 2 : 0 = effect, 1 = preset
+    sp_midi_rx_channel,                     // 3 : 0 to 15
+    sp_sysex_id,                            // 4 : MIDI sysex id number, 0 is usually broadcast. Use with caution. 1 is default.
+    unused11,                               // 5
+    sp_num_banks_lo,                        // 6
+    unused12,                               // 7
+    sp_midi_tx_channel,                     // 8 : 0 to 15
+    sp_dump_type,                           // 9
+    sp_num_banks,                           // 10
+    sp_tap_average,                         // 11
+    // Some source mappings skipped, only using the ones we really care about
+    // Value for _src columns: 0 = OFF/DISABLED, 5 = CC0 ...
+    sp_kb1_src = SYSVAR_BYTE_BASE + 18,    // 18
+    sp_kb2_src,                            // 19
+    sp_kb3_src,                            // 20
+    sp_kb4_src,                            // 21
+    sp_kb5_src,                            // 22
+    sp_kb6_src,                            // 23
+    sp_kb7_src,                            // 24
+    sp_kb8_src,                            // 25
+    sp_kb9_src,                            // 26
+    sp_kb10_src,                           // 27
+    sp_knob_mode = SYSVAR_BYTE_BASE + 69,  // 69
+
+    // WORD parameters (a WORD is a UINT16_t in H9 parlance)
+    sp_os_version = SYSVAR_WORD_BASE,       // 0
+    sp_mix_knob,                            // 1
+    sp_tempo,                               // 2
+                                            //
+    sp_kb1_min,                             // 3 : Realtime control over exp mapping!
+    sp_kb1_max,                             // 4
+    sp_kb2_min,                             // 5
+    sp_kb2_max,                             // 6
+    sp_kb3_min,                             // 7
+    sp_kb3_max,                             // 8
+    sp_kb4_min,                             // 9
+    sp_kb4_max,                             // 10
+    sp_kb5_min,                             // 11
+    sp_kb5_max,                             // 12
+    sp_kb6_min,                             // 13
+    sp_kb6_max,                             // 14
+    sp_kb7_min,                             // 15
+    sp_kb7_max,                             // 16
+    sp_kb8_min,                             // 17
+    sp_kb8_max,                             // 18
+    sp_kb9_min,                             // 19
+    sp_kb9_max,                             // 20
+    sp_kb10_min,                            // 21
+    sp_kb10_max,                            // 22
+                                            // AUX mapping skipped for now
+    sp_input_gain = SYSVAR_WORD_BASE + 43,  // 43 : In 0.5 dB steps
+    sp_output_gain,                         // 44 : In 0.5 dB steps
+    sp_version,                             // 45 : encoded (v[0] << 12) + (v[1] << 8) + v[2] (x.y.z[a] - not including a)
+    sp_pedal_cal_min,                       // 46
+    sp_pedal_cal_max,                       // 47
+
+    // DUMMY params (not saved in NVRAM between rebeoots, but some of these values affect the loaded preset)
+    sp_midiclock_present = SYSVAR_DUMMY_BASE,  // 0
+    sp_preset_dirty,                           // 1
+    sp_hotswitch_state,                        // 2 : TODO investigate if setting this to 1 is enough instead of fooling with the MIDI
+    sp_preset_outgain,                         // 3 : The main preset output gain control.
+                                               //     Twiddle this to affect the gain in realtime, but you must save it with the preset for it to "stick".
+    sp_product_type,                           // 4
+    sp_transient_preset,                       // 5
+    sp_x_switch,                               // 6
+    sp_y_switch,                               // 7
+    sp_z_switch,                               // 8
+    sp_bluetooth_connected,                    // 9
+    sp_tuner_note,                             // 10
+    sp_tuner_cents,                            // 11
+    sp_performance_switch,                     // 12
+    sp_preset_loading,                         // 13
+    sp_slow,                                   // 14
+    sp_inswell_enabled,                        // 15
+    sp_outswell_enabled,                       // 16
+    sp_routing_type,                           // 17
+    sp_spill_done,                             // 18
+    sp_kill_dry,                               // 19 : this is the combination of the global value and the preset value
+    sp_preset_kill_dry,                        // 20 : this is the value stored in the preset
+} h9_sysvar;
+
 typedef struct h9_sysex_preset {
     int      preset_num;
     int      module;
