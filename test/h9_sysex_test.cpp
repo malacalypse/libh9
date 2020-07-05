@@ -116,7 +116,7 @@ TEST_F(TEST_CLASS, h9_dump_writes_expr) {
     uint8_t output[buf_len];
     size_t  bytes_written = 0U;
     bytes_written         = h9_dump(h9obj, output, buf_len, true);
-    size_t position       = 63;  // TODO: make this less brittle by re-parsing
+    size_t position       = 65;  // TODO: make this less brittle by re-parsing
 
     char found_string[5];
     strncpy(found_string, reinterpret_cast<char *>(&output[position]), 4);

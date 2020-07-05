@@ -31,7 +31,8 @@ typedef struct h9_sysex_preset {
     int      preset_num;
     int      module;
     int      algorithm;
-    uint32_t control_values[12];  // Spec: 12 entries in this row, 11th is expr, 12th unknown, perhaps PSW
+    int      algorithm_repeat;
+    uint32_t control_values[11];  // Spec: 12 entries in this row, 0th is algorithm (again), 1st is knob7, 11th is expr
     uint32_t knob_map[30];        // Spec: 30 entries in this row
     uint32_t options[8];          // Spec: 8 entries in this row
     float    mknob_values[12];    // Spec: 12 entries in this row, 11th/12th always seem to be 65000
@@ -160,13 +161,20 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
     }
     debug_info("Found [%d] => %d:%d\n", sxpreset->preset_num, sxpreset->module, sxpreset->algorithm);
 
-    // Unpack Line 2: hex ascii knob values, order: 7 8 9 10 6 5 4 3 2 1 expression <unused>
-    size_t expected_values = 12;
-    found                  = scanhex(lines[1], sxpreset->control_values, expected_values);
+    // Unpack Line 2: hex ascii knob values, order: <alg repeat> 7 8 9 10 6 5 4 3 2 1 <expression>
+    size_t   expected_values = 12;
+    uint32_t line_values[12];
+    found = scanhex(lines[1], line_values, expected_values);
     if (found != expected_values) {
         debug_info("Line 2 did not validate, found %zu.\n", found);
         return false;
     }
+    // Assign them to the sxpreset
+    sxpreset->algorithm_repeat = line_values[0];
+    for (size_t i = 0; i < 11; i++) {
+        sxpreset->control_values[i] = line_values[i + 1];
+    }
+
     // Unpack Line 3: hex ascii knob mapping, knob order: paired [exp min] [exp max] x 10 : [psw] x 10
     expected_values = 30;
     found           = scanhex(lines[2], sxpreset->knob_map, expected_values);
@@ -214,7 +222,8 @@ static uint16_t checksum(h9_sysex_preset *sxpreset) {
     //       The resulting INTEGER is then formatted as HEX and the last 4 characters are compared
     //       to the characters on line 6.
     uint16_t checksum = 0U;
-    checksum += array_sum(sxpreset->control_values, 12);
+    checksum += sxpreset->algorithm_repeat;
+    checksum += array_sum(sxpreset->control_values, 11);
     checksum += array_sum(sxpreset->knob_map, 30);
     checksum += array_sum(sxpreset->options, 8);
     checksum += iarray_sumf(sxpreset->mknob_values, 12);
@@ -228,6 +237,10 @@ static bool validate_h9_sysex_preset(h9_sysex_preset *sxpreset) {
         return is_valid;
     }
     if (sxpreset->algorithm < 0 || sxpreset->algorithm >= modules[sxpreset->module - 1].num_algorithms) {
+        is_valid = false;
+        return is_valid;
+    }
+    if (sxpreset->algorithm != sxpreset->algorithm_repeat) {
         is_valid = false;
         return is_valid;
     }
@@ -256,9 +269,10 @@ static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
 }
 
 static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset) {
-    sxpreset->module     = preset->module->sysex_num;
-    sxpreset->algorithm  = preset->algorithm->id;
-    sxpreset->preset_num = DEFAULT_PRESET_NUM;
+    sxpreset->module           = preset->module->sysex_num;
+    sxpreset->algorithm        = preset->algorithm->id;
+    sxpreset->algorithm_repeat = preset->algorithm->id;
+    sxpreset->preset_num       = DEFAULT_PRESET_NUM;
 
     // Dump knob values
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
@@ -296,7 +310,7 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
                                     max_len,
                                     "\xf0%c%c%c%c"
                                     "[%d] %d 5 %d\r\n"
-                                    " %x %x %x %x %x %x %x %x %x %x %x 0\r\n"
+                                    " %d %x %x %x %x %x %x %x %x %x %x %x\r\n"
                                     " %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x\r\n"
                                     " %x %x %x %x %x %x %x %x\r\n"
                                     " %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f %.*f\r\n"
@@ -308,7 +322,8 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
                                     kH9_PROGRAM,  // Preamble
                                     sxpreset->preset_num,
                                     sxpreset->algorithm,
-                                    sxpreset->module,  // Line 1, etc..
+                                    sxpreset->module,     // Line 1, etc..
+                                    sxpreset->algorithm,  // Again, not sure why
                                     sxpreset->control_values[0],
                                     sxpreset->control_values[1],
                                     sxpreset->control_values[2],
