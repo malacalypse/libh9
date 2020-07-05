@@ -328,8 +328,10 @@ bool h9_setPresetName(h9* h9, const char* name, size_t len) {
                     valid_len++;
                 }
             } else {
-                new_name[i] = ' ';  // replace invalid characters with spaces
-                accumulated_spaces++;
+                if (j == valid_characters_length) { // Character is not valid
+                    new_name[i] = ' ';  // replace invalid characters with spaces
+                    accumulated_spaces++;
+                }
             }
         }
     }
