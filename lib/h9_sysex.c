@@ -520,7 +520,7 @@ void h9_sysexRequestCurrentPreset(h9 *h9) {
     uint8_t sysex[len];
     size_t  bytes_written = h9_sysexGenRequestCurrentPreset(h9, sysex, len);
     if (bytes_written <= len && h9->sysex_callback != NULL) {
-        h9->sysex_callback(h9, sysex, bytes_written);
+        h9->sysex_callback(h9->callback_context, sysex, bytes_written);
     }
 }
 
@@ -529,7 +529,7 @@ void h9_sysexRequestSystemConfig(h9 *h9) {
     uint8_t sysex[len];
     size_t  bytes_written = h9_sysexGenRequestSystemConfig(h9, sysex, len);
     if (bytes_written <= len && h9->sysex_callback != NULL) {
-        h9->sysex_callback(h9, sysex, bytes_written);
+        h9->sysex_callback(h9->callback_context, sysex, bytes_written);
     }
 }
 
@@ -538,7 +538,7 @@ void h9_sysexRequestConfigVar(h9 *h9, uint16_t key) {
     uint8_t sysex[len];
     size_t  bytes_written = h9_sysexGenRequestConfigVar(h9, key, sysex, len);
     if (bytes_written <= len && h9->sysex_callback != NULL) {
-        h9->sysex_callback(h9, sysex, bytes_written);
+        h9->sysex_callback(h9->callback_context, sysex, bytes_written);
     }
 }
 
@@ -547,6 +547,6 @@ void h9_sysexWriteConfigVar(h9 *h9, uint16_t key, uint16_t value) {
     uint8_t sysex[len];
     size_t  bytes_written = h9_sysexGenWriteConfigVar(h9, key, value, sysex, len);
     if (bytes_written <= len && h9->sysex_callback != NULL) {
-        h9->sysex_callback(h9, sysex, bytes_written);
+        h9->sysex_callback(h9->callback_context, sysex, bytes_written);
     }
 }
