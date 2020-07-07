@@ -30,6 +30,8 @@ typedef enum h9_status {
     kH9_SYSEX_PREAMBLE_INCORRECT,
     kH9_SYSEX_INVALID,
     kH9_SYSEX_CHECKSUM_INVALID,
+    kH9_SYSEX_ID_MISMATCH,
+    kH9_UNSUPPORTED_COMMAND,
 } h9_status;
 
 typedef enum control_id {

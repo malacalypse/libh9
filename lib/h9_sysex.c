@@ -89,7 +89,7 @@ typedef enum h9_sysvar {
     sp_bypass_mode = SYSVAR_BYTE_BASE + 0,  // 0 + 0x200
     unused10,                               // 1
     sp_startup_mode,                        // 2 : 0 = effect, 1 = preset
-    sp_midi_rx_channel,                     // 3 : 0 to 15
+    sp_midi_rx_channel,                     // 3 : 0 = disabled, 1 = OMNI, 2-17 = 0-15
     sp_sysex_id,                            // 4 : MIDI sysex id number, 0 is usually broadcast. Use with caution. 1 is default.
     unused11,                               // 5
     sp_num_banks_lo,                        // 6
@@ -100,7 +100,8 @@ typedef enum h9_sysvar {
     sp_tap_average,                         // 11
     // Some source mappings skipped, only using the ones we really care about
     // Value for _src columns: 0 = OFF/DISABLED, 5 = CC0 ...
-    sp_kb1_src = SYSVAR_BYTE_BASE + 18,    // 18
+    sp_psw_src = SYSVAR_BYTE_BASE + 16,    // 16 : PSW
+    sp_kb1_src = SYSVAR_BYTE_BASE + 18,    // 18 : Knob 0
     sp_kb2_src,                            // 19
     sp_kb3_src,                            // 20
     sp_kb4_src,                            // 21
@@ -109,7 +110,8 @@ typedef enum h9_sysvar {
     sp_kb7_src,                            // 24
     sp_kb8_src,                            // 25
     sp_kb9_src,                            // 26
-    sp_kb10_src,                           // 27
+    sp_kb10_src,                           // 27 : Knob 9
+    sp_pdl_src   = SYSVAR_BYTE_BASE + 32,  // 32 : expression pedal
     sp_knob_mode = SYSVAR_BYTE_BASE + 69,  // 69
 
     // WORD parameters (a WORD is a UINT16_t in H9 parlance)
@@ -125,6 +127,7 @@ typedef enum h9_sysvar {
     sp_pedal_cal_max,                       // 47
 
     // DUMMY params (not saved in NVRAM between rebeoots, but some of these values affect the loaded preset)
+    // NOTE: It appears that these actually don't exist or work at all - the pedal does not respond to them.
     sp_midiclock_present = SYSVAR_DUMMY_BASE,  // 0
     sp_preset_dirty,                           // 1
     sp_hotswitch_state,                        // 2 : TODO investigate if setting this to 1 is enough instead of fooling with the MIDI
@@ -162,8 +165,16 @@ typedef struct h9_sysex_preset {
     char     patch_name[H9_MAX_NAME_LEN];
 } h9_sysex_preset;
 
+typedef struct h9_system_value_dump {
+    uint8_t  byte_values[94];
+    uint16_t word_values[58];
+    bool     bit_values[32];
+    uint32_t bitword;  // Bit values as a word
+} h9_system_value_dump;
+
 //////////////////// Private Function Declarations
-static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset);
+static void      export_preset(h9_sysex_preset *sxpreset, h9_preset *preset);
+static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len);
 
 //////////////////// Private Functions
 
@@ -247,7 +258,7 @@ static void import_mknob_values(h9_preset *preset, float *mknob_row) {
     }
 }
 
-static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
+static bool unpack_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
     // Break up received data into lines
     size_t max_lines  = 7;
     size_t max_length = 128;  // Longest line is 4 hex chars * 30 positions + space, null, and \r\n = 124. 128 is
@@ -369,7 +380,7 @@ static bool validate_h9_sysex_preset(h9_sysex_preset *sxpreset) {
     return is_valid;
 }
 
-static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
+static void import_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
     // Transform values to h9 state
     size_t module_index = sxpreset->module - 1;  // modules are 1-based, algorithms are 0-. Why? No clue.
     strncpy(preset->name, sxpreset->patch_name, H9_MAX_NAME_LEN);
@@ -390,7 +401,7 @@ static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
     preset->output_gain = ((int32_t)(sxpreset->options[3] << 8) >> 8) * 0.1f;
 }
 
-static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset) {
+static void export_preset(h9_sysex_preset *sxpreset, h9_preset *preset) {
     sxpreset->module           = preset->module->sysex_num;
     sxpreset->algorithm        = preset->algorithm->id;
     sxpreset->algorithm_repeat = preset->algorithm->id;
@@ -529,21 +540,7 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
     return bytes_written;
 };
 
-h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
-    assert(h9);
-    char *cursor = (char *)sysex;  // start the cursor at the beginning
-    if (*cursor == (char)0xF0) {
-        cursor++;
-    }
-
-    // Validate preamble
-    uint8_t preamble[] = {H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_PROGRAM};
-    for (size_t i = 0; i < sizeof(preamble) / sizeof(*preamble); i++) {
-        if (*cursor++ != preamble[i]) {
-            return kH9_SYSEX_PREAMBLE_INCORRECT;
-        }
-    }
-
+static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
     // Debug
 #if (DEBUG_LEVEL >= DEBUG_INFO)
     char   sysex_buffer[1000];
@@ -558,7 +555,7 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
     // Need to unpack before we can validate the checksum
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));
-    if (!parse_h9_sysex_preset((uint8_t *)cursor, &sxpreset)) {
+    if (!unpack_preset(cursor, &sxpreset)) {
         return kH9_SYSEX_INVALID;
     }
 
@@ -574,14 +571,90 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
         return kH9_SYSEX_INVALID;
     }
 
-    load_preset(h9->preset, &sxpreset);
+    import_preset(h9->preset, &sxpreset);
 
     // Sync control state, trigger display callbacks
     h9_reset_display_values(h9);
 
     h9->dirty = false;
-
     return kH9_OK;
+}
+
+h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
+    h9_system_value_dump values;
+    size_t num_lines = 4;
+    memset(&values, 0x0, sizeof(values));
+    uint8_t *lines[num_lines];
+    size_t   line_len[num_lines];
+    size_t   current_line = 0;
+    uint8_t *cursor       = data;
+
+    // Memory-efficient scan-through to find line locations and lengths
+    lines[0] = cursor;
+    for (size_t i = 0; i < len; i++) {
+        if (*cursor == 0x0D || *cursor == 0x0A) {
+            cursor++;
+            if (*cursor == 0x0A || *cursor == 0x0D) {
+                cursor++; // Catch CRLF/LFCR and not just CR or LF alone
+            }
+            line_len[current_line] = (uintptr_t)cursor - (uintptr_t)lines[current_line];
+            lines[current_line++]  = cursor;
+            if (current_line > num_lines) {
+                break;
+            }
+        }
+    }
+
+    // Line 1 should be byte values
+    for (size_t i = 0; i < line_len[0]; i++) {
+        size_t expected_values = sizeof(values.byte_values) / sizeof(*values.byte_values);
+        size_t found           = scanhex_byte((char *)lines[0], line_len[0], values.byte_values, expected_values);
+        if (found != expected_values) {
+        }
+    }
+
+    return kH9_UNKNOWN; // TODO: Finish this function and fix assigments to internal values
+}
+
+h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
+    return kH9_UNKNOWN; // TODO: Writeme
+}
+
+h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
+    assert(h9);
+    uint8_t *cursor = sysex;  // start the cursor at the beginning
+    if (*cursor == 0xF0) {    // Skip the leading F0 if present
+        cursor++;
+    }
+
+    // Validate that it's an H9 piece of sysex
+    uint8_t preamble[] = {H9_SYSEX_EVENTIDE, H9_SYSEX_H9};
+    for (size_t i = 0; i < 2; i++) {
+        if (*cursor++ != preamble[i]) {
+            return kH9_SYSEX_PREAMBLE_INCORRECT;
+        }
+    }
+
+    if (enforce_sysex_id == kH9_RESTRICT_TO_SYSEX_ID) {
+        if (*cursor++ != h9->midi_config.sysex_id) {
+            return kH9_SYSEX_ID_MISMATCH;
+        }
+    } else {
+        cursor++;  // skip the id
+    }
+
+    // Finally, determine what type of message it is:
+    size_t effective_len = len - (size_t)((uintptr_t)cursor - (uintptr_t)sysex);
+    switch (*cursor++) {
+        case kH9_PROGRAM:
+            return load_preset(h9, cursor, effective_len);
+        case kH9_TJ_SYSVARS_DUMP:
+            return parse_system_value_dump(h9, cursor, effective_len);
+        case kH9_SYSEX_VALUE_DUMP:
+            return parse_system_value(h9, cursor, effective_len);
+        default:
+            return kH9_UNSUPPORTED_COMMAND;
+    }
 }
 
 size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
@@ -589,7 +662,7 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
 
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));
-    dump_preset(&sxpreset, h9->preset);
+    export_preset(&sxpreset, h9->preset);
 
     size_t bytes_written = format_sysex(sysex, max_len, &sxpreset, h9->midi_config.sysex_id);
     if (bytes_written <= max_len && update_dirty_flag) {

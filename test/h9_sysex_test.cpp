@@ -57,7 +57,7 @@ class TEST_CLASS : public ::testing::Test {
     }
 
     void LoadPatch(h9 *h9obj, char *sysex) {
-        h9_status status = h9_load(h9obj, reinterpret_cast<uint8_t *>(sysex), strnlen(sysex, 1000));
+        h9_status status = h9_load(h9obj, reinterpret_cast<uint8_t *>(sysex), strnlen(sysex, 1000), kH9_RESTRICT_TO_SYSEX_ID);
         ASSERT_EQ(status, kH9_OK);
     }
 
