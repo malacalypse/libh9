@@ -10,6 +10,7 @@
 #include "h9.h"
 #include "test_helpers.hpp"
 #include "utils.h"
+#include <stdio.h>
 
 #include "gtest/gtest.h"
 
@@ -88,6 +89,12 @@ TEST_F(TEST_CLASS, h9_dump_dumps_loaded_sysex) {
         if (sysex_hrmdlo[i - 1] != output[i]) {
             printf("%s\n", sysex_hrmdlo);
             printf("%s\n", output + 1);
+            char hexdump1[1000];
+            char hexdump2[1000];
+            hexdump(hexdump1, 1000, (uint8_t *)sysex_hrmdlo, sizeof(sysex_hrmdlo));
+            hexdump(hexdump2, 1000, output + 1, bytes_written - 2);
+            printf("%s\n", hexdump1);
+            printf("%s\n", hexdump2);
             printf("Failed at position %zu.\n", i);
         }
         ASSERT_EQ(sysex_hrmdlo[i - 1], output[i]);
@@ -172,6 +179,17 @@ TEST_F(TEST_CLASS, h9_load_flags_preset_clean) {
     EXPECT_TRUE(h9_dirty(h9obj));
     LoadPatch(h9obj, sysex_hrmdlo);
     ASSERT_FALSE(h9_dirty(h9obj));
+}
+
+TEST_F(TEST_CLASS, h9_load_parses_system_variable_dump) {
+    FILE *sysvar_dump_file;
+    sysvar_dump_file = fopen("./test_data/Device_Config1.syx", "r");
+    ASSERT_NE(sysvar_dump_file, nullptr);
+    uint8_t buffer[1000];
+    size_t buffer_len;
+    buffer_len = fread(buffer, 1000, 1, sysvar_dump_file);
+    ASSERT_EQ(h9_load(h9obj, buffer, buffer_len, kH9_RESPOND_TO_ANY_SYSEX_ID), kH9_OK);
+    // TODO: Validate the the values were applied to the h9obj
 }
 
 /*

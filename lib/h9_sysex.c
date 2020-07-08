@@ -258,24 +258,12 @@ static void import_mknob_values(h9_preset *preset, float *mknob_row) {
     }
 }
 
-static bool unpack_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
+static bool unpack_preset(uint8_t *sysex, size_t len, h9_sysex_preset *sxpreset) {
     // Break up received data into lines
-    size_t max_lines  = 7;
-    size_t max_length = 128;  // Longest line is 4 hex chars * 30 positions + space, null, and \r\n = 124. 128 is
-                              // comfortable, and ensures a terminating null.
-    char *lines[max_lines];
-    for (size_t i = 0; i < max_lines; i++) {
-        lines[i] = malloc(sizeof(char) * max_length);
-    }
-    size_t found = sscanf((char *)sysex,
-                          "%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]",
-                          lines[0],
-                          lines[1],
-                          lines[2],
-                          lines[3],
-                          lines[4],
-                          lines[5],
-                          lines[6]);
+    size_t max_lines = 7;
+    char * lines[max_lines];
+    size_t lengths[max_lines];
+    size_t found = find_lines((char *)sysex, len, lines, lengths, max_lines);
 
     if (found != max_lines) {
         debug_info("Did not find expected data. Retrieved only %zu lines.\n", found);
@@ -297,7 +285,7 @@ static bool unpack_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
     // Unpack Line 2: hex ascii knob values, order: <alg repeat> 7 8 9 10 6 5 4 3 2 1 <expression>
     size_t   expected_values = 12;
     uint32_t line_values[12];
-    found = scanhex(lines[1], line_values, expected_values);
+    found = scanhex(lines[1], 100, line_values, expected_values);
     if (found != expected_values) {
         debug_info("Line 2 did not validate, found %zu.\n", found);
         return false;
@@ -310,7 +298,7 @@ static bool unpack_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
 
     // Unpack Line 3: hex ascii knob mapping, knob order: paired [exp min] [exp max] x 10 : [psw] x 10
     expected_values = 30;
-    found           = scanhex(lines[2], sxpreset->knob_map, expected_values);
+    found           = scanhex(lines[2], lengths[2], sxpreset->knob_map, expected_values);
     if (found != expected_values) {
         debug_info("Line 3 did not validate, found %zu.\n", found);
         return false;
@@ -319,7 +307,7 @@ static bool unpack_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
     // Unpack Line 4:  0 [tempo * 100] [tempo enable = 1] [output gain * 10 in two's complement] [x] [y] [z] [modfactor
     // fast/slow]
     expected_values = 8;
-    found           = scanhex(lines[3], sxpreset->options, expected_values);
+    found           = scanhex(lines[3], lengths[3], sxpreset->options, expected_values);
     if (found != expected_values) {
         debug_info("Line 4 did not validate, found %zu.\n", found);
         return false;
@@ -327,7 +315,7 @@ static bool unpack_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
 
     // Unpack Line 5: ascii float decimals x 12 : MKnob Values (unknown function, send back as-is)
     expected_values = 12;
-    found           = scanfloat(lines[4], sxpreset->mknob_values, expected_values);
+    found           = scanfloat(lines[4], lengths[4], sxpreset->mknob_values, expected_values);
     if (found != expected_values) {
         debug_info("Line 4 did not validate, found %zu.\n", found);
         return false;
@@ -342,7 +330,7 @@ static bool unpack_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
 
     // Unpack Line 7: ASCII string patch name
     memset(sxpreset->patch_name, 0x0, H9_MAX_NAME_LEN);
-    strncpy(sxpreset->patch_name, lines[6], H9_MAX_NAME_LEN);
+    strncpy(sxpreset->patch_name, lines[6], lengths[6] > H9_MAX_NAME_LEN ? H9_MAX_NAME_LEN : lengths[6]);
 
     return true;
 }
@@ -555,7 +543,7 @@ static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
     // Need to unpack before we can validate the checksum
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));
-    if (!unpack_preset(cursor, &sxpreset)) {
+    if (!unpack_preset(cursor, len, &sxpreset)) {
         return kH9_SYSEX_INVALID;
     }
 
@@ -582,42 +570,62 @@ static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
 
 h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
     h9_system_value_dump values;
-    size_t num_lines = 4;
     memset(&values, 0x0, sizeof(values));
-    uint8_t *lines[num_lines];
-    size_t   line_len[num_lines];
-    size_t   current_line = 0;
-    uint8_t *cursor       = data;
+    size_t               num_lines = 5;
+    char *lines[num_lines];
+    size_t   lengths[num_lines];
+    size_t found_lines = find_lines((char*)data, len, lines, lengths, num_lines);
 
-    // Memory-efficient scan-through to find line locations and lengths
-    lines[0] = cursor;
-    for (size_t i = 0; i < len; i++) {
-        if (*cursor == 0x0D || *cursor == 0x0A) {
-            cursor++;
-            if (*cursor == 0x0A || *cursor == 0x0D) {
-                cursor++; // Catch CRLF/LFCR and not just CR or LF alone
-            }
-            line_len[current_line] = (uintptr_t)cursor - (uintptr_t)lines[current_line];
-            lines[current_line++]  = cursor;
-            if (current_line > num_lines) {
-                break;
-            }
-        }
+    if (found_lines != num_lines) {
+        return kH9_SYSEX_INVALID;
     }
+
+    // Line 0 should be [SYSTEM] V VV V.V.V[V] etc... but we don't really care about this line
 
     // Line 1 should be byte values
-    for (size_t i = 0; i < line_len[0]; i++) {
         size_t expected_values = sizeof(values.byte_values) / sizeof(*values.byte_values);
-        size_t found           = scanhex_byte((char *)lines[0], line_len[0], values.byte_values, expected_values);
+        size_t found           = scanhex_byte((char *)lines[1], lengths[1], values.byte_values, expected_values);
         if (found != expected_values) {
+            return kH9_SYSEX_INVALID;
         }
+
+    // Line 2 should be word values
+         expected_values = sizeof(values.word_values) / sizeof(*values.word_values);
+         found           = scanhex_word((char *)lines[2], lengths[2], values.word_values, expected_values);
+        if (found != expected_values) {
+            return kH9_SYSEX_INVALID;
+        }
+
+    // Line 3 should be bit values
+         expected_values = sizeof(values.bit_values) / sizeof(*values.bit_values);
+         found           = scanhex_bool((char *)lines[3], lengths[3], values.bit_values, expected_values);
+        if (found != expected_values) {
+            return kH9_SYSEX_INVALID;
+        }
+
+    // Line 4 should have the checksum
+    uint32_t checksum;
+     found = sscanf(lines[4], "C_%x", &checksum);
+    if (found != 1) {
+        debug_info("Did not identify checksum.\n");
+        return kH9_SYSEX_INVALID;
     }
 
-    return kH9_UNKNOWN; // TODO: Finish this function and fix assigments to internal values
+    // Validate the checksum
+    uint16_t computed_checksum = 0;
+    computed_checksum += array_sum16(values.word_values, sizeof(values.word_values) / sizeof(*values.word_values));
+    computed_checksum += array_sum8(values.byte_values, sizeof(values.byte_values) / sizeof(*values.byte_values));
+    computed_checksum += array_sum1(values.bit_values, sizeof(values.bit_values) / sizeof(*values.bit_values));
+
+    if (computed_checksum != (uint16_t)checksum) {
+        return kH9_SYSEX_CHECKSUM_INVALID;
+    }
+
+    return kH9_OK;  // TODO: Finish this function and fix assigments to internal values
 }
 
 h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
-    return kH9_UNKNOWN; // TODO: Writeme
+    return kH9_UNKNOWN;  // TODO: Writeme
 }
 
 h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
