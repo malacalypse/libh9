@@ -125,7 +125,7 @@ TEST_F(TEST_CLASS, scanhex_bool32_scansCorrectly) {
 TEST_F(TEST_CLASS, find_lines_works) {
     size_t max_lines = 12;
     char   string[]  = "This is a large line\r\nThis\r Is\n Not\n\r Normal\r\nBut it's totally ok.\r\n";
-    char * lines[max_lines];
+    char*  lines[max_lines];
     size_t lengths[max_lines];
     size_t found_lines = find_lines(string, strlen(string), lines, lengths, max_lines);
     ASSERT_EQ(found_lines, 6);
@@ -146,7 +146,7 @@ TEST_F(TEST_CLASS, find_lines_works) {
 TEST_F(TEST_CLASS, find_lines_whenNoTrailingNewline_works) {
     size_t max_lines = 12;
     char   string[]  = "S\r\nI\nX\rL\n\rN\r\nS";
-    char * lines[max_lines];
+    char*  lines[max_lines];
     size_t lengths[max_lines];
     size_t found_lines = find_lines(string, strlen(string), lines, lengths, max_lines);
     ASSERT_EQ(found_lines, 6);

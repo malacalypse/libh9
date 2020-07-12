@@ -6,11 +6,11 @@
 //
 
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
 #include "h9.h"
 #include "test_helpers.hpp"
 #include "utils.h"
-#include <stdio.h>
 
 #include "gtest/gtest.h"
 
@@ -186,7 +186,7 @@ TEST_F(TEST_CLASS, h9_load_parses_system_variable_dump) {
     sysvar_dump_file = fopen("./test_data/Device_Config1.syx", "r");
     ASSERT_NE(sysvar_dump_file, nullptr);
     uint8_t buffer[1000];
-    size_t buffer_len;
+    size_t  buffer_len;
     buffer_len = fread(buffer, 1000, 1, sysvar_dump_file);
     ASSERT_EQ(h9_load(h9obj, buffer, buffer_len, kH9_RESPOND_TO_ANY_SYSEX_ID), kH9_OK);
     // TODO: Validate the the values were applied to the h9obj

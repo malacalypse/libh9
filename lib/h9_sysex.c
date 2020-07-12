@@ -571,41 +571,45 @@ static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
 h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
     h9_system_value_dump values;
     memset(&values, 0x0, sizeof(values));
-    size_t               num_lines = 5;
-    char *lines[num_lines];
-    size_t   lengths[num_lines];
-    size_t found_lines = find_lines((char*)data, len, lines, lengths, num_lines);
+    size_t num_lines = 5;
+    char * lines[num_lines];
+    size_t lengths[num_lines];
+    size_t found_lines = find_lines((char *)data, len, lines, lengths, num_lines);
 
     if (found_lines != num_lines) {
         return kH9_SYSEX_INVALID;
     }
 
-    // Line 0 should be [SYSTEM] V VV V.V.V[V] etc... but we don't really care about this line
+    // Line 0 should be [SYSTEM] V VV V.V.V[V] etc... but we don't really care about this line, other than to validate it
+    char system_start[] = "[SYSTEM] ";
+    if (strncmp(lines[0], system_start, sizeof(system_start) - 1) != 0) {
+        return kH9_SYSEX_INVALID;
+    }
 
     // Line 1 should be byte values
-        size_t expected_values = sizeof(values.byte_values) / sizeof(*values.byte_values);
-        size_t found           = scanhex_byte((char *)lines[1], lengths[1], values.byte_values, expected_values);
-        if (found != expected_values) {
-            return kH9_SYSEX_INVALID;
-        }
+    size_t expected_values = sizeof(values.byte_values) / sizeof(*values.byte_values);
+    size_t found           = scanhex_byte((char *)lines[1], lengths[1], values.byte_values, expected_values);
+    if (found != expected_values) {
+        return kH9_SYSEX_INVALID;
+    }
 
     // Line 2 should be word values
-         expected_values = sizeof(values.word_values) / sizeof(*values.word_values);
-         found           = scanhex_word((char *)lines[2], lengths[2], values.word_values, expected_values);
-        if (found != expected_values) {
-            return kH9_SYSEX_INVALID;
-        }
+    expected_values = sizeof(values.word_values) / sizeof(*values.word_values);
+    found           = scanhex_word((char *)lines[2], lengths[2], values.word_values, expected_values);
+    if (found != expected_values) {
+        return kH9_SYSEX_INVALID;
+    }
 
     // Line 3 should be bit values
-         expected_values = sizeof(values.bit_values) / sizeof(*values.bit_values);
-         found           = scanhex_bool((char *)lines[3], lengths[3], values.bit_values, expected_values);
-        if (found != expected_values) {
-            return kH9_SYSEX_INVALID;
-        }
+    expected_values = sizeof(values.bit_values) / sizeof(*values.bit_values);
+    found           = scanhex_bool((char *)lines[3], lengths[3], values.bit_values, expected_values);
+    if (found != expected_values) {
+        return kH9_SYSEX_INVALID;
+    }
 
     // Line 4 should have the checksum
     uint32_t checksum;
-     found = sscanf(lines[4], "C_%x", &checksum);
+    found = sscanf(lines[4], "C_%x", &checksum);
     if (found != 1) {
         debug_info("Did not identify checksum.\n");
         return kH9_SYSEX_INVALID;
@@ -620,6 +624,30 @@ h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
     if (computed_checksum != (uint16_t)checksum) {
         return kH9_SYSEX_CHECKSUM_INVALID;
     }
+
+    /*
+      Value map:
+      Bit values: [index]
+        [2]  = bypass
+        [3]  = killdry
+        [7]  = tempo (global)
+        [10] = MIDI tempo sync
+        [11] = tx CC
+        [12] = tx PC
+        [16] = global TEMPO
+      Byte values: [index]
+        [3]  = MIDI RX Channel
+        [4]  = Sysex ID
+        [8]  = MIDI TX Channel
+        [16] = PSW map to CC
+        [18] = KNOB0 map to CC
+        ...
+        [27] = KNOB9 map to CC
+        [32] = EXPR map to CC
+        [69] = Knob Mode [0 = normal, 1 = catchup, 2 = "locked"
+      Word values: [index]
+        // None of these seem useful since the outgain doesn't "work" properly.
+     */
 
     return kH9_OK;  // TODO: Finish this function and fix assigments to internal values
 }
