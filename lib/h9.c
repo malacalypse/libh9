@@ -110,7 +110,7 @@ static void cc_callback(h9* h9, control_id control, float value) {
     if ((h9->cc_callback == NULL) || (h9->midi_config.cc_rx_map[control] == CC_DISABLED)) {
         return;
     }
-    uint8_t  midi_channel = h9->midi_config.midi_channel;
+    uint8_t  midi_channel = h9->midi_config.midi_rx_channel;
     uint8_t  control_cc   = h9->midi_config.cc_rx_map[control];
     uint16_t cc_value     = clip(value, 0.0f, 1.0f) * MIDI_MAX;
     h9->cc_callback(h9->callback_context, midi_channel, control_cc, (uint8_t)(cc_value >> 7), (uint8_t)(cc_value & 0x7F));
@@ -134,7 +134,8 @@ h9* h9_new(void) {
 
     // Set sane default values so the object functions correctly
     h9->midi_config.sysex_id     = 1U;
-    h9->midi_config.midi_channel = 0U;
+    h9->midi_config.midi_rx_channel = 0U;
+    h9->midi_config.midi_tx_channel = 0U;
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
         h9->midi_config.cc_rx_map[i] = DEFAULT_KNOB_CC + i;
         h9->midi_config.cc_tx_map[i] = DEFAULT_KNOB_CC + i;
@@ -195,7 +196,7 @@ void h9_setControl(h9* h9, control_id control, control_value value, h9_callback_
         default:  // A knob
             h9_setKnob(h9, control, value);
     }
-    h9->dirty = true;
+    h9->preset->dirty = true;
     if (cc_cb_action == kH9_TRIGGER_CALLBACK) {
         cc_callback(h9, control, value);
     }
@@ -260,7 +261,7 @@ bool h9_setAlgorithm(h9* h9, uint8_t module_zero_indexed_id, uint8_t algorithm_z
     }
     h9->preset->module    = module;
     h9->preset->algorithm = &module->algorithms[algorithm_zero_indexed_id];
-    h9->dirty             = true;
+    h9->preset->dirty             = true;
     h9_reset_display_values(h9);
     return true;
 }
@@ -391,5 +392,5 @@ void h9_copyMidiConfig(h9* h9, h9_midi_config* dest_copy) {
 }
 
 bool h9_dirty(h9* h9) {
-    return h9->dirty;
+    return h9->preset->dirty;
 }

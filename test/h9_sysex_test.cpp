@@ -175,7 +175,7 @@ TEST_F(TEST_CLASS, h9_dump_works_without_previously_loading) {
 }
 
 TEST_F(TEST_CLASS, h9_load_flags_preset_clean) {
-    h9obj->dirty = true;  // force it
+    h9obj->preset->dirty = true;  // force it
     EXPECT_TRUE(h9_dirty(h9obj));
     LoadPatch(h9obj, sysex_hrmdlo);
     ASSERT_FALSE(h9_dirty(h9obj));

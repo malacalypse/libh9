@@ -50,6 +50,12 @@ typedef enum control_id {
     NUM_CONTROLS,  // KEEP THIS LAST
 } control_id;
 
+typedef enum knob_mode {
+    kKnobModeNormal = 0U,
+    kKnobModeCatchup,
+    kKnobModeLocked,
+} knob_mode;
+
 typedef enum h9_callback_action {
     kH9_SUPPRESS_CALLBACK = 0U,
     kH9_TRIGGER_CALLBACK,
@@ -105,6 +111,8 @@ typedef struct h9_preset {
     uint8_t       xyz_map[3];
     bool          tempo_enabled;
     bool          modfactor_fast_slow;
+
+    bool           dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
 } h9_preset;
 
 struct h9;
@@ -125,16 +133,25 @@ typedef void (*h9_sysex_callback)(void* ctx, uint8_t* sysex, size_t len);
  */
 typedef struct h9_midi_config {
     uint8_t sysex_id;
-    uint8_t midi_channel;
+    uint8_t midi_rx_channel; // channel the pedal listens and the plugin sends on
+    uint8_t midi_tx_channel; // channel the pedal sends and the plugin listens on
     uint8_t cc_rx_map[NUM_CONTROLS];
     uint8_t cc_tx_map[NUM_CONTROLS];
+    bool midi_tempo_sync;
+    bool transmit_cc_enabled;
+    bool transmit_pc_enabled;
 } h9_midi_config;
 
 // The core H9 model
 typedef struct h9 {
     h9_midi_config midi_config;
     h9_preset*     preset;
-    bool           dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
+
+    // Pedal settings
+    bool bypass;
+    bool killdry;
+    bool global_tempo;
+    knob_mode knob_mode;
 
     // Observer registration
     h9_display_callback display_callback;

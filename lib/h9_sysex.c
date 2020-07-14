@@ -564,7 +564,7 @@ static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
     // Sync control state, trigger display callbacks
     h9_reset_display_values(h9);
 
-    h9->dirty = false;
+    h9->preset->dirty = false;
     return kH9_OK;
 }
 
@@ -648,6 +648,23 @@ h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
       Word values: [index]
         // None of these seem useful since the outgain doesn't "work" properly.
      */
+    h9->bypass = values.bit_values[2];
+    h9->killdry = values.bit_values[3];
+    h9->global_tempo = values.bit_values[7];
+    h9->midi_config.midi_rx_channel = values.byte_values[3];
+    h9->midi_config.midi_tx_channel = values.byte_values[8];
+    h9->midi_config.sysex_id = values.byte_values[4];
+    size_t control_indices[] = { 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 32, 16};
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        uint8_t cc = values.byte_values[control_indices[i]];
+        if (cc < 5) {
+            h9->midi_config.cc_rx_map[i] = CC_DISABLED;
+            h9->midi_config.cc_tx_map[i] = CC_DISABLED;
+        } else {
+            h9->midi_config.cc_rx_map[i] = cc - 5;
+            h9->midi_config.cc_tx_map[i] = cc - 5;
+        }
+    }
 
     return kH9_OK;  // TODO: Finish this function and fix assigments to internal values
 }
@@ -702,7 +719,7 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
 
     size_t bytes_written = format_sysex(sysex, max_len, &sxpreset, h9->midi_config.sysex_id);
     if (bytes_written <= max_len && update_dirty_flag) {
-        h9->dirty = false;
+        h9->preset->dirty = false;
     }
 
     return bytes_written;
