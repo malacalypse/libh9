@@ -666,11 +666,100 @@ h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
         }
     }
 
-    return kH9_OK;  // TODO: Finish this function and fix assigments to internal values
+    return kH9_OK;
+}
+
+static void internalize_cc(h9* h9, control_id id, uint32_t cc) {
+    if (cc < 5) {
+        h9->midi_config.cc_rx_map[id] =  CC_DISABLED;
+        h9->midi_config.cc_tx_map[id] =  CC_DISABLED;
+    }
+    h9->midi_config.cc_rx_map[id] =  cc - 5;
+    h9->midi_config.cc_tx_map[id] =  cc - 5;
 }
 
 h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
-    return kH9_UNKNOWN;  // TODO: Writeme
+    uint32_t key = 0;
+    uint32_t value = 0;
+
+    if (sscanf("%d %d", (char *)cursor, &key, &value) == 2) {
+        switch (key) {
+            case sp_bypass:
+                h9->bypass = value;
+                break;
+            case sp_tempo:
+                h9->preset->tempo = (float)value / 100.0f;
+                break;
+            case sp_global_tempo:
+                h9->global_tempo = value;
+                break;
+            case sp_kill_dry:
+                h9->killdry = value;
+                break;
+            case sp_kill_dry_global:
+                h9->killdry = value;
+                break;
+            case sp_kb1_src:
+                internalize_cc(h9, 0, value);
+                break;
+            case sp_kb2_src:
+                internalize_cc(h9, 1, value);
+                break;
+            case sp_kb3_src:
+                internalize_cc(h9, 2, value);
+                break;
+            case sp_kb4_src:
+                internalize_cc(h9, 3, value);
+                break;
+            case sp_kb5_src:
+                internalize_cc(h9, 4, value);
+                break;
+            case sp_kb6_src:
+                internalize_cc(h9, 5, value);
+                break;
+            case sp_kb7_src:
+                internalize_cc(h9, 6, value);
+                break;
+            case sp_kb8_src:
+                internalize_cc(h9, 7, value);
+                break;
+            case sp_kb9_src:
+                internalize_cc(h9, 8, value);
+                break;
+            case sp_kb10_src:
+                internalize_cc(h9, 9, value);
+                break;
+            case sp_pdl_src:
+                internalize_cc(h9, 10, value);
+                break;
+            case sp_psw_src:
+                internalize_cc(h9, 11, value);
+                break;
+            case sp_tx_midi_cc:
+                h9->midi_config.transmit_cc_enabled = value;
+                break;
+            case sp_midi_rx_channel:
+                h9->midi_config.midi_rx_channel = value;
+                break;
+            case sp_midi_tx_channel:
+                h9->midi_config.midi_tx_channel = value;
+                break;
+            case sp_tx_midi_pchg:
+                h9->midi_config.transmit_pc_enabled = value;
+                break;
+            case sp_sysex_id:
+                h9->midi_config.sysex_id = value;
+                break;
+            case sp_knob_mode:
+                h9->knob_mode = value;
+                break;
+            default:
+                return kH9_UNKNOWN;
+        }
+    } else {
+        return kH9_SYSEX_INVALID;
+    }
+    return kH9_OK;
 }
 
 h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
