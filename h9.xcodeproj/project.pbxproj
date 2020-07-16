@@ -28,6 +28,7 @@
 		ED1CF0CA24AD6E54003684BF /* test_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED1CF0C824AD6E54003684BF /* test_helpers.cpp */; };
 		ED1CF0CC24AD8778003684BF /* h9_preset_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED1CF0CB24AD8778003684BF /* h9_preset_test.cpp */; };
 		ED1CF0D724B5277C003684BF /* utils_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED1CF0D624B5277C003684BF /* utils_test.cpp */; };
+		ED74746824BFD4BF0051BD8C /* h9_midi_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED74746724BFD4BF0051BD8C /* h9_midi_test.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -343,6 +344,7 @@
 		ED1CF0D924B56A53003684BF /* RESONATOR.syx */ = {isa = PBXFileReference; lastKnownFileType = file; path = RESONATOR.syx; sourceTree = "<group>"; };
 		ED1CF0DA24B56A53003684BF /* MODECHOVERB.syx */ = {isa = PBXFileReference; lastKnownFileType = file; path = MODECHOVERB.syx; sourceTree = "<group>"; };
 		ED1CF0DB24B56A53003684BF /* 1985 DAMAGE.syx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "1985 DAMAGE.syx"; sourceTree = "<group>"; };
+		ED74746724BFD4BF0051BD8C /* h9_midi_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = h9_midi_test.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -937,6 +939,7 @@
 				ED1CF0C924AD6E54003684BF /* test_helpers.hpp */,
 				ED1CF0CB24AD8778003684BF /* h9_preset_test.cpp */,
 				ED1CF0D624B5277C003684BF /* utils_test.cpp */,
+				ED74746724BFD4BF0051BD8C /* h9_midi_test.cpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -1031,6 +1034,7 @@
 				ED1CF0CA24AD6E54003684BF /* test_helpers.cpp in Sources */,
 				ED07FC6F24AAEEBB006D36D1 /* gtest-matchers.cc in Sources */,
 				ED07FC7024AAEED4006D36D1 /* gtest-test-part.cc in Sources */,
+				ED74746824BFD4BF0051BD8C /* h9_midi_test.cpp in Sources */,
 				ED1CF0C724AD6D9F003684BF /* h9_controls_test.cpp in Sources */,
 				ED07FC7324AAF218006D36D1 /* h9.c in Sources */,
 				ED1CF0CC24AD8778003684BF /* h9_preset_test.cpp in Sources */,

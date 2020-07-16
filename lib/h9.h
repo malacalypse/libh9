@@ -22,7 +22,7 @@
 #define H9_NOMODULE       -1
 #define H9_NOALGORITHM    -1
 #define CC_DISABLED       255
-#define MAX_CC            99
+#define MAX_CC            99  // H9 manual states that allowable CCs are 0-99.
 
 typedef enum h9_status {
     kH9_UNKNOWN = 0U,
@@ -61,7 +61,7 @@ typedef enum h9_callback_action {
     kH9_TRIGGER_CALLBACK,
 } h9_callback_action;
 
-typedef float control_value;  // 0.00 to 1.00 always.
+typedef double control_value;  // 0.00 to 1.00 always.
 
 typedef struct h9_algorithm {
     uint8_t id;
@@ -91,7 +91,7 @@ typedef struct h9_module {
 typedef struct h9_knob {
     control_value current_value;  // Physical position of the knob.
     control_value display_value;  // Display value, after adjustment by, e.g. exp or psw operation.
-    float         mknob_value;    // Still no clue what this is exactly, seems some translated display value of the knob.
+    double        mknob_value;    // Still no clue what this is exactly, seems some translated display value of the knob.
     control_value exp_min;
     control_value exp_max;
     control_value psw;
@@ -106,13 +106,13 @@ typedef struct h9_preset {
     h9_knob       knobs[H9_NUM_KNOBS];
     control_value expression;
     bool          psw;
-    float         tempo;
-    float         output_gain;
+    double        tempo;
+    double        output_gain;
     uint8_t       xyz_map[3];
     bool          tempo_enabled;
     bool          modfactor_fast_slow;
 
-    bool           dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
+    bool dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
 } h9_preset;
 
 struct h9;
@@ -133,13 +133,13 @@ typedef void (*h9_sysex_callback)(void* ctx, uint8_t* sysex, size_t len);
  */
 typedef struct h9_midi_config {
     uint8_t sysex_id;
-    uint8_t midi_rx_channel; // channel the pedal listens and the plugin sends on
-    uint8_t midi_tx_channel; // channel the pedal sends and the plugin listens on
+    uint8_t midi_rx_channel;  // channel the pedal listens and the plugin sends on
+    uint8_t midi_tx_channel;  // channel the pedal sends and the plugin listens on
     uint8_t cc_rx_map[NUM_CONTROLS];
     uint8_t cc_tx_map[NUM_CONTROLS];
-    bool midi_tempo_sync;
-    bool transmit_cc_enabled;
-    bool transmit_pc_enabled;
+    bool    midi_clock_sync;
+    bool    transmit_cc_enabled;
+    bool    transmit_pc_enabled;
 } h9_midi_config;
 
 // The core H9 model
@@ -148,9 +148,9 @@ typedef struct h9 {
     h9_preset*     preset;
 
     // Pedal settings
-    bool bypass;
-    bool killdry;
-    bool global_tempo;
+    bool      bypass;
+    bool      killdry;
+    bool      global_tempo;
     knob_mode knob_mode;
 
     // Observer registration
@@ -189,6 +189,7 @@ bool              h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algor
 void              h9_setControl(h9* h9, control_id knob_num, control_value value, h9_callback_action cc_cb_action);
 void              h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw);
 bool              h9_setMidiConfig(h9* h9, const h9_midi_config* midi_config);
+void              h9_cc(h9* h9, uint8_t cc_num, uint8_t cc_value);
 
 #ifdef __cplusplus
 }

@@ -568,7 +568,7 @@ static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
     return kH9_OK;
 }
 
-h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
+static h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
     h9_system_value_dump values;
     memset(&values, 0x0, sizeof(values));
     size_t num_lines = 5;
@@ -648,13 +648,16 @@ h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
       Word values: [index]
         // None of these seem useful since the outgain doesn't "work" properly.
      */
-    h9->bypass = values.bit_values[2];
-    h9->killdry = values.bit_values[3];
-    h9->global_tempo = values.bit_values[7];
-    h9->midi_config.midi_rx_channel = values.byte_values[3];
-    h9->midi_config.midi_tx_channel = values.byte_values[8];
-    h9->midi_config.sysex_id = values.byte_values[4];
-    size_t control_indices[] = { 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 32, 16};
+    h9->bypass                          = values.bit_values[2];
+    h9->killdry                         = values.bit_values[3];
+    h9->global_tempo                    = values.bit_values[7];
+    h9->midi_config.midi_rx_channel     = values.byte_values[3];
+    h9->midi_config.midi_tx_channel     = values.byte_values[8];
+    h9->midi_config.sysex_id            = values.byte_values[4];
+    h9->midi_config.transmit_cc_enabled = values.byte_values[11];
+    h9->midi_config.transmit_pc_enabled = values.byte_values[12];
+    h9->midi_config.midi_clock_sync     = values.byte_values[10];
+    size_t control_indices[]            = {27, 26, 25, 24, 23, 22, 18, 19, 20, 21, 32, 16};
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
         uint8_t cc = values.byte_values[control_indices[i]];
         if (cc < 5) {
@@ -669,17 +672,17 @@ h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
     return kH9_OK;
 }
 
-static void internalize_cc(h9* h9, control_id id, uint32_t cc) {
+static void internalize_cc(h9 *h9, control_id id, uint32_t cc) {
     if (cc < 5) {
-        h9->midi_config.cc_rx_map[id] =  CC_DISABLED;
-        h9->midi_config.cc_tx_map[id] =  CC_DISABLED;
+        h9->midi_config.cc_rx_map[id] = CC_DISABLED;
+        h9->midi_config.cc_tx_map[id] = CC_DISABLED;
     }
-    h9->midi_config.cc_rx_map[id] =  cc - 5;
-    h9->midi_config.cc_tx_map[id] =  cc - 5;
+    h9->midi_config.cc_rx_map[id] = cc - 5;
+    h9->midi_config.cc_tx_map[id] = cc - 5;
 }
 
-h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
-    uint32_t key = 0;
+static h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
+    uint32_t key   = 0;
     uint32_t value = 0;
 
     if (sscanf("%d %d", (char *)cursor, &key, &value) == 2) {
@@ -762,7 +765,7 @@ h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
     return kH9_OK;
 }
 
-h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
+h9_status h9_parse_sysex(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
     assert(h9);
     uint8_t *cursor = sysex;  // start the cursor at the beginning
     if (*cursor == 0xF0) {    // Skip the leading F0 if present

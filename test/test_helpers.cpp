@@ -13,11 +13,11 @@
 #define MAX_CC 127
 #endif
 
-static float    display_callback_tracker[12];
-static int8_t   cc_callback_tracker[MAX_CC + 1];
-static uint32_t cc_callback_counter = 0U;
-static uint8_t *sysex_callback_tracker;
-static size_t   sysex_callback_tracker_len;
+static control_value display_callback_tracker[12];
+static int8_t        cc_callback_tracker[MAX_CC + 1];
+static uint32_t      cc_callback_counter = 0U;
+static uint8_t *     sysex_callback_tracker;
+static size_t        sysex_callback_tracker_len;
 
 void cc_callback(void *ctx, uint8_t midi_channel, uint8_t cc_num, uint8_t msb, uint8_t lsb) {
     cc_callback_tracker[cc_num] = static_cast<int8_t>(msb);
@@ -59,7 +59,7 @@ uint32_t cc_callback_count(void) {
     return cc_callback_counter;
 }
 
-bool display_callback_triggered(control_id control, float *callback_value) {
+bool display_callback_triggered(control_id control, control_value *callback_value) {
     if (display_callback_tracker[control] == DISPLAY_CALLBACK_NULL) {
         return false;
     }

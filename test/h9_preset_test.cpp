@@ -15,10 +15,6 @@
 
 #define TEST_CLASS        H9PresetTest
 #define EMPTY_PRESET_NAME "Empty"  // TODO: Find an elegant way to match with h9.c
-#define DEFAULT_KNOB_CC   22       // Per the user guide
-#define DEFAULT_EXPR_CC   15       // Per the user guide, but only for transmit
-
-// Various sysex constants for testing certian things
 
 namespace h9_test {
 

@@ -12,28 +12,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "h9_module.h"
 #include "h9_modules.h"
 #include "utils.h"
 
-#define MIDI_MAX          16383  // 2^14 - 1 for 14-bit MIDI
-#define DEFAULT_MODULE    4      // zero-indexed
-#define DEFAULT_ALGORITHM 0
-#define DEFAULT_KNOB_CC   22
-#define DEFAULT_EXPR_CC   15
-#define DEFAULT_PSW_CC    CC_DISABLED
-#define EMPTY_PRESET_NAME "Empty"
+#define MIDI_MAX                     16383  // 2^14 - 1 for 14-bit MIDI
+#define DEFAULT_MODULE               4      // zero-indexed
+#define DEFAULT_ALGORITHM            0
+#define DEFAULT_KNOB_CC              22
+#define DEFAULT_EXPR_CC              15
+#define DEFAULT_PSW_CC               CC_DISABLED
+#define DEFAULT_KNOB_VALUE           0.5
+#define EMPTY_PRESET_NAME            "Empty"
+#define MIDI_ACCEPTABLE_LSB_DELAY_MS 3.5  // roughly the amount of time to transmit the CC over a slow DIN connection
 
 #define DEBUG_LEVEL DEBUG_ERROR
 #include "debug.h"
+
+/* ==== Private Variables ========================================================= */
+
+static uint8_t last_msb_cc             = CC_DISABLED;
+static uint8_t last_msb                = 0;
+static double  last_msb_timestamp_msec = 0;
 
 /* ==== Private Function Declarations ============================================= */
 static void h9_setExpr(h9* h9, control_value value);
 static void h9_setPsw(h9* h9, bool psw_on);
 static void h9_setKnob(h9* h9, control_id control, control_value value);
-static void display_callback(h9* h9, control_id control, float current_value, float display_value);
-static void cc_callback(h9* h9, control_id control, float value);
+static void display_callback(h9* h9, control_id control, double current_value, double display_value);
+static void cc_callback(h9* h9, control_id control, double value);
 
 /* ==== MODULE Private Function Definitions (implements h9_module.h) ============== */
 void h9_reset_display_values(h9* h9) {
@@ -100,13 +109,13 @@ static void h9_setKnob(h9* h9, control_id control, control_value value) {
     }
 }
 
-static void display_callback(h9* h9, control_id control, float current_value, float display_value) {
+static void display_callback(h9* h9, control_id control, double current_value, double display_value) {
     if (h9->display_callback != NULL) {
         h9->display_callback(h9->callback_context, control, current_value, display_value);
     }
 }
 
-static void cc_callback(h9* h9, control_id control, float value) {
+static void cc_callback(h9* h9, control_id control, double value) {
     if ((h9->cc_callback == NULL) || (h9->midi_config.cc_rx_map[control] == CC_DISABLED)) {
         return;
     }
@@ -133,7 +142,7 @@ h9* h9_new(void) {
     }
 
     // Set sane default values so the object functions correctly
-    h9->midi_config.sysex_id     = 1U;
+    h9->midi_config.sysex_id        = 1U;
     h9->midi_config.midi_rx_channel = 0U;
     h9->midi_config.midi_tx_channel = 0U;
     for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
@@ -174,6 +183,17 @@ h9_preset* h9_preset_new(void) {
     strncpy(h9_preset->name, EMPTY_PRESET_NAME, H9_MAX_NAME_LEN);
     h9_preset->output_gain = 0.0f;
     h9_preset->tempo       = 120.0f;
+
+    for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
+        h9_knob* knob       = &h9_preset->knobs[i];
+        knob->current_value = DEFAULT_KNOB_VALUE;
+        knob->display_value = DEFAULT_KNOB_VALUE;
+        knob->exp_mapped    = false;
+        knob->mknob_value   = 0.0;
+        knob->psw_mapped    = false;
+    }
+    h9_preset->expression = 0.0;
+    h9_preset->psw        = false;
 
     return h9_preset;
 }
@@ -261,7 +281,7 @@ bool h9_setAlgorithm(h9* h9, uint8_t module_zero_indexed_id, uint8_t algorithm_z
     }
     h9->preset->module    = module;
     h9->preset->algorithm = &module->algorithms[algorithm_zero_indexed_id];
-    h9->preset->dirty             = true;
+    h9->preset->dirty     = true;
     h9_reset_display_values(h9);
     return true;
 }
@@ -393,4 +413,47 @@ void h9_copyMidiConfig(h9* h9, h9_midi_config* dest_copy) {
 
 bool h9_dirty(h9* h9) {
     return h9->preset->dirty;
+}
+
+double now_ms(void) {
+    struct timespec now;  // both C11 and POSIX
+    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+    double now_ms = ((double)now.tv_sec + 10.0E-9 * (double)now.tv_nsec) * 1000.0;
+    return now_ms;
+}
+
+void h9_cc(h9* h9, uint8_t cc_num, uint8_t cc_value) {
+    uint8_t value = cc_value & 0x7F;
+
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        if (h9->midi_config.cc_tx_map[i] == cc_num) {
+            // i is the control listening to that CC, value is the MSB half
+
+            // Timestamp and save this information in case the LSB half shows up soon after
+            last_msb_cc             = cc_num;
+            last_msb                = value;
+            last_msb_timestamp_msec = now_ms();
+            h9_setKnob(h9, (control_id)i, ((double)value / 127.0f));
+            return;
+        } else if (h9->midi_config.cc_tx_map[i] == (cc_num - 32)) {
+            // i is the control listening to the CC, value is the LSB half
+
+            if (last_msb_cc != cc_num) {
+                return;  // Ignore, MSB shouldn't be sent randomly
+            }
+
+            double time_ms = now_ms();
+            if ((time_ms - last_msb_timestamp_msec) > MIDI_ACCEPTABLE_LSB_DELAY_MS) {
+                // It's been too long since we got the last MSB for this control, ignore and reset for next MSB.
+                last_msb_cc = CC_DISABLED;
+                return;
+            }
+
+            uint16_t high_res_cc   = (last_msb << 7) + value;
+            double   control_value = (double)high_res_cc / (double)(1 << 14);
+            h9_setKnob(h9, (control_id)i, control_value);
+            last_msb_cc = CC_DISABLED;
+            return;
+        }
+    }
 }

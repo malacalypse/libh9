@@ -17,8 +17,6 @@
 #define DEFAULT_KNOB_CC 22  // Per the user guide
 #define DEFAULT_EXPR_CC 15  // Per the user guide, but only for transmit
 
-// Various sysex constants for testing certian things
-
 namespace h9_test {
 
 // Test Fixture
@@ -92,15 +90,16 @@ TEST_F(TEST_CLASS, h9_setControl_updatesDisplayValue) {
 TEST_F(TEST_CLASS, h9_setControl_withDisplayCallback_callsDisplayCallback) {
     h9obj->display_callback = display_callback;
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        float value          = float(1.0f / (float)i);
-        float expected_value = value;
+        control_value value          = control_value(i) / ((control_value)NUM_CONTROLS + 1.0);
+        control_value expected_value = value;
         if (control_id(i) == PSW) {
-            expected_value = (value == 0.0f) ? 0.0f : 1.0f;
+            value          = (value <= 0.5f) ? 0.0f : 1.0f;
+            expected_value = (value <= 0.0f) ? 0.0f : 1.0f;
         }
         h9_setControl(h9obj, control_id(i), value, kH9_TRIGGER_CALLBACK);
-        float retrieved_value = -1.0f;
+        control_value retrieved_value = -1.0f;
         EXPECT_TRUE(display_callback_triggered(control_id(i), &retrieved_value));
-        EXPECT_EQ(retrieved_value, expected_value);
+        EXPECT_NEAR(retrieved_value, expected_value, 0.00001);
     }
 }
 
@@ -115,9 +114,9 @@ TEST_F(TEST_CLASS, h9_setControl_withCCCallback_whenTriggering_callsCCCallback) 
     ASSERT_TRUE(h9_setMidiConfig(h9obj, &midi_config));
 
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        float   value             = float(rand()) / float(RAND_MAX);
-        uint8_t expected_cc_value = static_cast<uint8_t>(static_cast<uint16_t>(rintf(value * 16383)) >> 7);
-        uint8_t retrieved_value   = 128;
+        control_value value             = control_value(rand()) / control_value(RAND_MAX);
+        uint8_t       expected_cc_value = static_cast<uint8_t>(static_cast<uint16_t>(rintf(value * 16383)) >> 7);
+        uint8_t       retrieved_value   = 128;
         h9_setControl(h9obj, control_id(i), value, kH9_TRIGGER_CALLBACK);
         uint8_t cc_value_to_check = h9obj->midi_config.cc_rx_map[i];
         EXPECT_TRUE(cc_callback_triggered(cc_value_to_check, &retrieved_value));
@@ -135,9 +134,9 @@ TEST_F(TEST_CLASS, h9_setControl_withCCCallback_whenSuppressing_suppressesCCCall
     }
     ASSERT_TRUE(h9_setMidiConfig(h9obj, &midi_config));
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        float   value             = float(rand()) / float(RAND_MAX);  // random between 0.0f and 1.0f
-        uint8_t retrieved_value   = 128;
-        uint8_t cc_value_to_check = h9obj->midi_config.cc_rx_map[i];
+        control_value value             = control_value(rand()) / control_value(RAND_MAX);  // random between 0.0f and 1.0f
+        uint8_t       retrieved_value   = 128;
+        uint8_t       cc_value_to_check = h9obj->midi_config.cc_rx_map[i];
         h9_setControl(h9obj, control_id(i), value, kH9_SUPPRESS_CALLBACK);
         EXPECT_FALSE(cc_callback_triggered(cc_value_to_check, &retrieved_value));
     }
@@ -154,7 +153,7 @@ TEST_F(TEST_CLASS, h9_setControl_withCCCallback_withCCDisabled_whenTriggering_su
     ASSERT_TRUE(h9_setMidiConfig(h9obj, &midi_config));
 
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        float value = float(rand()) / float(RAND_MAX);  // random between 0.0f and 1.0f
+        control_value value = control_value(rand()) / control_value(RAND_MAX);  // random between 0.0f and 1.0f
         h9_setControl(h9obj, control_id(i), value, kH9_TRIGGER_CALLBACK);
     }
     EXPECT_EQ(cc_callback_count(), 0);
@@ -164,15 +163,15 @@ TEST_F(TEST_CLASS, h9_setControl_withDisplayCallback_whenSuppressing_stillCallsD
     h9obj->display_callback = display_callback;
     h9obj->cc_callback      = cc_callback;
     for (size_t i = 0; i < NUM_CONTROLS; i++) {
-        float value          = float(rand()) / float(RAND_MAX);  // random between 0.0f and 1.0f
-        float expected_value = value;
+        control_value value          = control_value(rand()) / control_value(RAND_MAX);  // random between 0.0f and 1.0f
+        control_value expected_value = value;
         if (control_id(i) == PSW) {
             expected_value = (value == 0.0f) ? 0.0f : 1.0f;
         }
         h9_setControl(h9obj, control_id(i), value, kH9_SUPPRESS_CALLBACK);
-        float retrieved_value = -1.0f;
+        control_value retrieved_value = -1.0f;
         EXPECT_TRUE(display_callback_triggered(control_id(i), &retrieved_value));
-        EXPECT_EQ(retrieved_value, expected_value);
+        EXPECT_NEAR(retrieved_value, expected_value, 0.00001);
     }
 }
 

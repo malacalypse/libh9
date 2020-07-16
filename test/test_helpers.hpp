@@ -18,7 +18,7 @@ void     sysex_callback(void *ctx, uint8_t *sysex, size_t len);
 void     init_callback_helpers(void);
 bool     cc_callback_triggered(uint8_t cc, uint8_t *callback_value);
 uint32_t cc_callback_count(void);
-bool     display_callback_triggered(control_id control, float *callback_value);
+bool     display_callback_triggered(control_id control, control_value *callback_value);
 bool     sysex_callback_triggered(uint8_t **sysex, size_t *len);
 
 #endif /* test_helpers_hpp */

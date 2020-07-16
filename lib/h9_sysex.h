@@ -47,7 +47,7 @@ extern "C" {
  *
  * Return value indicates whether the operation was successful.
  */
-h9_status h9_load(h9* h9, uint8_t* sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id);
+h9_status h9_parse_sysex(h9* h9, uint8_t* sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id);
 
 /*
  * Generates a complete sysex message encapsulating the specified h9 object's current state.
