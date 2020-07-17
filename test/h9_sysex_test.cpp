@@ -225,6 +225,8 @@ TEST_F(TEST_CLASS, h9_load_parses_system_variable_dump) {
     }
     EXPECT_EQ(h9obj->midi_config.cc_rx_map[EXPR], rx_map[EXPR]);
     EXPECT_EQ(h9obj->midi_config.cc_tx_map[PSW], tx_map[PSW]);
+    EXPECT_STREQ(h9obj->name, "DC-H9Std");
+    EXPECT_STREQ(h9obj->bluetooth_pin, "1723");
 }
 
 /*

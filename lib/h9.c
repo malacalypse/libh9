@@ -158,6 +158,12 @@ h9* h9_new(void) {
     h9->display_callback = NULL;
     h9->sysex_callback   = NULL;
     h9->callback_context = (void*)h9;
+
+    memset(h9->name, 0x0, sizeof(h9->name));
+    memset(h9->bluetooth_pin, 0x0, sizeof(h9->bluetooth_pin));
+    strcpy(h9->name, "H9");
+    strcpy(h9->bluetooth_pin, "0000");
+
     return h9;
 }
 

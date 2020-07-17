@@ -16,7 +16,7 @@
 #define H9_NUM_MODULES    5
 #define H9_MAX_ALGORITHMS 12
 #define H9_NUM_KNOBS      10
-#define H9_MAX_NAME_LEN   17
+#define H9_MAX_NAME_LEN   17 // 16 plus a null
 #define H9_SYSEX_EVENTIDE 0x1C
 #define H9_SYSEX_H9       0x70
 #define H9_NOMODULE       -1
@@ -148,6 +148,8 @@ typedef struct h9 {
     h9_preset*     preset;
 
     // Pedal settings
+    char      name[H9_MAX_NAME_LEN];
+    char      bluetooth_pin[5]; // include the NULL
     bool      bypass;
     bool      killdry;
     bool      global_tempo;

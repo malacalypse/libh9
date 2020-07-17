@@ -125,6 +125,16 @@ typedef enum h9_sysvar {
     sp_version,                             // 45 : encoded (v[0] << 12) + (v[1] << 8) + v[2] (x.y.z[a] - not including a)
     sp_pedal_cal_min,                       // 46
     sp_pedal_cal_max,                       // 47
+    bluetoothPIN01,                          // 48: Returns an ASCII integer string (e.g. "14129") which when converted to a uint16 (e.g. 0x3731) and then case as a char* are two ASCII characters, (e.g. "17"). PIN01 are the first two chars PIN32 are the last two, so if PIN01 decodes as "17" and PIN32 decodes as "53", the actual PIN is 1753. This indicates that the data is little-endian, read out as uint16_t pairs instead of chars.
+    bluetoothPIN23,                          // 49
+    name01,                                  // 50 : Name field is encoded in the same ASCII integer string -> uint16 -> char[2] fielding.
+    name23,                                  // 51 : Names can be up to 16 characters long. If they are shorter, they will end in a space and, if room, a NULL. While spaces are permitted in the name, the final space before a NULL (or the last space if in the 16th character) is NOT part of the name.
+    name45,  // 52
+    name67,  // 53
+    name89, // 54
+    nameAB, // 55
+    nameCD, // 56
+    nameEF, // 57
 
     // DUMMY params (not saved in NVRAM between rebeoots, but some of these values affect the loaded preset)
     // NOTE: It appears that these actually don't exist or work at all - the pedal does not respond to them.
@@ -646,7 +656,8 @@ static h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
         [32] = EXPR map to CC
         [69] = Knob Mode [0 = normal, 1 = catchup, 2 = "locked"
       Word values: [index]
-        // None of these seem useful since the outgain doesn't "work" properly.
+        [48] + [49] : Bluetooth PIN (see notes in system variables)
+        [50] -> [57] : Pedal name (also encoded)
      */
     h9->bypass                          = values.bit_values[2];
     h9->killdry                         = values.bit_values[3];
@@ -668,6 +679,8 @@ static h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
             h9->midi_config.cc_tx_map[i] = cc - 5;
         }
     }
+    strncpy(h9->name, (char *)&values.word_values[50], H9_MAX_NAME_LEN - 1);
+    strncpy(h9->bluetooth_pin, (char *)&values.word_values[48], 4);
 
     return kH9_OK;
 }
@@ -684,6 +697,7 @@ static void internalize_cc(h9 *h9, control_id id, uint32_t cc) {
 static h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
     uint32_t key   = 0;
     uint32_t value = 0;
+    char *value_chars = (char *)&value + 2; // last two chars of 32-bit word
 
     if (sscanf("%d %d", (char *)cursor, &key, &value) == 2) {
         switch (key) {
@@ -755,6 +769,37 @@ static h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
                 break;
             case sp_knob_mode:
                 h9->knob_mode = value;
+                break;
+            // Name handling is a bit funky
+            case name01:
+                strncpy(h9->name, value_chars, 2);
+                break;
+            case name23:
+                strncpy(h9->name + 0x2, value_chars, 2);
+                break;
+            case name45:
+                strncpy(h9->name + 0x4, value_chars, 2);
+                break;
+            case name67:
+                strncpy(h9->name + 0x6, value_chars, 2);
+                break;
+            case name89:
+                strncpy(h9->name + 0x8, value_chars, 2);
+                break;
+            case nameAB:
+                strncpy(h9->name + 0xA, value_chars, 2);
+                break;
+            case nameCD:
+                strncpy(h9->name + 0xC, value_chars, 2);
+                break;
+            case nameEF:
+                strncpy(h9->name + 0xE, value_chars, 2);
+                break;
+            case bluetoothPIN01:
+                strncpy(h9->bluetooth_pin, value_chars, 2);
+                break;
+            case bluetoothPIN23:
+                strncpy(h9->bluetooth_pin + 2, value_chars, 2);
                 break;
             default:
                 return kH9_UNKNOWN;
