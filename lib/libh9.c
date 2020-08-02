@@ -138,6 +138,13 @@ static void cc_callback(h9* h9, control_id control, double value) {
     h9->cc_callback(h9->callback_context, midi_channel, control_cc, (uint8_t)(cc_value >> 7), (uint8_t)(cc_value & 0x7F));
 }
 
+static double now_ms(void) {
+    struct timespec now;  // both C11 and POSIX
+    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+    double now_ms = ((double)now.tv_sec + 10.0E-9 * (double)now.tv_nsec) * 1000.0;
+    return now_ms;
+}
+
 /* ==== PUBLIC (exported) Functions =============================================== */
 
 h9* h9_new(void) {
@@ -432,13 +439,6 @@ void h9_copyMidiConfig(h9* h9, h9_midi_config* dest_copy) {
 
 bool h9_dirty(h9* h9) {
     return h9->preset->dirty;
-}
-
-double now_ms(void) {
-    struct timespec now;  // both C11 and POSIX
-    clock_gettime(CLOCK_MONOTONIC_RAW, &now);
-    double now_ms = ((double)now.tv_sec + 10.0E-9 * (double)now.tv_nsec) * 1000.0;
-    return now_ms;
 }
 
 void h9_cc(h9* h9, uint8_t cc_num, uint8_t cc_value) {
