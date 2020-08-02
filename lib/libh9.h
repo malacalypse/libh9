@@ -1,13 +1,25 @@
-//
-//  h9.h
-//  libh9 - Sysex and state manipulation toolkit for remotely controlling
-//          the Eventide H9 multi-effect pedal.
-//
-//  Created by Studio DC on 2020-06-24.
-//
+/*  libh9.h
+    This file is part of libh9, a library for remotely managing Eventide H9
+    effects pedals.
 
-#ifndef h9_h
-#define h9_h
+    Copyright (C) 2020 Daniel Collins
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#ifndef libh9_h
+#define libh9_h
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -16,7 +28,7 @@
 #define H9_NUM_MODULES    5
 #define H9_MAX_ALGORITHMS 12
 #define H9_NUM_KNOBS      10
-#define H9_MAX_NAME_LEN   17 // 16 plus a null
+#define H9_MAX_NAME_LEN   17  // 16 plus a null
 #define H9_SYSEX_EVENTIDE 0x1C
 #define H9_SYSEX_H9       0x70
 #define H9_NOMODULE       -1
@@ -149,7 +161,7 @@ typedef struct h9 {
 
     // Pedal settings
     char      name[H9_MAX_NAME_LEN];
-    char      bluetooth_pin[5]; // include the NULL
+    char      bluetooth_pin[5];  // include the NULL
     bool      bypass;
     bool      killdry;
     bool      global_tempo;
@@ -200,4 +212,4 @@ void              h9_cc(h9* h9, uint8_t cc_num, uint8_t cc_value);
 // Bring in the rest of the modules
 #include "h9_sysex.h"
 
-#endif /* h9_h */
+#endif /* libh9_h */

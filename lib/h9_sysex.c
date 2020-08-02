@@ -1,9 +1,22 @@
-//
-//  h9_sysex.c
-//  h9
-//
-//  Created by Studio DC on 2020-06-30.
-//
+/*  h9_sysex.c
+    This file is part of libh9, a library for remotely managing Eventide H9
+    effects pedals.
+
+    Copyright (C) 2020 Daniel Collins
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
 #include "h9_sysex.h"
 
@@ -15,8 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "h9.h"
 #include "h9_module.h"
+#include "libh9.h"
 #include "utils.h"
 
 #define DEBUG_LEVEL DEBUG_ERROR
@@ -125,16 +138,19 @@ typedef enum h9_sysvar {
     sp_version,                             // 45 : encoded (v[0] << 12) + (v[1] << 8) + v[2] (x.y.z[a] - not including a)
     sp_pedal_cal_min,                       // 46
     sp_pedal_cal_max,                       // 47
-    bluetoothPIN01,                          // 48: Returns an ASCII integer string (e.g. "14129") which when converted to a uint16 (e.g. 0x3731) and then case as a char* are two ASCII characters, (e.g. "17"). PIN01 are the first two chars PIN32 are the last two, so if PIN01 decodes as "17" and PIN32 decodes as "53", the actual PIN is 1753. This indicates that the data is little-endian, read out as uint16_t pairs instead of chars.
-    bluetoothPIN23,                          // 49
-    name01,                                  // 50 : Name field is encoded in the same ASCII integer string -> uint16 -> char[2] fielding.
-    name23,                                  // 51 : Names can be up to 16 characters long. If they are shorter, they will end in a space and, if room, a NULL. While spaces are permitted in the name, the final space before a NULL (or the last space if in the 16th character) is NOT part of the name.
+    bluetoothPIN01,  // 48: Returns an ASCII integer string (e.g. "14129") which when converted to a uint16 (e.g. 0x3731) and then case as a char* are two ASCII characters, (e.g.
+                     // "17"). PIN01 are the first two chars PIN32 are the last two, so if PIN01 decodes as "17" and PIN32 decodes as "53", the actual PIN is 1753. This indicates
+                     // that the data is little-endian, read out as uint16_t pairs instead of chars.
+    bluetoothPIN23,  // 49
+    name01,          // 50 : Name field is encoded in the same ASCII integer string -> uint16 -> char[2] fielding.
+    name23,  // 51 : Names can be up to 16 characters long. If they are shorter, they will end in a space and, if room, a NULL. While spaces are permitted in the name, the final
+             // space before a NULL (or the last space if in the 16th character) is NOT part of the name.
     name45,  // 52
     name67,  // 53
-    name89, // 54
-    nameAB, // 55
-    nameCD, // 56
-    nameEF, // 57
+    name89,  // 54
+    nameAB,  // 55
+    nameCD,  // 56
+    nameEF,  // 57
 
     // DUMMY params (not saved in NVRAM between rebeoots, but some of these values affect the loaded preset)
     // NOTE: It appears that these actually don't exist or work at all - the pedal does not respond to them.
@@ -695,9 +711,9 @@ static void internalize_cc(h9 *h9, control_id id, uint32_t cc) {
 }
 
 static h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
-    uint32_t key   = 0;
-    uint32_t value = 0;
-    char *value_chars = (char *)&value + 2; // last two chars of 32-bit word
+    uint32_t key         = 0;
+    uint32_t value       = 0;
+    char *   value_chars = (char *)&value + 2;  // last two chars of 32-bit word
 
     if (sscanf("%d %d", (char *)cursor, &key, &value) == 2) {
         switch (key) {

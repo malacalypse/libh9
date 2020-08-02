@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		ED07F99924A91CB2006D36D1 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98E24A90D62006D36D1 /* main.c */; };
-		ED07F99A24A91CBA006D36D1 /* h9.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98A24A44193006D36D1 /* h9.c */; };
+		ED07F99A24A91CBA006D36D1 /* libh9.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98A24A44193006D36D1 /* libh9.c */; };
 		ED07F9A124AA921F006D36D1 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F99E24AA921F006D36D1 /* utils.c */; };
 		ED07FC6824AAEE1A006D36D1 /* gtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5A24AADFE3006D36D1 /* gtest.cc */; };
 		ED07FC6924AAEE1A006D36D1 /* gtest_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5B24AADFE3006D36D1 /* gtest_main.cc */; };
@@ -20,7 +20,7 @@
 		ED07FC6F24AAEEBB006D36D1 /* gtest-matchers.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA6324AADFE3006D36D1 /* gtest-matchers.cc */; };
 		ED07FC7024AAEED4006D36D1 /* gtest-test-part.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED07FA5924AADFE3006D36D1 /* gtest-test-part.cc */; };
 		ED07FC7224AAEF0E006D36D1 /* h9_sysex_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED07FC7124AAEF0E006D36D1 /* h9_sysex_test.cpp */; };
-		ED07FC7324AAF218006D36D1 /* h9.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98A24A44193006D36D1 /* h9.c */; };
+		ED07FC7324AAF218006D36D1 /* libh9.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F98A24A44193006D36D1 /* libh9.c */; };
 		ED07FC7424AAF21E006D36D1 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = ED07F99E24AA921F006D36D1 /* utils.c */; };
 		ED1CF0C124ABE775003684BF /* h9_sysex.c in Sources */ = {isa = PBXBuildFile; fileRef = ED1CF0C024ABE775003684BF /* h9_sysex.c */; };
 		ED1CF0C224ABE775003684BF /* h9_sysex.c in Sources */ = {isa = PBXBuildFile; fileRef = ED1CF0C024ABE775003684BF /* h9_sysex.c */; };
@@ -53,8 +53,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		ED07F98924A44193006D36D1 /* h9.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = h9.h; sourceTree = "<group>"; };
-		ED07F98A24A44193006D36D1 /* h9.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = h9.c; sourceTree = "<group>"; };
+		ED07F98924A44193006D36D1 /* libh9.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libh9.h; sourceTree = "<group>"; };
+		ED07F98A24A44193006D36D1 /* libh9.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libh9.c; sourceTree = "<group>"; };
 		ED07F98D24A90D62006D36D1 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		ED07F98E24A90D62006D36D1 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		ED07F99424A91CAC006D36D1 /* h9cmd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = h9cmd; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -398,8 +398,8 @@
 				ED07F99C24A98E73006D36D1 /* h9_modules.h */,
 				ED1CF0C024ABE775003684BF /* h9_sysex.c */,
 				ED1CF0BF24ABE775003684BF /* h9_sysex.h */,
-				ED07F98A24A44193006D36D1 /* h9.c */,
-				ED07F98924A44193006D36D1 /* h9.h */,
+				ED07F98A24A44193006D36D1 /* libh9.c */,
+				ED07F98924A44193006D36D1 /* libh9.h */,
 				ED07F99E24AA921F006D36D1 /* utils.c */,
 				ED07F99D24AA921F006D36D1 /* utils.h */,
 			);
@@ -1020,7 +1020,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ED07F99A24A91CBA006D36D1 /* h9.c in Sources */,
+				ED07F99A24A91CBA006D36D1 /* libh9.c in Sources */,
 				ED07F9A124AA921F006D36D1 /* utils.c in Sources */,
 				ED07F99924A91CB2006D36D1 /* main.c in Sources */,
 				ED1CF0C124ABE775003684BF /* h9_sysex.c in Sources */,
@@ -1036,7 +1036,7 @@
 				ED07FC7024AAEED4006D36D1 /* gtest-test-part.cc in Sources */,
 				ED74746824BFD4BF0051BD8C /* h9_midi_test.cpp in Sources */,
 				ED1CF0C724AD6D9F003684BF /* h9_controls_test.cpp in Sources */,
-				ED07FC7324AAF218006D36D1 /* h9.c in Sources */,
+				ED07FC7324AAF218006D36D1 /* libh9.c in Sources */,
 				ED1CF0CC24AD8778003684BF /* h9_preset_test.cpp in Sources */,
 				ED07FC6D24AAEEBB006D36D1 /* gtest-typed-test.cc in Sources */,
 				ED07FC6E24AAEEBB006D36D1 /* gtest-filepath.cc in Sources */,
@@ -1088,7 +1088,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				VALID_ARCHS = x86_64;
 			};
@@ -1126,7 +1126,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				VALID_ARCHS = x86_64;
 			};
 			name = Deployment;
