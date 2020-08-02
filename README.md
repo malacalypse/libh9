@@ -5,7 +5,7 @@ More will be written on this as I have time to expand on it.
 
 ## Summary
 
-This library contains the `h9.h` main header file (which is all you need to include to use the core h9 object and API). 
+This library contains the `libh9.h` main header file (which is all you need to include to use the core h9 object and API). 
 
 There are also some example projects which use this library in various useful ways - such as a commandline sysex parsing and validation tool, and a test harness which runs the unit testing framework.
 
