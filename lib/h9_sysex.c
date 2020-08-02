@@ -1,9 +1,22 @@
-//
-//  h9_sysex.c
-//  h9
-//
-//  Created by Studio DC on 2020-06-30.
-//
+/*  h9_sysex.c
+    This file is part of libh9, a library for remotely managing Eventide H9
+    effects pedals.
+
+    Copyright (C) 2020 Daniel Collins
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
 #include "h9_sysex.h"
 
@@ -15,8 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "h9.h"
 #include "h9_module.h"
+#include "libh9.h"
 #include "utils.h"
 
 #define DEBUG_LEVEL DEBUG_ERROR
@@ -89,7 +102,7 @@ typedef enum h9_sysvar {
     sp_bypass_mode = SYSVAR_BYTE_BASE + 0,  // 0 + 0x200
     unused10,                               // 1
     sp_startup_mode,                        // 2 : 0 = effect, 1 = preset
-    sp_midi_rx_channel,                     // 3 : 0 to 15
+    sp_midi_rx_channel,                     // 3 : 0 = disabled, 1 = OMNI, 2-17 = 0-15
     sp_sysex_id,                            // 4 : MIDI sysex id number, 0 is usually broadcast. Use with caution. 1 is default.
     unused11,                               // 5
     sp_num_banks_lo,                        // 6
@@ -100,7 +113,8 @@ typedef enum h9_sysvar {
     sp_tap_average,                         // 11
     // Some source mappings skipped, only using the ones we really care about
     // Value for _src columns: 0 = OFF/DISABLED, 5 = CC0 ...
-    sp_kb1_src = SYSVAR_BYTE_BASE + 18,    // 18
+    sp_psw_src = SYSVAR_BYTE_BASE + 16,    // 16 : PSW
+    sp_kb1_src = SYSVAR_BYTE_BASE + 18,    // 18 : Knob 0
     sp_kb2_src,                            // 19
     sp_kb3_src,                            // 20
     sp_kb4_src,                            // 21
@@ -109,7 +123,8 @@ typedef enum h9_sysvar {
     sp_kb7_src,                            // 24
     sp_kb8_src,                            // 25
     sp_kb9_src,                            // 26
-    sp_kb10_src,                           // 27
+    sp_kb10_src,                           // 27 : Knob 9
+    sp_pdl_src   = SYSVAR_BYTE_BASE + 32,  // 32 : expression pedal
     sp_knob_mode = SYSVAR_BYTE_BASE + 69,  // 69
 
     // WORD parameters (a WORD is a UINT16_t in H9 parlance)
@@ -123,8 +138,22 @@ typedef enum h9_sysvar {
     sp_version,                             // 45 : encoded (v[0] << 12) + (v[1] << 8) + v[2] (x.y.z[a] - not including a)
     sp_pedal_cal_min,                       // 46
     sp_pedal_cal_max,                       // 47
+    bluetoothPIN01,  // 48: Returns an ASCII integer string (e.g. "14129") which when converted to a uint16 (e.g. 0x3731) and then case as a char* are two ASCII characters, (e.g.
+                     // "17"). PIN01 are the first two chars PIN32 are the last two, so if PIN01 decodes as "17" and PIN32 decodes as "53", the actual PIN is 1753. This indicates
+                     // that the data is little-endian, read out as uint16_t pairs instead of chars.
+    bluetoothPIN23,  // 49
+    name01,          // 50 : Name field is encoded in the same ASCII integer string -> uint16 -> char[2] fielding.
+    name23,  // 51 : Names can be up to 16 characters long. If they are shorter, they will end in a space and, if room, a NULL. While spaces are permitted in the name, the final
+             // space before a NULL (or the last space if in the 16th character) is NOT part of the name.
+    name45,  // 52
+    name67,  // 53
+    name89,  // 54
+    nameAB,  // 55
+    nameCD,  // 56
+    nameEF,  // 57
 
     // DUMMY params (not saved in NVRAM between rebeoots, but some of these values affect the loaded preset)
+    // NOTE: It appears that these actually don't exist or work at all - the pedal does not respond to them.
     sp_midiclock_present = SYSVAR_DUMMY_BASE,  // 0
     sp_preset_dirty,                           // 1
     sp_hotswitch_state,                        // 2 : TODO investigate if setting this to 1 is enough instead of fooling with the MIDI
@@ -162,8 +191,16 @@ typedef struct h9_sysex_preset {
     char     patch_name[H9_MAX_NAME_LEN];
 } h9_sysex_preset;
 
+typedef struct h9_system_value_dump {
+    uint8_t  byte_values[94];
+    uint16_t word_values[58];
+    bool     bit_values[32];
+    uint32_t bitword;  // Bit values as a word
+} h9_system_value_dump;
+
 //////////////////// Private Function Declarations
-static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset);
+static void      export_preset(h9_sysex_preset *sxpreset, h9_preset *preset);
+static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len);
 
 //////////////////// Private Functions
 
@@ -247,24 +284,12 @@ static void import_mknob_values(h9_preset *preset, float *mknob_row) {
     }
 }
 
-static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
+static bool unpack_preset(uint8_t *sysex, size_t len, h9_sysex_preset *sxpreset) {
     // Break up received data into lines
-    size_t max_lines  = 7;
-    size_t max_length = 128;  // Longest line is 4 hex chars * 30 positions + space, null, and \r\n = 124. 128 is
-                              // comfortable, and ensures a terminating null.
-    char *lines[max_lines];
-    for (size_t i = 0; i < max_lines; i++) {
-        lines[i] = malloc(sizeof(char) * max_length);
-    }
-    size_t found = sscanf((char *)sysex,
-                          "%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]\r\n%127[^\r\n]",
-                          lines[0],
-                          lines[1],
-                          lines[2],
-                          lines[3],
-                          lines[4],
-                          lines[5],
-                          lines[6]);
+    size_t max_lines = 7;
+    char * lines[max_lines];
+    size_t lengths[max_lines];
+    size_t found = find_lines((char *)sysex, len, lines, lengths, max_lines);
 
     if (found != max_lines) {
         debug_info("Did not find expected data. Retrieved only %zu lines.\n", found);
@@ -286,7 +311,7 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
     // Unpack Line 2: hex ascii knob values, order: <alg repeat> 7 8 9 10 6 5 4 3 2 1 <expression>
     size_t   expected_values = 12;
     uint32_t line_values[12];
-    found = scanhex(lines[1], line_values, expected_values);
+    found = scanhex(lines[1], 100, line_values, expected_values);
     if (found != expected_values) {
         debug_info("Line 2 did not validate, found %zu.\n", found);
         return false;
@@ -299,7 +324,7 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
 
     // Unpack Line 3: hex ascii knob mapping, knob order: paired [exp min] [exp max] x 10 : [psw] x 10
     expected_values = 30;
-    found           = scanhex(lines[2], sxpreset->knob_map, expected_values);
+    found           = scanhex(lines[2], lengths[2], sxpreset->knob_map, expected_values);
     if (found != expected_values) {
         debug_info("Line 3 did not validate, found %zu.\n", found);
         return false;
@@ -308,7 +333,7 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
     // Unpack Line 4:  0 [tempo * 100] [tempo enable = 1] [output gain * 10 in two's complement] [x] [y] [z] [modfactor
     // fast/slow]
     expected_values = 8;
-    found           = scanhex(lines[3], sxpreset->options, expected_values);
+    found           = scanhex(lines[3], lengths[3], sxpreset->options, expected_values);
     if (found != expected_values) {
         debug_info("Line 4 did not validate, found %zu.\n", found);
         return false;
@@ -316,7 +341,7 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
 
     // Unpack Line 5: ascii float decimals x 12 : MKnob Values (unknown function, send back as-is)
     expected_values = 12;
-    found           = scanfloat(lines[4], sxpreset->mknob_values, expected_values);
+    found           = scanfloat(lines[4], lengths[4], sxpreset->mknob_values, expected_values);
     if (found != expected_values) {
         debug_info("Line 4 did not validate, found %zu.\n", found);
         return false;
@@ -331,7 +356,7 @@ static bool parse_h9_sysex_preset(uint8_t *sysex, h9_sysex_preset *sxpreset) {
 
     // Unpack Line 7: ASCII string patch name
     memset(sxpreset->patch_name, 0x0, H9_MAX_NAME_LEN);
-    strncpy(sxpreset->patch_name, lines[6], H9_MAX_NAME_LEN);
+    strncpy(sxpreset->patch_name, lines[6], lengths[6] > H9_MAX_NAME_LEN ? H9_MAX_NAME_LEN : lengths[6]);
 
     return true;
 }
@@ -369,7 +394,7 @@ static bool validate_h9_sysex_preset(h9_sysex_preset *sxpreset) {
     return is_valid;
 }
 
-static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
+static void import_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
     // Transform values to h9 state
     size_t module_index = sxpreset->module - 1;  // modules are 1-based, algorithms are 0-. Why? No clue.
     strncpy(preset->name, sxpreset->patch_name, H9_MAX_NAME_LEN);
@@ -390,7 +415,7 @@ static void load_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
     preset->output_gain = ((int32_t)(sxpreset->options[3] << 8) >> 8) * 0.1f;
 }
 
-static void dump_preset(h9_sysex_preset *sxpreset, h9_preset *preset) {
+static void export_preset(h9_sysex_preset *sxpreset, h9_preset *preset) {
     sxpreset->module           = preset->module->sysex_num;
     sxpreset->algorithm        = preset->algorithm->id;
     sxpreset->algorithm_repeat = preset->algorithm->id;
@@ -529,21 +554,7 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
     return bytes_written;
 };
 
-h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
-    assert(h9);
-    char *cursor = (char *)sysex;  // start the cursor at the beginning
-    if (*cursor == (char)0xF0) {
-        cursor++;
-    }
-
-    // Validate preamble
-    uint8_t preamble[] = {H9_SYSEX_EVENTIDE, H9_SYSEX_H9, h9->midi_config.sysex_id, kH9_PROGRAM};
-    for (size_t i = 0; i < sizeof(preamble) / sizeof(*preamble); i++) {
-        if (*cursor++ != preamble[i]) {
-            return kH9_SYSEX_PREAMBLE_INCORRECT;
-        }
-    }
-
+static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
     // Debug
 #if (DEBUG_LEVEL >= DEBUG_INFO)
     char   sysex_buffer[1000];
@@ -558,7 +569,7 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
     // Need to unpack before we can validate the checksum
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));
-    if (!parse_h9_sysex_preset((uint8_t *)cursor, &sxpreset)) {
+    if (!unpack_preset(cursor, len, &sxpreset)) {
         return kH9_SYSEX_INVALID;
     }
 
@@ -574,14 +585,282 @@ h9_status h9_load(h9 *h9, uint8_t *sysex, size_t len) {
         return kH9_SYSEX_INVALID;
     }
 
-    load_preset(h9->preset, &sxpreset);
+    import_preset(h9->preset, &sxpreset);
 
     // Sync control state, trigger display callbacks
     h9_reset_display_values(h9);
 
-    h9->dirty = false;
+    h9->preset->dirty = false;
+    return kH9_OK;
+}
+
+static h9_status parse_system_value_dump(h9 *h9, uint8_t *data, size_t len) {
+    h9_system_value_dump values;
+    memset(&values, 0x0, sizeof(values));
+    size_t num_lines = 5;
+    char * lines[num_lines];
+    size_t lengths[num_lines];
+    size_t found_lines = find_lines((char *)data, len, lines, lengths, num_lines);
+
+    if (found_lines != num_lines) {
+        return kH9_SYSEX_INVALID;
+    }
+
+    // Line 0 should be [SYSTEM] V VV V.V.V[V] etc... but we don't really care about this line, other than to validate it
+    char system_start[] = "[SYSTEM] ";
+    if (strncmp(lines[0], system_start, sizeof(system_start) - 1) != 0) {
+        return kH9_SYSEX_INVALID;
+    }
+
+    // Line 1 should be byte values
+    size_t expected_values = sizeof(values.byte_values) / sizeof(*values.byte_values);
+    size_t found           = scanhex_byte((char *)lines[1], lengths[1], values.byte_values, expected_values);
+    if (found != expected_values) {
+        return kH9_SYSEX_INVALID;
+    }
+
+    // Line 2 should be word values
+    expected_values = sizeof(values.word_values) / sizeof(*values.word_values);
+    found           = scanhex_word((char *)lines[2], lengths[2], values.word_values, expected_values);
+    if (found != expected_values) {
+        return kH9_SYSEX_INVALID;
+    }
+
+    // Line 3 should be bit values
+    expected_values = sizeof(values.bit_values) / sizeof(*values.bit_values);
+    found           = scanhex_bool((char *)lines[3], lengths[3], values.bit_values, expected_values);
+    if (found != expected_values) {
+        return kH9_SYSEX_INVALID;
+    }
+
+    // Line 4 should have the checksum
+    uint32_t checksum;
+    found = sscanf(lines[4], "C_%x", &checksum);
+    if (found != 1) {
+        debug_info("Did not identify checksum.\n");
+        return kH9_SYSEX_INVALID;
+    }
+
+    // Validate the checksum
+    uint16_t computed_checksum = 0;
+    computed_checksum += array_sum16(values.word_values, sizeof(values.word_values) / sizeof(*values.word_values));
+    computed_checksum += array_sum8(values.byte_values, sizeof(values.byte_values) / sizeof(*values.byte_values));
+    computed_checksum += array_sum1(values.bit_values, sizeof(values.bit_values) / sizeof(*values.bit_values));
+
+    if (computed_checksum != (uint16_t)checksum) {
+        return kH9_SYSEX_CHECKSUM_INVALID;
+    }
+
+    /*
+      Value map:
+      Bit values: [index]
+        [2]  = bypass
+        [3]  = killdry
+        [7]  = tempo (global)
+        [10] = MIDI tempo sync
+        [11] = tx CC
+        [12] = tx PC
+        [16] = global TEMPO
+      Byte values: [index]
+        [3]  = MIDI RX Channel
+        [4]  = Sysex ID
+        [8]  = MIDI TX Channel
+        [16] = PSW map to CC
+        [18] = KNOB0 map to CC
+        ...
+        [27] = KNOB9 map to CC
+        [32] = EXPR map to CC
+        [69] = Knob Mode [0 = normal, 1 = catchup, 2 = "locked"
+      Word values: [index]
+        [48] + [49] : Bluetooth PIN (see notes in system variables)
+        [50] -> [57] : Pedal name (also encoded)
+     */
+    h9->bypass                          = values.bit_values[2];
+    h9->killdry                         = values.bit_values[3];
+    h9->global_tempo                    = values.bit_values[7];
+    h9->midi_config.midi_rx_channel     = values.byte_values[3];
+    h9->midi_config.midi_tx_channel     = values.byte_values[8];
+    h9->midi_config.sysex_id            = values.byte_values[4];
+    h9->midi_config.transmit_cc_enabled = values.byte_values[11];
+    h9->midi_config.transmit_pc_enabled = values.byte_values[12];
+    h9->midi_config.midi_clock_sync     = values.byte_values[10];
+    size_t control_indices[]            = {27, 26, 25, 24, 23, 22, 18, 19, 20, 21, 32, 16};
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        uint8_t cc = values.byte_values[control_indices[i]];
+        if (cc < 5) {
+            h9->midi_config.cc_rx_map[i] = CC_DISABLED;
+            h9->midi_config.cc_tx_map[i] = CC_DISABLED;
+        } else {
+            h9->midi_config.cc_rx_map[i] = cc - 5;
+            h9->midi_config.cc_tx_map[i] = cc - 5;
+        }
+    }
+    strncpy(h9->name, (char *)&values.word_values[50], H9_MAX_NAME_LEN - 1);
+    strncpy(h9->bluetooth_pin, (char *)&values.word_values[48], 4);
 
     return kH9_OK;
+}
+
+static void internalize_cc(h9 *h9, control_id id, uint32_t cc) {
+    if (cc < 5) {
+        h9->midi_config.cc_rx_map[id] = CC_DISABLED;
+        h9->midi_config.cc_tx_map[id] = CC_DISABLED;
+    }
+    h9->midi_config.cc_rx_map[id] = cc - 5;
+    h9->midi_config.cc_tx_map[id] = cc - 5;
+}
+
+static h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
+    uint32_t key         = 0;
+    uint32_t value       = 0;
+    char *   value_chars = (char *)&value + 2;  // last two chars of 32-bit word
+
+    if (sscanf("%d %d", (char *)cursor, &key, &value) == 2) {
+        switch (key) {
+            case sp_bypass:
+                h9->bypass = value;
+                break;
+            case sp_tempo:
+                h9->preset->tempo = (float)value / 100.0f;
+                break;
+            case sp_global_tempo:
+                h9->global_tempo = value;
+                break;
+            case sp_kill_dry:
+                h9->killdry = value;
+                break;
+            case sp_kill_dry_global:
+                h9->killdry = value;
+                break;
+            case sp_kb1_src:
+                internalize_cc(h9, 0, value);
+                break;
+            case sp_kb2_src:
+                internalize_cc(h9, 1, value);
+                break;
+            case sp_kb3_src:
+                internalize_cc(h9, 2, value);
+                break;
+            case sp_kb4_src:
+                internalize_cc(h9, 3, value);
+                break;
+            case sp_kb5_src:
+                internalize_cc(h9, 4, value);
+                break;
+            case sp_kb6_src:
+                internalize_cc(h9, 5, value);
+                break;
+            case sp_kb7_src:
+                internalize_cc(h9, 6, value);
+                break;
+            case sp_kb8_src:
+                internalize_cc(h9, 7, value);
+                break;
+            case sp_kb9_src:
+                internalize_cc(h9, 8, value);
+                break;
+            case sp_kb10_src:
+                internalize_cc(h9, 9, value);
+                break;
+            case sp_pdl_src:
+                internalize_cc(h9, 10, value);
+                break;
+            case sp_psw_src:
+                internalize_cc(h9, 11, value);
+                break;
+            case sp_tx_midi_cc:
+                h9->midi_config.transmit_cc_enabled = value;
+                break;
+            case sp_midi_rx_channel:
+                h9->midi_config.midi_rx_channel = value;
+                break;
+            case sp_midi_tx_channel:
+                h9->midi_config.midi_tx_channel = value;
+                break;
+            case sp_tx_midi_pchg:
+                h9->midi_config.transmit_pc_enabled = value;
+                break;
+            case sp_sysex_id:
+                h9->midi_config.sysex_id = value;
+                break;
+            case sp_knob_mode:
+                h9->knob_mode = value;
+                break;
+            // Name handling is a bit funky
+            case name01:
+                strncpy(h9->name, value_chars, 2);
+                break;
+            case name23:
+                strncpy(h9->name + 0x2, value_chars, 2);
+                break;
+            case name45:
+                strncpy(h9->name + 0x4, value_chars, 2);
+                break;
+            case name67:
+                strncpy(h9->name + 0x6, value_chars, 2);
+                break;
+            case name89:
+                strncpy(h9->name + 0x8, value_chars, 2);
+                break;
+            case nameAB:
+                strncpy(h9->name + 0xA, value_chars, 2);
+                break;
+            case nameCD:
+                strncpy(h9->name + 0xC, value_chars, 2);
+                break;
+            case nameEF:
+                strncpy(h9->name + 0xE, value_chars, 2);
+                break;
+            case bluetoothPIN01:
+                strncpy(h9->bluetooth_pin, value_chars, 2);
+                break;
+            case bluetoothPIN23:
+                strncpy(h9->bluetooth_pin + 2, value_chars, 2);
+                break;
+            default:
+                return kH9_UNKNOWN;
+        }
+    } else {
+        return kH9_SYSEX_INVALID;
+    }
+    return kH9_OK;
+}
+
+h9_status h9_parse_sysex(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
+    assert(h9);
+    uint8_t *cursor = sysex;  // start the cursor at the beginning
+    if (*cursor == 0xF0) {    // Skip the leading F0 if present
+        cursor++;
+    }
+
+    // Validate that it's an H9 piece of sysex
+    uint8_t preamble[] = {H9_SYSEX_EVENTIDE, H9_SYSEX_H9};
+    for (size_t i = 0; i < 2; i++) {
+        if (*cursor++ != preamble[i]) {
+            return kH9_SYSEX_PREAMBLE_INCORRECT;
+        }
+    }
+
+    if (enforce_sysex_id == kH9_RESTRICT_TO_SYSEX_ID) {
+        if (*cursor++ != h9->midi_config.sysex_id) {
+            return kH9_SYSEX_ID_MISMATCH;
+        }
+    } else {
+        cursor++;  // skip the id
+    }
+
+    // Finally, determine what type of message it is:
+    size_t effective_len = len - (size_t)((uintptr_t)cursor - (uintptr_t)sysex);
+    switch (*cursor++) {
+        case kH9_PROGRAM:
+            return load_preset(h9, cursor, effective_len);
+        case kH9_TJ_SYSVARS_DUMP:
+            return parse_system_value_dump(h9, cursor, effective_len);
+        case kH9_SYSEX_VALUE_DUMP:
+            return parse_system_value(h9, cursor, effective_len);
+        default:
+            return kH9_UNSUPPORTED_COMMAND;
+    }
 }
 
 size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
@@ -589,11 +868,11 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
 
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));
-    dump_preset(&sxpreset, h9->preset);
+    export_preset(&sxpreset, h9->preset);
 
     size_t bytes_written = format_sysex(sysex, max_len, &sxpreset, h9->midi_config.sysex_id);
     if (bytes_written <= max_len && update_dirty_flag) {
-        h9->dirty = false;
+        h9->preset->dirty = false;
     }
 
     return bytes_written;

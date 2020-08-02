@@ -1,13 +1,27 @@
-//
-//  h9_sysex_test.cpp
-//  h9_gtest
-//
-//  Created by Studio DC on 2020-06-29.
-//
+/*  h9_sysex_test.cpp
+    This file is part of libh9, a library for remotely managing Eventide H9
+    effects pedals.
+
+    Copyright (C) 2020 Daniel Collins
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
-#include "h9.h"
+#include "libh9.h"
 #include "test_helpers.hpp"
 #include "utils.h"
 
@@ -16,7 +30,7 @@
 #define TEST_CLASS H9SysexTest
 #define KNOB_MAX   0x7fe0
 
-// Various sysex constants for testing certian things
+// Various sysex constants for testing certain things
 char sysex_hrmdlo[] =
     "\x1c\x70\x01\x4f"
     "[1] 8 5 5\r\n"
@@ -28,7 +42,6 @@ char sysex_hrmdlo[] =
     "HRMDLO\r\n";
 
 namespace h9_test {
-
 // The fixture for testing class Foo.
 class TEST_CLASS : public ::testing::Test {
  protected:
@@ -57,7 +70,7 @@ class TEST_CLASS : public ::testing::Test {
     }
 
     void LoadPatch(h9 *h9obj, char *sysex) {
-        h9_status status = h9_load(h9obj, reinterpret_cast<uint8_t *>(sysex), strnlen(sysex, 1000));
+        h9_status status = h9_parse_sysex(h9obj, reinterpret_cast<uint8_t *>(sysex), strnlen(sysex, 1000), kH9_RESTRICT_TO_SYSEX_ID);
         ASSERT_EQ(status, kH9_OK);
     }
 
@@ -88,6 +101,12 @@ TEST_F(TEST_CLASS, h9_dump_dumps_loaded_sysex) {
         if (sysex_hrmdlo[i - 1] != output[i]) {
             printf("%s\n", sysex_hrmdlo);
             printf("%s\n", output + 1);
+            char hexdump1[1000];
+            char hexdump2[1000];
+            hexdump(hexdump1, 1000, (uint8_t *)sysex_hrmdlo, sizeof(sysex_hrmdlo));
+            hexdump(hexdump2, 1000, output + 1, bytes_written - 2);
+            printf("%s\n", hexdump1);
+            printf("%s\n", hexdump2);
             printf("Failed at position %zu.\n", i);
         }
         ASSERT_EQ(sysex_hrmdlo[i - 1], output[i]);
@@ -168,10 +187,59 @@ TEST_F(TEST_CLASS, h9_dump_works_without_previously_loading) {
 }
 
 TEST_F(TEST_CLASS, h9_load_flags_preset_clean) {
-    h9obj->dirty = true;  // force it
+    h9obj->preset->dirty = true;  // force it
     EXPECT_TRUE(h9_dirty(h9obj));
     LoadPatch(h9obj, sysex_hrmdlo);
     ASSERT_FALSE(h9_dirty(h9obj));
+}
+
+TEST_F(TEST_CLASS, h9_load_parses_system_variable_dump) {
+    FILE *sysvar_dump_file;
+    sysvar_dump_file = fopen("./test_data/Device_Config3.syx", "r");
+    ASSERT_NE(sysvar_dump_file, nullptr);
+    uint8_t buffer[1000];
+    size_t  buffer_len;
+    buffer_len = fread(buffer, 1000, 1, sysvar_dump_file);
+
+    // Fill h9obj with dummy values so we can be sure they were loaded from the file
+    h9obj->bypass                          = true;
+    h9obj->global_tempo                    = false;
+    h9obj->killdry                         = true;
+    h9obj->knob_mode                       = kKnobModeLocked;
+    h9obj->midi_config.midi_rx_channel     = 9;
+    h9obj->midi_config.midi_tx_channel     = 9;
+    h9obj->midi_config.midi_clock_sync     = false;
+    h9obj->midi_config.sysex_id            = 7;
+    h9obj->midi_config.transmit_cc_enabled = false;
+    h9obj->midi_config.transmit_pc_enabled = false;
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        h9obj->midi_config.cc_rx_map[i] = 0;
+        h9obj->midi_config.cc_tx_map[i] = 0;
+    }
+
+    // Load the sysex
+    ASSERT_EQ(h9_parse_sysex(h9obj, buffer, buffer_len, kH9_RESPOND_TO_ANY_SYSEX_ID), kH9_OK);
+
+    // See what happens
+    EXPECT_EQ(h9obj->global_tempo, true);
+    EXPECT_EQ(h9obj->killdry, false);
+    EXPECT_EQ(h9obj->bypass, false);
+    EXPECT_EQ(h9obj->midi_config.sysex_id, 0);
+    EXPECT_EQ(h9obj->midi_config.midi_rx_channel, 2);   // 0 = off, 1 = OMNI, 2 = MIDI Channel 1... 16
+    EXPECT_EQ(h9obj->midi_config.midi_tx_channel, 10);  // MIDI CH 11 on the device
+    EXPECT_EQ(h9obj->midi_config.transmit_cc_enabled, true);
+    EXPECT_EQ(h9obj->midi_config.transmit_pc_enabled, true);
+    EXPECT_EQ(h9obj->midi_config.midi_clock_sync, true);
+    uint8_t rx_map[] = {22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 11, 71};
+    uint8_t tx_map[] = {22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 11, 71};
+    for (size_t i = 0; i < H9_NUM_KNOBS; i++) {
+        EXPECT_EQ(h9obj->midi_config.cc_rx_map[i], rx_map[i]);  // +5 becuase 0 = disabled, 1-5 are switches...
+        EXPECT_EQ(h9obj->midi_config.cc_tx_map[i], tx_map[i]);
+    }
+    EXPECT_EQ(h9obj->midi_config.cc_rx_map[EXPR], rx_map[EXPR]);
+    EXPECT_EQ(h9obj->midi_config.cc_tx_map[PSW], tx_map[PSW]);
+    EXPECT_STREQ(h9obj->name, "DC-H9Std");
+    EXPECT_STREQ(h9obj->bluetooth_pin, "1723");
 }
 
 /*

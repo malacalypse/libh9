@@ -1,9 +1,22 @@
-//
-//  test_helpers.cpp
-//  h9_gtest
-//
-//  Created by Studio DC on 2020-07-01.
-//
+/*  test_helpers.cpp
+    This file is part of libh9, a library for remotely managing Eventide H9
+    effects pedals.
+
+    Copyright (C) 2020 Daniel Collins
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
 #include "test_helpers.hpp"
 
@@ -13,11 +26,11 @@
 #define MAX_CC 127
 #endif
 
-static float    display_callback_tracker[12];
-static int8_t   cc_callback_tracker[MAX_CC + 1];
-static uint32_t cc_callback_counter = 0U;
-static uint8_t *sysex_callback_tracker;
-static size_t   sysex_callback_tracker_len;
+static control_value display_callback_tracker[12];
+static int8_t        cc_callback_tracker[MAX_CC + 1];
+static uint32_t      cc_callback_counter = 0U;
+static uint8_t *     sysex_callback_tracker;
+static size_t        sysex_callback_tracker_len;
 
 void cc_callback(void *ctx, uint8_t midi_channel, uint8_t cc_num, uint8_t msb, uint8_t lsb) {
     cc_callback_tracker[cc_num] = static_cast<int8_t>(msb);
@@ -59,7 +72,7 @@ uint32_t cc_callback_count(void) {
     return cc_callback_counter;
 }
 
-bool display_callback_triggered(control_id control, float *callback_value) {
+bool display_callback_triggered(control_id control, control_value *callback_value) {
     if (display_callback_tracker[control] == DISPLAY_CALLBACK_NULL) {
         return false;
     }

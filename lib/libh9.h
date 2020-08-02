@@ -1,13 +1,25 @@
-//
-//  h9.h
-//  libh9 - Sysex and state manipulation toolkit for remotely controlling
-//          the Eventide H9 multi-effect pedal.
-//
-//  Created by Studio DC on 2020-06-24.
-//
+/*  libh9.h
+    This file is part of libh9, a library for remotely managing Eventide H9
+    effects pedals.
 
-#ifndef h9_h
-#define h9_h
+    Copyright (C) 2020 Daniel Collins
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#ifndef libh9_h
+#define libh9_h
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -16,13 +28,13 @@
 #define H9_NUM_MODULES    5
 #define H9_MAX_ALGORITHMS 12
 #define H9_NUM_KNOBS      10
-#define H9_MAX_NAME_LEN   17
+#define H9_MAX_NAME_LEN   17  // 16 plus a null
 #define H9_SYSEX_EVENTIDE 0x1C
 #define H9_SYSEX_H9       0x70
 #define H9_NOMODULE       -1
 #define H9_NOALGORITHM    -1
 #define CC_DISABLED       255
-#define MAX_CC            99
+#define MAX_CC            99  // H9 manual states that allowable CCs are 0-99.
 
 typedef enum h9_status {
     kH9_UNKNOWN = 0U,
@@ -30,6 +42,8 @@ typedef enum h9_status {
     kH9_SYSEX_PREAMBLE_INCORRECT,
     kH9_SYSEX_INVALID,
     kH9_SYSEX_CHECKSUM_INVALID,
+    kH9_SYSEX_ID_MISMATCH,
+    kH9_UNSUPPORTED_COMMAND,
 } h9_status;
 
 typedef enum control_id {
@@ -48,12 +62,18 @@ typedef enum control_id {
     NUM_CONTROLS,  // KEEP THIS LAST
 } control_id;
 
+typedef enum knob_mode {
+    kKnobModeNormal = 0U,
+    kKnobModeCatchup,
+    kKnobModeLocked,
+} knob_mode;
+
 typedef enum h9_callback_action {
     kH9_SUPPRESS_CALLBACK = 0U,
     kH9_TRIGGER_CALLBACK,
 } h9_callback_action;
 
-typedef float control_value;  // 0.00 to 1.00 always.
+typedef double control_value;  // 0.00 to 1.00 always.
 
 typedef struct h9_algorithm {
     uint8_t id;
@@ -83,7 +103,7 @@ typedef struct h9_module {
 typedef struct h9_knob {
     control_value current_value;  // Physical position of the knob.
     control_value display_value;  // Display value, after adjustment by, e.g. exp or psw operation.
-    float         mknob_value;    // Still no clue what this is exactly, seems some translated display value of the knob.
+    double        mknob_value;    // Still no clue what this is exactly, seems some translated display value of the knob.
     control_value exp_min;
     control_value exp_max;
     control_value psw;
@@ -98,11 +118,13 @@ typedef struct h9_preset {
     h9_knob       knobs[H9_NUM_KNOBS];
     control_value expression;
     bool          psw;
-    float         tempo;
-    float         output_gain;
+    double        tempo;
+    double        output_gain;
     uint8_t       xyz_map[3];
     bool          tempo_enabled;
     bool          modfactor_fast_slow;
+
+    bool dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
 } h9_preset;
 
 struct h9;
@@ -123,16 +145,27 @@ typedef void (*h9_sysex_callback)(void* ctx, uint8_t* sysex, size_t len);
  */
 typedef struct h9_midi_config {
     uint8_t sysex_id;
-    uint8_t midi_channel;
+    uint8_t midi_rx_channel;  // channel the pedal listens and the plugin sends on
+    uint8_t midi_tx_channel;  // channel the pedal sends and the plugin listens on
     uint8_t cc_rx_map[NUM_CONTROLS];
     uint8_t cc_tx_map[NUM_CONTROLS];
+    bool    midi_clock_sync;
+    bool    transmit_cc_enabled;
+    bool    transmit_pc_enabled;
 } h9_midi_config;
 
 // The core H9 model
 typedef struct h9 {
     h9_midi_config midi_config;
     h9_preset*     preset;
-    bool           dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
+
+    // Pedal settings
+    char      name[H9_MAX_NAME_LEN];
+    char      bluetooth_pin[5];  // include the NULL
+    bool      bypass;
+    bool      killdry;
+    bool      global_tempo;
+    knob_mode knob_mode;
 
     // Observer registration
     h9_display_callback display_callback;
@@ -170,6 +203,7 @@ bool              h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algor
 void              h9_setControl(h9* h9, control_id knob_num, control_value value, h9_callback_action cc_cb_action);
 void              h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw);
 bool              h9_setMidiConfig(h9* h9, const h9_midi_config* midi_config);
+void              h9_cc(h9* h9, uint8_t cc_num, uint8_t cc_value);
 
 #ifdef __cplusplus
 }
@@ -178,4 +212,4 @@ bool              h9_setMidiConfig(h9* h9, const h9_midi_config* midi_config);
 // Bring in the rest of the modules
 #include "h9_sysex.h"
 
-#endif /* h9_h */
+#endif /* libh9_h */

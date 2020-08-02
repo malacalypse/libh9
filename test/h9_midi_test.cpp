@@ -1,4 +1,4 @@
-/*  h9_preset_test.cpp
+/*  h9_midi_test.cpp
     This file is part of libh9, a library for remotely managing Eventide H9
     effects pedals.
 
@@ -26,8 +26,7 @@
 
 #include "gtest/gtest.h"
 
-#define TEST_CLASS        H9PresetTest
-#define EMPTY_PRESET_NAME "Empty"  // TODO: Find an elegant way to match with h9.c
+#define TEST_CLASS H9MIDITest
 
 namespace h9_test {
 
@@ -51,6 +50,7 @@ class TEST_CLASS : public ::testing::Test {
     void SetUp() override {
         h9obj = h9_new();
         init_callback_helpers();
+        h9obj->display_callback = display_callback;
     }
 
     void TearDown() override {
@@ -62,19 +62,41 @@ class TEST_CLASS : public ::testing::Test {
     h9 *h9obj;
 };
 
-TEST_F(TEST_CLASS, h9_new_populates_default_preset) {
-    ASSERT_NE(h9obj, nullptr);
-    EXPECT_NE(h9obj->preset, nullptr);
-    EXPECT_NE(h9obj->preset->module, nullptr);
-    EXPECT_NE(h9obj->preset->algorithm, nullptr);
-    char expected_name[] = EMPTY_PRESET_NAME;
-    EXPECT_STREQ(h9obj->preset->name, expected_name);
+TEST_F(TEST_CLASS, h9_cc_withNonMappedCC_doesNothing) {
+    uint8_t non_mapped_cc = 99;
+    uint8_t some_value    = 42;
+    h9_cc(h9obj, non_mapped_cc, some_value);
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        if (i < H9_NUM_KNOBS) {
+            EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+            EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.5f);
+        } else {
+            EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+            EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.0f);
+        }
+    }
 }
 
-TEST_F(TEST_CLASS, h9_setControl_flagsPresetAsDirty) {
-    EXPECT_FALSE(h9_dirty(h9obj));
-    h9_setControl(h9obj, KNOB1, 0.5f, kH9_SUPPRESS_CALLBACK);
-    EXPECT_TRUE(h9_dirty(h9obj));
+TEST_F(TEST_CLASS, h9_cc_withMappedCC_updatesControl) {
+    control_id chosen_control = KNOB5;
+    uint8_t    mapped_cc      = h9obj->midi_config.cc_tx_map[chosen_control];
+    uint8_t    some_value     = 42;
+    h9_cc(h9obj, mapped_cc, some_value);
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        if (i != chosen_control) {
+            if (i < H9_NUM_KNOBS) {
+                EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+                EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.5f);
+            } else {
+                EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+                EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.0f);
+            }
+        } else {
+            control_value updated_value;
+            EXPECT_EQ(display_callback_triggered((control_id)i, &updated_value), true);
+            EXPECT_NEAR(updated_value, (double)some_value / 127.0, 0.001);
+        }
+    }
 }
 
 }  // namespace h9_test
