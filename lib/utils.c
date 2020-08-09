@@ -64,9 +64,11 @@ size_t scanhex(char *str, size_t strlen, uint32_t *dest, size_t destlen) {
         if ((current >= '0' && current <= '9') || (current >= 'a' && current <= 'f') || (current >= 'A' && current <= 'F')) {
             if (!found) {
                 dest_i++;
+                dest[dest_i] = htoi(current);
+                found = true;
+            } else {
+                dest[dest_i] = (dest[dest_i] << 4) + htoi(current);
             }
-            dest[dest_i] = (dest[dest_i] << 4) + htoi(current);
-            found        = true;
         } else if (current == ' ') {
             found = false;
         } else {
@@ -86,9 +88,11 @@ size_t scanhex_word(char *str, size_t strlen, uint16_t *dest, size_t destlen) {
         if ((current >= '0' && current <= '9') || (current >= 'a' && current <= 'f') || (current >= 'A' && current <= 'F')) {
             if (!found) {
                 dest_i++;
+                dest[dest_i] = htoi(current);
+                found = true;
+            } else {
+                dest[dest_i] = (dest[dest_i] << 4) + htoi(current);
             }
-            dest[dest_i] = (dest[dest_i] << 4) + htoi(current);
-            found        = true;
         } else if (current == ' ') {
             found = false;
         } else {
@@ -108,9 +112,11 @@ size_t scanhex_byte(char *str, size_t strlen, uint8_t *dest, size_t destlen) {
         if ((current >= '0' && current <= '9') || (current >= 'a' && current <= 'f') || (current >= 'A' && current <= 'F')) {
             if (!found) {
                 dest_i++;
+                dest[dest_i] = htoi(current);
+                found = true;
+            } else {
+                dest[dest_i] = (dest[dest_i] << 4) + htoi(current);
             }
-            dest[dest_i] = (dest[dest_i] << 4) + htoi(current);
-            found        = true;
         } else if (current == ' ') {
             found = false;
         } else {

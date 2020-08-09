@@ -195,7 +195,7 @@ TEST_F(TEST_CLASS, h9_load_flags_preset_clean) {
 
 TEST_F(TEST_CLASS, h9_load_parses_system_variable_dump) {
     FILE *sysvar_dump_file;
-    sysvar_dump_file = fopen("./test_data/Device_Config3.syx", "r");
+    sysvar_dump_file = fopen("../test_data/Device_Config3.syx", "r");
     ASSERT_NE(sysvar_dump_file, nullptr);
     uint8_t buffer[1000];
     size_t  buffer_len;
