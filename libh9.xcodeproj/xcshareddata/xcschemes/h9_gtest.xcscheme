@@ -17,7 +17,7 @@
                BlueprintIdentifier = "ED07FC6024AAEDE9006D36D1"
                BuildableName = "h9_gtest"
                BlueprintName = "h9_gtest"
-               ReferencedContainer = "container:h9.xcodeproj">
+               ReferencedContainer = "container:libh9.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -65,7 +65,7 @@
             BlueprintIdentifier = "ED07FC6024AAEDE9006D36D1"
             BuildableName = "h9_gtest"
             BlueprintName = "h9_gtest"
-            ReferencedContainer = "container:h9.xcodeproj">
+            ReferencedContainer = "container:libh9.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -82,16 +82,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ED07FC6024AAEDE9006D36D1"
-            BuildableName = "h9_gtest"
-            BlueprintName = "h9_gtest"
-            ReferencedContainer = "container:h9.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Development">

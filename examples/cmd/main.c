@@ -20,7 +20,7 @@
 
 #include "main.h"
 
-#include "h9.h"
+#include "libh9.h"
 #include "midi_parser.h"
 #include "utils.h"
 
