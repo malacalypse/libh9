@@ -32,6 +32,7 @@ add_executable(${TESTNAME}
     ${PROJECT_SOURCE_DIR}/test/test_helpers.cpp
     ${PROJECT_SOURCE_DIR}/test/h9_midi_test.cpp
     ${PROJECT_SOURCE_DIR}/test/h9_controls_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/h9_preset_test.cpp
     ${PROJECT_SOURCE_DIR}/test/h9_sysex_test.cpp
     ${PROJECT_SOURCE_DIR}/test/utils_test.cpp
     ${PROJECT_SOURCE_DIR}/third_party/googletest/googletest/src/gtest_main.cc)

@@ -38,7 +38,7 @@
 #define KNOB_MAX           0x7FE0  // By observation
 #define DEFAULT_PRESET_NUM 1
 
-extern h9_module modules[H9_NUM_MODULES];
+extern h9_module h9_modules[H9_NUM_MODULES];
 
 typedef enum h9_message_code {
     kH9_SYSEX_OK          = 0x0,
@@ -180,7 +180,7 @@ typedef enum h9_sysvar {
 
 typedef struct h9_sysex_preset {
     int      preset_num;
-    int      module;
+    int      module_sysex_id;
     int      algorithm;
     int      algorithm_repeat;
     uint32_t control_values[11];  // Spec: 12 entries in this row, 0th is algorithm (again), 1st is knob7, 11th is expr
@@ -301,7 +301,7 @@ static bool unpack_preset(uint8_t *sysex, size_t len, h9_sysex_preset *sxpreset)
     }
 
     // Unpack Line 1: [00] 0 0 0 => [<preset>] {module} {unknown, always 5} {algorithm}
-    found = sscanf(lines[0], "[%d] %d %*d %d", &sxpreset->preset_num, &sxpreset->algorithm, &sxpreset->module);
+    found = sscanf(lines[0], "[%d] %d %*d %d", &sxpreset->preset_num, &sxpreset->algorithm, &sxpreset->module_sysex_id);
     if (found != 3) {
         debug_info("Line 1 did not validate, found %zu.\n", found);
         return false;
@@ -379,11 +379,11 @@ static uint16_t checksum(h9_sysex_preset *sxpreset) {
 
 static bool validate_h9_sysex_preset(h9_sysex_preset *sxpreset) {
     bool is_valid = true;
-    if (sxpreset->module < 1 || sxpreset->module > H9_NUM_MODULES) {
+    if (sxpreset->module_sysex_id < 1 || sxpreset->module_sysex_id > H9_NUM_MODULES) {
         is_valid = false;
         return is_valid;
     }
-    if (sxpreset->algorithm < 0 || sxpreset->algorithm >= modules[sxpreset->module - 1].num_algorithms) {
+    if (sxpreset->algorithm < 0 || sxpreset->algorithm >= h9_modules[sxpreset->module_sysex_id - 1].num_algorithms) {
         is_valid = false;
         return is_valid;
     }
@@ -396,10 +396,10 @@ static bool validate_h9_sysex_preset(h9_sysex_preset *sxpreset) {
 
 static void import_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
     // Transform values to h9 state
-    size_t module_index = sxpreset->module - 1;  // modules are 1-based, algorithms are 0-. Why? No clue.
+    size_t module_index = sxpreset->module_sysex_id - 1;  // modules are 1-based, algorithms are 0-. Why? No clue.
     strncpy(preset->name, sxpreset->patch_name, H9_MAX_NAME_LEN);
-    preset->module    = &modules[module_index];
-    preset->algorithm = &modules[module_index].algorithms[sxpreset->algorithm];
+    preset->module    = &h9_modules[module_index];
+    preset->algorithm = &h9_modules[module_index].algorithms[sxpreset->algorithm];
     import_control_values(preset, sxpreset->control_values);
     import_knob_map(preset, sxpreset->knob_map);
     import_mknob_values(preset, sxpreset->mknob_values);
@@ -416,7 +416,7 @@ static void import_preset(h9_preset *preset, h9_sysex_preset *sxpreset) {
 }
 
 static void export_preset(h9_sysex_preset *sxpreset, h9_preset *preset) {
-    sxpreset->module           = preset->module->sysex_num;
+    sxpreset->module_sysex_id  = preset->module->sysex_id;
     sxpreset->algorithm        = preset->algorithm->id;
     sxpreset->algorithm_repeat = preset->algorithm->id;
     sxpreset->preset_num       = DEFAULT_PRESET_NUM;
@@ -469,8 +469,8 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
                                     kH9_PROGRAM,  // Preamble
                                     sxpreset->preset_num,
                                     sxpreset->algorithm,
-                                    sxpreset->module,     // Line 1, etc..
-                                    sxpreset->algorithm,  // Again, not sure why
+                                    sxpreset->module_sysex_id,  // Line 1, etc..
+                                    sxpreset->algorithm,        // Again, not sure why
                                     sxpreset->control_values[0],
                                     sxpreset->control_values[1],
                                     sxpreset->control_values[2],
@@ -555,17 +555,6 @@ static size_t format_sysex(uint8_t *sysex, size_t max_len, h9_sysex_preset *sxpr
 };
 
 static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
-    // Debug
-#if (DEBUG_LEVEL >= DEBUG_INFO)
-    char   sysex_buffer[1000];
-    size_t bytes_written = hexdump(sysex_buffer, 1000, sysex, len);
-
-    debug_info("Debugging...\n");
-    debug_info("%*s\n", bytes_written, sysex_buffer);
-    debug_info("%.*s\n", (int)len, sysex);  // Print as string
-    debug_info("Debug complete.\n");
-#endif
-
     // Need to unpack before we can validate the checksum
     h9_sysex_preset sxpreset;
     memset(&sxpreset, 0x0, sizeof(sxpreset));

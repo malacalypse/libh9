@@ -99,4 +99,69 @@ TEST_F(TEST_CLASS, h9_cc_withMappedCC_updatesControl) {
     }
 }
 
+TEST_F(TEST_CLASS, h9_cc_withMappedCC_whenSending14bitCCLSB_beforeMSB_doesNOTupdateControl) {
+    control_id chosen_control = KNOB5;
+    uint8_t    mapped_cc      = h9obj->midi_config.cc_tx_map[chosen_control];
+    uint8_t    some_value     = 42;
+    h9_cc(h9obj, mapped_cc + 32, some_value);
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        if (i < H9_NUM_KNOBS) {
+            EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+            EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.5f);
+        } else {
+            EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+            EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.0f);
+        }
+    }
+}
+
+TEST_F(TEST_CLASS, h9_cc_withMappedCC_whenSending14bitCCLSB_afterMSB_beforeTimeout_updatesControl) {
+    control_id chosen_control = KNOB5;
+    uint8_t    mapped_cc      = h9obj->midi_config.cc_tx_map[chosen_control];
+    uint8_t    msb            = 42;
+    uint8_t    lsb            = 24;
+    h9_cc(h9obj, mapped_cc, msb);
+    h9_cc(h9obj, mapped_cc + 32, lsb);
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        if (i != chosen_control) {
+            if (i < H9_NUM_KNOBS) {
+                EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+                EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.5f);
+            } else {
+                EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+                EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.0f);
+            }
+        } else {
+            control_value updated_value;
+            EXPECT_EQ(display_callback_triggered((control_id)i, &updated_value), true);
+            EXPECT_NEAR(updated_value, (double)((msb << 7) + lsb) / (double)((1 << 14) - 1), 0.00001);
+        }
+    }
+}
+
+TEST_F(TEST_CLASS, h9_cc_withMappedCC_whenSending14bitCCLSB_afterMSB_afterTimeout_doesNOTupdateControlWithLSB) {
+    control_id chosen_control = KNOB5;
+    uint8_t    mapped_cc      = h9obj->midi_config.cc_tx_map[chosen_control];
+    uint8_t    msb            = 42;
+    uint8_t    lsb            = 24;
+    h9_cc(h9obj, mapped_cc, msb);
+    usleep(4000);  // sleep 4 ms
+    h9_cc(h9obj, mapped_cc + 32, lsb);
+    for (size_t i = 0; i < NUM_CONTROLS; i++) {
+        if (i != chosen_control) {
+            if (i < H9_NUM_KNOBS) {
+                EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+                EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.5f);
+            } else {
+                EXPECT_EQ(display_callback_triggered((control_id)i, NULL), false);
+                EXPECT_EQ(h9_controlValue(h9obj, (control_id)i), 0.0f);
+            }
+        } else {
+            control_value updated_value;
+            EXPECT_EQ(display_callback_triggered((control_id)i, &updated_value), true);
+            EXPECT_NEAR(updated_value, (double)msb / 127.0, 0.00001);
+        }
+    }
+}
+
 }  // namespace h9_test
