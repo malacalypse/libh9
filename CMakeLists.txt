@@ -20,7 +20,10 @@ set_property(TARGET ${LIBNAME} PROPERTY C_STANDARD 11)
 
 
 project(${TESTNAME})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/third_party/cmake/")
 include(GoogleTest)
+include(CodeCoverage)
+append_coverage_compiler_flags()
 enable_testing()
 include_directories(${PROJECT_SOURCE_DIR}/test)
 
@@ -35,3 +38,11 @@ add_executable(${TESTNAME}
 target_link_libraries(${TESTNAME} gtest gtest_main libh9)
 gtest_discover_tests(${TESTNAME} WORKING_DIRECTORY ${PROJECT_DIR})
 set_property(TARGET ${TESTNAME} PROPERTY C_STANDARD 11)
+
+setup_target_for_coverage_gcovr_html(
+    NAME ${TESTNAME}_coverage
+    EXECUTABLE ctest -j ${PROCESSOR_COUNT}
+    DEPENDENCIES ${TESTNAME}
+    BASE_DIRECTORY "./"
+    EXCLUDE "third_party/googletest" "test"
+)
