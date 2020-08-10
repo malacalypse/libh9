@@ -76,25 +76,25 @@ typedef enum h9_callback_action {
 typedef double control_value;  // 0.00 to 1.00 always.
 
 typedef struct h9_algorithm {
-    uint8_t id;
-    uint8_t module;
-    char*   name;
-    char*   label_knob1;
-    char*   label_knob2;
-    char*   label_knob3;
-    char*   label_knob4;
-    char*   label_knob5;
-    char*   label_knob6;
-    char*   label_knob7;
-    char*   label_knob8;
-    char*   label_knob9;
-    char*   label_knob10;
-    char*   label_psw;
+    uint8_t     id;         // sero indexed for internal and sysex values
+    uint8_t     module_id;  // zero indexed internal value
+    char const* name;
+    char const* label_knob1;
+    char const* label_knob2;
+    char const* label_knob3;
+    char const* label_knob4;
+    char const* label_knob5;
+    char const* label_knob6;
+    char const* label_knob7;
+    char const* label_knob8;
+    char const* label_knob9;
+    char const* label_knob10;
+    char const* label_psw;
 } h9_algorithm;
 
 typedef struct h9_module {
-    char*        name;
-    uint8_t      sysex_num;
+    char const*  name;
+    uint8_t      sysex_id;  // 1 indexed
     uint8_t      psw_mode;
     h9_algorithm algorithms[H9_MAX_ALGORITHMS];
     size_t       num_algorithms;
@@ -152,6 +152,11 @@ typedef struct h9_midi_config {
     bool    midi_clock_sync;
     bool    transmit_cc_enabled;
     bool    transmit_pc_enabled;
+
+    // CC MSB/LSB trackers
+    uint8_t last_msb_cc;
+    uint8_t last_msb;
+    double  last_msb_timestamp_msec;
 } h9_midi_config;
 
 // The core H9 model
@@ -195,11 +200,13 @@ bool              h9_setPresetName(h9* h9, const char* name, size_t len);
 bool              h9_dirty(h9* h9);
 control_value     h9_displayValue(h9* h9, control_id control);
 void              h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw);
-const char* const h9_moduleName(uint8_t module_sysex_id);
+bool              h9_knobExprMapped(h9* h9, control_id knob_num);
+bool              h9_knobPswMapped(h9* h9, control_id knob_num);
+const char* const h9_moduleName(uint8_t module_id);
 h9*               h9_new(void);  // Allocates and returns a pointer to a new H9 instance
-size_t            h9_numAlgorithms(h9* h9, uint8_t module_sysex_id);
+size_t            h9_numAlgorithms(h9* h9, uint8_t module_id);
 size_t            h9_numModules(h9* h9);
-bool              h9_setAlgorithm(h9* h9, uint8_t module_sysex_id, uint8_t algorithm_sysex_id);
+bool              h9_setAlgorithm(h9* h9, uint8_t module_id, uint8_t algorithm_id);
 void              h9_setControl(h9* h9, control_id knob_num, control_value value, h9_callback_action cc_cb_action);
 void              h9_setKnobMap(h9* h9, control_id knob_num, control_value exp_min, control_value exp_max, control_value psw);
 bool              h9_setMidiConfig(h9* h9, const h9_midi_config* midi_config);

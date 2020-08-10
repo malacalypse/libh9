@@ -46,10 +46,6 @@
 
 /* ==== Private Variables ========================================================= */
 
-static uint8_t last_msb_cc             = CC_DISABLED;
-static uint8_t last_msb                = 0;
-static double  last_msb_timestamp_msec = 0;
-
 /* ==== Private Function Declarations ============================================= */
 static void h9_setExpr(h9* h9, control_value value);
 static void h9_setPsw(h9* h9, bool psw_on);
@@ -162,6 +158,10 @@ h9* h9_new(void) {
     }
 
     // Set sane default values so the object functions correctly
+    h9->midi_config.last_msb_cc             = CC_DISABLED;
+    h9->midi_config.last_msb                = 0;
+    h9->midi_config.last_msb_timestamp_msec = 0;
+
     h9->midi_config.sysex_id        = 1U;
     h9->midi_config.midi_rx_channel = 0U;
     h9->midi_config.midi_tx_channel = 0U;
@@ -204,7 +204,7 @@ h9_preset* h9_preset_new(void) {
     }
 
     // Set up a safe (but not very useful) default preset
-    h9_preset->module    = &modules[DEFAULT_MODULE];
+    h9_preset->module    = &h9_modules[DEFAULT_MODULE];
     h9_preset->algorithm = &h9_preset->module->algorithms[DEFAULT_ALGORITHM];
     strncpy(h9_preset->name, EMPTY_PRESET_NAME, H9_MAX_NAME_LEN);
     h9_preset->output_gain = 0.0f;
@@ -286,6 +286,22 @@ control_value h9_displayValue(h9* h9, control_id control) {
     return knob->display_value;
 }
 
+bool h9_knobExprMapped(h9* h9, control_id knob_num) {
+    if (knob_num > KNOB9) {
+        return false;
+    }
+    h9_knob* knob = &h9->preset->knobs[knob_num];
+    return knob->exp_mapped;
+}
+
+bool h9_knobPswMapped(h9* h9, control_id knob_num) {
+    if (knob_num > KNOB9) {
+        return false;
+    }
+    h9_knob* knob = &h9->preset->knobs[knob_num];
+    return knob->psw_mapped;
+}
+
 void h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_value* exp_max, control_value* psw) {
     if (knob_num > KNOB9) {
         return;
@@ -297,16 +313,16 @@ void h9_knobMap(h9* h9, control_id knob_num, control_value* exp_min, control_val
 }
 
 // Preset Operations
-bool h9_setAlgorithm(h9* h9, uint8_t module_zero_indexed_id, uint8_t algorithm_zero_indexed_id) {
-    if (module_zero_indexed_id >= H9_NUM_MODULES) {
+bool h9_setAlgorithm(h9* h9, uint8_t module_id, uint8_t algorithm_id) {
+    if (module_id >= H9_NUM_MODULES) {
         return false;
     }
-    h9_module* module = &modules[module_zero_indexed_id];
-    if (algorithm_zero_indexed_id >= module->num_algorithms) {
+    h9_module* module = &h9_modules[module_id];
+    if (algorithm_id >= module->num_algorithms) {
         return false;
     }
     h9->preset->module    = module;
-    h9->preset->algorithm = &module->algorithms[algorithm_zero_indexed_id];
+    h9->preset->algorithm = &module->algorithms[algorithm_id];
     h9->preset->dirty     = true;
     h9_reset_display_values(h9);
     return true;
@@ -317,9 +333,11 @@ size_t h9_numModules(h9* h9) {
     return H9_NUM_MODULES;
 }
 
-size_t h9_numAlgorithms(h9* h9, uint8_t module_sysex_id) {
-    assert(module_sysex_id > 0 && module_sysex_id <= H9_NUM_MODULES);
-    return modules[module_sysex_id - 1].num_algorithms;
+size_t h9_numAlgorithms(h9* h9, uint8_t module_id) {
+    if (module_id < 0 || module_id >= H9_NUM_MODULES) {
+        return 0;
+    }
+    return h9_modules[module_id].num_algorithms;
 }
 
 h9_module* h9_currentModule(h9* h9) {
@@ -327,7 +345,7 @@ h9_module* h9_currentModule(h9* h9) {
 }
 
 uint8_t h9_currentModuleIndex(h9* h9) {
-    return h9->preset->module->sysex_num - 1;  // Zero index externally
+    return h9->preset->module->sysex_id - 1;  // Zero index externally
 }
 
 h9_algorithm* h9_currentAlgorithm(h9* h9) {
@@ -338,9 +356,11 @@ uint8_t h9_currentAlgorithmIndex(h9* h9) {
     return h9->preset->algorithm->id;
 }
 
-const char* const h9_moduleName(uint8_t module_sysex_id) {
-    assert(module_sysex_id > 0 && module_sysex_id <= H9_NUM_MODULES);
-    return modules[module_sysex_id].name;
+const char* const h9_moduleName(uint8_t module_id) {
+    if (module_id < 0 || module_id >= H9_NUM_MODULES) {
+        return NULL;
+    }
+    return h9_modules[module_id].name;
 }
 
 const char* h9_currentModuleName(h9* h9) {
@@ -399,7 +419,7 @@ bool h9_setPresetName(h9* h9, const char* name, size_t len) {
 
 const char* const h9_algorithmName(uint8_t module_sysex_id, uint8_t algorithm_sysex_id) {
     assert(module_sysex_id > 0 && module_sysex_id <= H9_NUM_MODULES);
-    h9_module* module = &modules[module_sysex_id];
+    h9_module* module = &h9_modules[module_sysex_id];
     assert(algorithm_sysex_id < module->num_algorithms);
     return module->algorithms[algorithm_sysex_id].name;
 }
@@ -449,29 +469,29 @@ void h9_cc(h9* h9, uint8_t cc_num, uint8_t cc_value) {
             // i is the control listening to that CC, value is the MSB half
 
             // Timestamp and save this information in case the LSB half shows up soon after
-            last_msb_cc             = cc_num;
-            last_msb                = value;
-            last_msb_timestamp_msec = now_ms();
+            h9->midi_config.last_msb_cc             = cc_num;
+            h9->midi_config.last_msb                = value;
+            h9->midi_config.last_msb_timestamp_msec = now_ms();
             h9_setKnob(h9, (control_id)i, ((double)value / 127.0f));
             return;
         } else if (h9->midi_config.cc_tx_map[i] == (cc_num - 32)) {
             // i is the control listening to the CC, value is the LSB half
 
-            if (last_msb_cc != cc_num) {
+            if (h9->midi_config.last_msb_cc != cc_num - 32) {
                 return;  // Ignore, MSB shouldn't be sent randomly
             }
 
             double time_ms = now_ms();
-            if ((time_ms - last_msb_timestamp_msec) > MIDI_ACCEPTABLE_LSB_DELAY_MS) {
+            if ((time_ms - h9->midi_config.last_msb_timestamp_msec) > MIDI_ACCEPTABLE_LSB_DELAY_MS) {
                 // It's been too long since we got the last MSB for this control, ignore and reset for next MSB.
-                last_msb_cc = CC_DISABLED;
+                h9->midi_config.last_msb_cc = CC_DISABLED;
                 return;
             }
 
-            uint16_t high_res_cc   = (last_msb << 7) + value;
-            double   control_value = (double)high_res_cc / (double)(1 << 14);
+            uint16_t high_res_cc   = (h9->midi_config.last_msb << 7) + value;
+            double   control_value = (double)high_res_cc / (double)((1 << 14) - 1);
             h9_setKnob(h9, (control_id)i, control_value);
-            last_msb_cc = CC_DISABLED;
+            h9->midi_config.last_msb_cc = CC_DISABLED;
             return;
         }
     }

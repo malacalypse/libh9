@@ -82,7 +82,7 @@ class TEST_CLASS : public ::testing::Test {
 TEST_F(TEST_CLASS, h9_load_withCorrectSysex_returns_kH9_OK) {
     LoadPatch(h9obj, sysex_hrmdlo);
     ASSERT_EQ(h9obj->preset->algorithm->id, 8);
-    ASSERT_EQ(h9obj->preset->module->sysex_num, 5);
+    ASSERT_EQ(h9obj->preset->module->sysex_id, 5);
 }
 
 // Test that the h9_load correctly dumps the same sysex it parsed
