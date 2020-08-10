@@ -40,7 +40,7 @@ gtest_discover_tests(${TESTNAME} WORKING_DIRECTORY ${PROJECT_DIR})
 set_property(TARGET ${TESTNAME} PROPERTY C_STANDARD 11)
 
 setup_target_for_coverage_gcovr_html(
-    NAME ${TESTNAME}_coverage
+    NAME coverage
     EXECUTABLE ctest -j ${PROCESSOR_COUNT}
     DEPENDENCIES ${TESTNAME}
     BASE_DIRECTORY "./"

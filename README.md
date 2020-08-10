@@ -7,9 +7,16 @@ More will be written on this as I have time to expand on it.
 
 This library contains the `libh9.h` main header file (which is all you need to include to use the core h9 object and API). 
 
-There are also some example projects which use this library in various useful ways - such as a commandline sysex parsing and validation tool, and a test harness which runs the unit testing framework.
+The examples dir is really not useful right now, that's a work in progress.
 
-The project is currently set up entirely in XCode. I will be porting it entirely to CMake at some point in the nearish future as XCode annoys me when I'm not building GUI apps.  
+## Building / Testing
+
+To build, follow the classic CMake pattern:
+
+1. `mkdir build` (or choose a suitable directory name: Debug, Release, Test, etc.)
+1. `cd build` (use the dirname you chose above)
+1. `cmake ..` (for an explicitly debug or release build, `cmake -DCMAKE_BUILD_TYPE=Debug ..`, substitute Release for Debug as appropriate.)
+1. `make` (if you want to make only a specific target, you can `make libh9` to build only the library, `make unittests` to build and run the tests, and `make coverage` to run the tests and generate a coverage report)
 
 ## License
 
