@@ -11,7 +11,6 @@ set(LIB_PATCH_VERS "0")
 project(${LIBNAME} VERSION ${LIB_MAJOR_VERS}.${LIB_MINOR_VERS}.${LIB_PATCH_VERS})
 
 include_directories(${PROJECT_SOURCE_DIR}/lib)
-include_directories(${PROJECT_SOURCE_DIR}/utils)
 add_library(libh9 
     lib/h9_sysex.c
     lib/utils.c
