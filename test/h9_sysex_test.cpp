@@ -244,10 +244,20 @@ TEST_F(TEST_CLASS, h9_load_parses_system_variable_dump) {
 
 /*
 Tests to do:
-- Test that knob values are populated from preset properly
-- Examine pedal behaviour with expression pedal across preset load and see what it does
+ - Loading a preset from sysex sets loaded and clears dirty
+ - Dumping a preset sets loaded (to true)
+ - Dumping a preset clears dirty if the flag is set, does not clear it if the flag is not set
+ - Dumping a preset into a buffer that is too small does not set loaded
+ - Dumping a preset into a buffer that is too small does not clear the dirty flag if it is set
+ - Test that knob values are populated from preset properly
+ - Examine pedal behaviour with expression pedal across preset load and see what it does
     (does it reset the expression pedal position, does it "ignore" it until it updates? - and does the catch-up mode matter?)
     and then test that the behaviour matches.
+ - Test generator methods for requesting data
+ - When incoming sysex id is 0, restrict is ignored (correctly)
+ - When incoming sysex id is not 0, and h9 sysex id is 0, restrict is ignored (correctly)
+ - When incoming sysex id is not 0 and h9 sysex id is not 0, if restrict is set, the sysex is not processed
+ - And when it is not set, the sysex is processed.
 */
 
 }  // namespace h9_test

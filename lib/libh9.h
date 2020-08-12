@@ -124,7 +124,8 @@ typedef struct h9_preset {
     bool          tempo_enabled;
     bool          modfactor_fast_slow;
 
-    bool dirty;  // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
+    bool dirty;   // true if changes have been made (e.g. knobs twiddled, exp map changed) after last load or save
+    bool loaded;  // true if the preset has been loaded to or from the pedal
 } h9_preset;
 
 struct h9;
@@ -195,6 +196,7 @@ const char*       h9_currentAlgorithmName(h9* h9);
 h9_module*        h9_currentModule(h9* h9);
 uint8_t           h9_currentModuleIndex(h9* h9);
 const char*       h9_currentModuleName(h9* h9);
+bool              h9_presetLoaded(h9* h9);
 const char*       h9_presetName(h9* h9, size_t* len);
 bool              h9_setPresetName(h9* h9, const char* name, size_t len);
 bool              h9_dirty(h9* h9);

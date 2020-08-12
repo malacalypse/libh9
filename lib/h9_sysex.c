@@ -178,6 +178,13 @@ typedef enum h9_sysvar {
     sp_preset_kill_dry,                        // 20 : this is the value stored in the preset
 } h9_sysvar;
 
+typedef struct h9_sysex_blob {
+    h9_message_code type;
+    uint8_t         dest_id;
+    uint8_t *       data;
+    size_t          len;
+} h9_sysex_blob;
+
 typedef struct h9_sysex_preset {
     int      preset_num;
     int      module_sysex_id;
@@ -579,7 +586,8 @@ static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
     // Sync control state, trigger display callbacks
     h9_reset_display_values(h9);
 
-    h9->preset->dirty = false;
+    h9->preset->dirty  = false;
+    h9->preset->loaded = true;
     return kH9_OK;
 }
 
@@ -815,7 +823,7 @@ static h9_status parse_system_value(h9 *h9, uint8_t *cursor, size_t len) {
     return kH9_OK;
 }
 
-h9_status h9_parse_sysex(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
+static h9_status parse_sysex_header(h9 *h9, uint8_t *sysex, size_t len, h9_sysex_blob *payload) {
     assert(h9);
     uint8_t *cursor = sysex;  // start the cursor at the beginning
     if (*cursor == 0xF0) {    // Skip the leading F0 if present
@@ -830,23 +838,29 @@ h9_status h9_parse_sysex(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id
         }
     }
 
-    if (enforce_sysex_id == kH9_RESTRICT_TO_SYSEX_ID) {
-        if (*cursor++ != h9->midi_config.sysex_id) {
-            return kH9_SYSEX_ID_MISMATCH;
-        }
-    } else {
-        cursor++;  // skip the id
+    payload->dest_id = *cursor++;
+    payload->type    = *cursor++;
+    payload->len     = len - (size_t)((uintptr_t)cursor - (uintptr_t)sysex);
+    payload->data    = cursor;
+
+    return kH9_OK;
+}
+
+h9_status h9_parse_sysex(h9 *h9, uint8_t *sysex, size_t len, h9_enforce_sysex_id enforce_sysex_id) {
+    assert(h9);
+    h9_sysex_blob payload;
+    h9_status     result = parse_sysex_header(h9, sysex, len, &payload);
+    if (result != kH9_OK) {
+        return result;
     }
 
-    // Finally, determine what type of message it is:
-    size_t effective_len = len - (size_t)((uintptr_t)cursor - (uintptr_t)sysex);
-    switch (*cursor++) {
+    switch (payload.type) {
         case kH9_PROGRAM:
-            return load_preset(h9, cursor, effective_len);
+            return load_preset(h9, payload.data, payload.len);
         case kH9_TJ_SYSVARS_DUMP:
-            return parse_system_value_dump(h9, cursor, effective_len);
+            return parse_system_value_dump(h9, payload.data, payload.len);
         case kH9_SYSEX_VALUE_DUMP:
-            return parse_system_value(h9, cursor, effective_len);
+            return parse_system_value(h9, payload.data, payload.len);
         default:
             return kH9_UNSUPPORTED_COMMAND;
     }
@@ -860,8 +874,11 @@ size_t h9_dump(h9 *h9, uint8_t *sysex, size_t max_len, bool update_dirty_flag) {
     export_preset(&sxpreset, h9->preset);
 
     size_t bytes_written = format_sysex(sysex, max_len, &sxpreset, h9->midi_config.sysex_id);
-    if (bytes_written <= max_len && update_dirty_flag) {
-        h9->preset->dirty = false;
+    if (bytes_written <= max_len) {
+        if (update_dirty_flag) {
+            h9->preset->dirty = false;
+        }
+        h9->preset->loaded = true;
     }
 
     return bytes_written;
@@ -923,4 +940,13 @@ void h9_sysexWriteConfigVar(h9 *h9, uint16_t key, uint16_t value) {
     if (bytes_written <= len && h9->sysex_callback != NULL) {
         h9->sysex_callback(h9->callback_context, sysex, bytes_written);
     }
+}
+
+bool h9_isSystemConfig(h9 *h9, uint8_t *sysex, size_t len) {
+    assert(h9);
+    h9_sysex_blob payload;
+    if (parse_sysex_header(h9, sysex, len, &payload) != kH9_OK) {
+        return false;
+    }
+    return (payload.type == kH9_TJ_SYSVARS_DUMP);
 }
