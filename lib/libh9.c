@@ -221,6 +221,9 @@ h9_preset* h9_preset_new(void) {
     h9_preset->expression = 0.0;
     h9_preset->psw        = false;
 
+    h9_preset->loaded = false;
+    h9_preset->dirty  = false;
+
     return h9_preset;
 }
 
@@ -365,6 +368,10 @@ const char* const h9_moduleName(uint8_t module_id) {
 
 const char* h9_currentModuleName(h9* h9) {
     return h9->preset->module->name;
+}
+
+bool h9_presetLoaded(h9* h9) {
+    return h9->preset->loaded;
 }
 
 const char* h9_presetName(h9* h9, size_t* len) {

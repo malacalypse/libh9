@@ -180,7 +180,7 @@ size_t scanfloat(char *str, size_t strlen, float *dest, size_t destlen) {
 
     for (size_t i = 0; (i < strlen) && (dest_i < (int)destlen); i++) {
         char current = str[i];
-        if ((current >= '0' && current <= '9') || (current == '.')) {
+        if ((current >= '0' && current <= '9') || (current == '.') || (current == '-')) {
             if (!found) {
                 cursor = &str[i];
                 found  = true;
