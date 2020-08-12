@@ -414,10 +414,11 @@ bool h9_setPresetName(h9* h9, const char* name, size_t len) {
         }
     }
     if (valid_len > 0) {
-        if (valid_len < H9_MAX_NAME_LEN) {
-            valid_len++;  // Add room for the null terminator
-        }                 // otherwise truncate to make room for it.
-        strlcpy(h9->preset->name, new_name, valid_len);
+        if (valid_len >= H9_MAX_NAME_LEN) {
+            valid_len = H9_MAX_NAME_LEN - 1;  // truncate if too long, leave room for null terminator
+        }
+        memcpy(h9->preset->name, new_name, valid_len);
+        h9->preset->name[H9_MAX_NAME_LEN - 1] = 0;  // force null termination
         return true;
     } else {
         return false;  // Blank names are not permitted by the pedal.

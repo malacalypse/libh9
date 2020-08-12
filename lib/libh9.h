@@ -62,11 +62,11 @@ typedef enum control_id {
     NUM_CONTROLS,  // KEEP THIS LAST
 } control_id;
 
-typedef enum knob_mode {
+typedef enum h9_knob_mode {
     kKnobModeNormal = 0U,
     kKnobModeCatchup,
     kKnobModeLocked,
-} knob_mode;
+} h9_knob_mode;
 
 typedef enum h9_callback_action {
     kH9_SUPPRESS_CALLBACK = 0U,
@@ -166,12 +166,12 @@ typedef struct h9 {
     h9_preset*     preset;
 
     // Pedal settings
-    char      name[H9_MAX_NAME_LEN];
-    char      bluetooth_pin[5];  // include the NULL
-    bool      bypass;
-    bool      killdry;
-    bool      global_tempo;
-    knob_mode knob_mode;
+    char         name[H9_MAX_NAME_LEN];
+    char         bluetooth_pin[5];  // include the NULL
+    bool         bypass;
+    bool         killdry;
+    bool         global_tempo;
+    h9_knob_mode knob_mode;
 
     // Observer registration
     h9_display_callback display_callback;
