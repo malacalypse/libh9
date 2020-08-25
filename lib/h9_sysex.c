@@ -576,7 +576,7 @@ static h9_status load_preset(h9 *h9, uint8_t *cursor, size_t len) {
     }
     debug_info("Checksum VALID.\n");
 
-    // Valiate contents - checksum is fine, but if the module / algorithm indices are invalid, we cannot continue.
+    // Validate contents - checksum is fine, but if the module / algorithm indices are invalid, we cannot continue.
     if (!validate_h9_sysex_preset(&sxpreset)) {
         return kH9_SYSEX_INVALID;
     }
