@@ -16,6 +16,7 @@ add_library(libh9
     lib/utils.c
     lib/libh9.c)
 set_property(TARGET ${LIBNAME} PROPERTY C_STANDARD 11)
+set_target_properties(${LIBNAME} PROPERTIES PREFIX "")
 
 
 project(${TESTNAME})
@@ -24,6 +25,7 @@ add_library(${LIBNAME}_coverage
     lib/utils.c
     lib/libh9.c)
 set_property(TARGET ${LIBNAME}_coverage PROPERTY C_STANDARD 11)
+set_target_properties(${LIBNAME}_coverage PROPERTIES PREFIX "")
 
 add_executable(${TESTNAME} 
     ${PROJECT_SOURCE_DIR}/test/test_helpers.cpp
