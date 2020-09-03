@@ -23,6 +23,8 @@ To build libh9 directly (produces a .a file) or to build and run the test suite,
 1. `cmake ..` (for an explicitly debug or release build, `cmake -DCMAKE_BUILD_TYPE=Debug ..`, substitute Release for Debug as appropriate.)
 1. `make` (if you want to make only a specific target, you can `make libh9` to build only the library, `make unittests` to build and run the tests, and `make coverage` to run the tests and generate a coverage report)
 
+Builds are tested on MacOS. I do not provide support for using it on Windows.
+
 ## License
 
 The full text of the license should be found in LICENSE.txt, included as part of this repository.
