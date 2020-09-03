@@ -139,8 +139,13 @@ elseif(NOT CMAKE_COMPILER_IS_GNUCXX)
     endif()
 endif()
 
-set(COVERAGE_COMPILER_FLAGS "-g -fprofile-arcs -ftest-coverage"
-    CACHE INTERNAL "")
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+    set(COVERAGE_COMPILER_FLAGS -g -fprofile-arcs -ftest-coverage CACHE INTERNAL "")
+    set(COVERAGE_LINKER_FLAGS -fprofile-arcs -ftest-coverage CACHE INTERNAL "")
+else()
+    set(COVERAGE_COMPILER_FLAGS "-g -fprofile-arcs -ftest-coverage" CACHE INTERNAL "")
+    set(COVERAGE_LINKER_FLAGS CACHE INTERNAL "")
+endif()
 
 set(CMAKE_Fortran_FLAGS_COVERAGE
     ${COVERAGE_COMPILER_FLAGS}
@@ -429,8 +434,15 @@ function(setup_target_for_coverage_gcovr_html)
 endfunction() # setup_target_for_coverage_gcovr_html
 
 function(append_coverage_compiler_flags)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
-    message(STATUS "Appending code coverage compiler flags: ${COVERAGE_COMPILER_FLAGS}")
+    set(options NONE)
+    set(oneValueArgs TARGET)
+    set(multiValueArgs NA)
+    cmake_parse_arguments(append_tgt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    target_compile_options(${append_tgt_TARGET} PUBLIC "${COVERAGE_COMPILER_FLAGS}")
+    target_link_options(${append_tgt_TARGET} PUBLIC "${COVERAGE_LINKER_FLAGS}")
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
+    #set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${COVERAGE_COMPILER_FLAGS}" PARENT_SCOPE)
+    message(STATUS "Appending code coverage compiler flags to ${append_tgt_TARGET}: ${COVERAGE_COMPILER_FLAGS}")
 endfunction() # append_coverage_compiler_flags
