@@ -1,17 +1,22 @@
 # libh9
-A C library for communicating with and modeling the remote behaviour of an Eventide H9 multi-effect unit.
-
-More will be written on this as I have time to expand on it. 
+A C library for communicating with and modeling the remote behaviour of an Eventide H9 multi-effect unit. For an example of this library in use, check out my (rudimentary) Max/MSP external [H9 External](https://github.com/malacalypse/h9_external).
 
 ## Summary
 
-This library contains the `libh9.h` main header file (which is all you need to include to use the core h9 object and API). 
-
-The examples dir is really not useful right now, that's a work in progress.
+To use libh9 in your project, include the header:
+```C
+#include "libh9.h"
+```
+If you are using CMake, you can take advantage of the build toolchain directly. Add something like this to your project's CMakeLists.txt:
+```CMake
+add_subdirectory(lib/libh9)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/libh9/lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE libh9)
+```
 
 ## Building / Testing
 
-To build, follow the classic CMake pattern:
+To build libh9 directly (produces a .a file) or to build and run the test suite, follow the classic CMake pattern:
 
 1. `mkdir build` (or choose a suitable directory name: Debug, Release, Test, etc.)
 1. `cd build` (use the dirname you chose above)
@@ -22,7 +27,7 @@ To build, follow the classic CMake pattern:
 
 The full text of the license should be found in LICENSE.txt, included as part of this repository.
 
-This library and all accompanying code, examples, information and documentation is 
+This library and all accompanying code, examples, information and documentation is
 Copyright (C) 2019-2020 Daniel Collins
 
 This program is free software: you can redistribute it and/or modify
