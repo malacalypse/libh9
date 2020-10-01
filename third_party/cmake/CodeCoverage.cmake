@@ -143,7 +143,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
     set(COVERAGE_COMPILER_FLAGS -g -fprofile-arcs -ftest-coverage CACHE INTERNAL "")
     set(COVERAGE_LINKER_FLAGS -fprofile-arcs -ftest-coverage CACHE INTERNAL "")
 else()
-    set(COVERAGE_COMPILER_FLAGS "-g -fprofile-arcs -ftest-coverage" CACHE INTERNAL "")
+    set(COVERAGE_COMPILER_FLAGS -fprofile-arcs -ftest-coverage CACHE INTERNAL "")
     set(COVERAGE_LINKER_FLAGS CACHE INTERNAL "")
 endif()
 
